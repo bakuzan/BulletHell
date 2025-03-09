@@ -1,4 +1,6 @@
 #include <SFML/Graphics.hpp>
+
+#include <cmath>
 #include <iostream>
 
 #include "Constants.h"
@@ -9,10 +11,26 @@ void LoadWindowIcon(sf::Window &window)
     sf::Image icon;
     if (!icon.loadFromFile("resources/icon.png"))
     {
-        exit(1);
+        exit(1); // Handle error
     }
 
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    // Flip the icon by 180 degrees (invert both horizontally and vertically)
+    sf::Vector2u iconSize = icon.getSize();
+    sf::Image flippedIcon;
+    flippedIcon.create(iconSize.x, iconSize.y);
+
+    for (unsigned int x = 0; x < iconSize.x; ++x)
+    {
+        for (unsigned int y = 0; y < iconSize.y; ++y)
+        {
+            // Mirror pixels both horizontally and vertically
+            sf::Color pixel = icon.getPixel(x, y);
+            flippedIcon.setPixel(iconSize.x - x - 1, iconSize.y - y - 1, pixel);
+        }
+    }
+
+    // Set the flipped icon
+    window.setIcon(flippedIcon.getSize().x, flippedIcon.getSize().y, flippedIcon.getPixelsPtr());
 }
 
 int main()
@@ -47,9 +65,9 @@ int main()
     // Player
     sf::Sprite player;
     player.setTexture(spaceshipsTexture);
-    player.setTextureRect(sf::IntRect(3 * 128, 0, 128, 128));
+    player.setTextureRect(sf::IntRect(3 * Constants::SPRITE_SIZE, 0, Constants::SPRITE_SIZE, Constants::SPRITE_SIZE));
     player.setScale(0.25f, 0.25f);
-    player.setOrigin(128 / 2.f, 128 / 2.f);
+    player.setOrigin(Constants::SPRITE_SIZE / 2.f, Constants::SPRITE_SIZE / 2.f);
     player.setPosition(100.0f, 100.0f);
 
     while (window.isOpen())
@@ -88,6 +106,17 @@ int main()
                 break;
             }
         }
+
+        // Turn the player to face the mouse location
+        sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+        sf::Vector2f worldMousePosition = window.mapPixelToCoords(mousePosition);
+
+        // Calculate the angle between the player and mouse
+        sf::Vector2f currentPlayerPos = player.getPosition();
+        float dx = worldMousePosition.x - currentPlayerPos.x;
+        float dy = worldMousePosition.y - currentPlayerPos.y;
+        float angle = std::atan2(dy, dx) * 180.f / 3.14159f; // Convert to degrees
+        player.setRotation(angle + 270.f);                   // Add 90 degrees to align sprite properly
 
         const float playerSpeed = Constants::BASE_PLAYER_SPEED;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
