@@ -11,26 +11,10 @@ void LoadWindowIcon(sf::Window &window)
     sf::Image icon;
     if (!icon.loadFromFile("resources/icon.png"))
     {
-        exit(1); // Handle error
+        exit(1);
     }
 
-    // Flip the icon by 180 degrees (invert both horizontally and vertically)
-    sf::Vector2u iconSize = icon.getSize();
-    sf::Image flippedIcon;
-    flippedIcon.create(iconSize.x, iconSize.y);
-
-    for (unsigned int x = 0; x < iconSize.x; ++x)
-    {
-        for (unsigned int y = 0; y < iconSize.y; ++y)
-        {
-            // Mirror pixels both horizontally and vertically
-            sf::Color pixel = icon.getPixel(x, y);
-            flippedIcon.setPixel(iconSize.x - x - 1, iconSize.y - y - 1, pixel);
-        }
-    }
-
-    // Set the flipped icon
-    window.setIcon(flippedIcon.getSize().x, flippedIcon.getSize().y, flippedIcon.getPixelsPtr());
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 }
 
 int main()
