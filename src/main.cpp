@@ -1,13 +1,13 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 #include "Constants.h"
-#include "GameUtils.h"
 
 void LoadWindowIcon(sf::Window &window)
 {
     // Load the icon
     sf::Image icon;
-    if (!icon.loadFromFile("resources/lightbulb-icon.png"))
+    if (!icon.loadFromFile("resources/icon.png"))
     {
         exit(1);
     }
@@ -17,7 +17,7 @@ void LoadWindowIcon(sf::Window &window)
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Setup Test");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Bullet Hell");
     sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT));
 
     LoadWindowIcon(window);
@@ -25,17 +25,31 @@ int main()
     // Objects
     sf::Clock gameClock;
 
-    // World boundary
-    sf::Vector2f worldSize(Constants::WORLD_WIDTH, Constants::WORLD_HEIGHT);
-    sf::RectangleShape worldBoundary(sf::Vector2f(worldSize.x - 10.0f, worldSize.y - 10.0f));
-    worldBoundary.setFillColor(sf::Color::Transparent);
-    worldBoundary.setOutlineColor(sf::Color::Green);
-    worldBoundary.setOutlineThickness(5.0f);
-    worldBoundary.setPosition(5.0f, 5.0f);
+    // Background
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("resources/background.png"))
+    {
+        // Handle error
+        std::cerr << "Failed to load background image!" << std::endl;
+    }
+
+    sf::RectangleShape background(sf::Vector2f(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT));
+    background.setTexture(&backgroundTexture);
+
+    // Entities
+    sf::Texture spaceshipsTexture;
+    if (!spaceshipsTexture.loadFromFile("resources/spaceships.png"))
+    {
+        std::cerr << "Failed to load spaceships texture!" << std::endl;
+    }
 
     // Player
-    sf::RectangleShape player(sf::Vector2f(50.0f, 50.0f));
-    player.setFillColor(sf::Color(128, 0, 128));
+    sf::Sprite player;
+    player.setTexture(spaceshipsTexture);
+    player.setTextureRect(sf::IntRect(3 * 128, 0, 128, 128));
+    player.setScale(0.5f, 0.5f);
+    player.setOrigin(64 / 2.f, 64 / 2.f);
+    player.setPosition(100.0f, 100.0f);
 
     while (window.isOpen())
     {
@@ -63,7 +77,7 @@ int main()
             }
         }
 
-        const float playerSpeed = 200.0f; // Pixels per second
+        const float playerSpeed = 500.0f; // Pixels per second
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
             player.move(-playerSpeed * deltaTime, 0.0f);
@@ -81,22 +95,14 @@ int main()
             player.move(0.0f, playerSpeed * deltaTime);
         }
 
-        // Clamp the player's position to the world boundaries
-        ClampPlayerToWorld(player);
-
         // Logic
 
         // Draw + Display
-        window.clear(sf::Color(31, 31, 31));
-
-        UpdateView(view,
-                   player.getPosition(),
-                   worldSize,
-                   sf::Vector2f(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT));
+        view.setCenter(player.getPosition());
         window.setView(view);
 
-        // Draw objects
-        window.draw(worldBoundary);
+        window.clear(sf::Color(31, 31, 31));
+        window.draw(background);
         window.draw(player);
 
         // Display

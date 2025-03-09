@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(MyGame)
+project(BulletHell)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -10,7 +10,7 @@ find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 # Add your executable
 file(GLOB_RECURSE SOURCES "src/**/*.cpp" "src/*.cpp")
 message(STATUS "Source files: ${SOURCES}")
-add_executable(MyGame ${SOURCES})
+add_executable(BulletHell ${SOURCES})
 
 # Link SFML libraries
 target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
@@ -38,7 +38,7 @@ endif()
 
 # Copy resources folder to the build directory
 add_custom_command(
-    TARGET MyGame POST_BUILD
+    TARGET BulletHell POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:MyGame>/resources
+    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:BulletHell>/resources
 )

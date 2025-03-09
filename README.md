@@ -1,3 +1,3 @@
-# CMAKE
+# BulletHell
 
-Basic example setup for using CMake with g++ for an SFML project.
+A Bullet Hell game implemented in C++.
