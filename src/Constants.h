@@ -5,6 +5,8 @@ namespace Constants
 {
     extern const float VIEW_WIDTH;
     extern const float VIEW_HEIGHT;
+
+    extern const float BASE_PLAYER_SPEED;
 };
 
 #endif // CONSTANTS_H

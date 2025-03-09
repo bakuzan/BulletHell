@@ -32,13 +32,14 @@ int main()
         // Handle error
         std::cerr << "Failed to load background image!" << std::endl;
     }
+    backgroundTexture.setRepeated(true);
 
     sf::RectangleShape background(sf::Vector2f(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT));
     background.setTexture(&backgroundTexture);
 
     // Entities
     sf::Texture spaceshipsTexture;
-    if (!spaceshipsTexture.loadFromFile("resources/spaceships.png"))
+    if (!spaceshipsTexture.loadFromFile("resources/spaceships_brighter.png"))
     {
         std::cerr << "Failed to load spaceships texture!" << std::endl;
     }
@@ -47,8 +48,8 @@ int main()
     sf::Sprite player;
     player.setTexture(spaceshipsTexture);
     player.setTextureRect(sf::IntRect(3 * 128, 0, 128, 128));
-    player.setScale(0.5f, 0.5f);
-    player.setOrigin(64 / 2.f, 64 / 2.f);
+    player.setScale(0.25f, 0.25f);
+    player.setOrigin(128 / 2.f, 128 / 2.f);
     player.setPosition(100.0f, 100.0f);
 
     while (window.isOpen())
@@ -70,6 +71,17 @@ int main()
                 // Maintain the height of the view to match the window height
                 float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
                 view.setSize(Constants::VIEW_HEIGHT * aspectRatio, Constants::VIEW_HEIGHT);
+
+                // Resize the background to match the new window size
+                background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
+
+                // Adjust texture rect for seamless tiling
+                background.setTextureRect(sf::IntRect(
+                    view.getCenter().x - view.getSize().x / 2.0f,
+                    view.getCenter().y - view.getSize().y / 2.0f,
+                    window.getSize().x,
+                    window.getSize().y));
+
                 break;
             }
             default:
@@ -77,7 +89,7 @@ int main()
             }
         }
 
-        const float playerSpeed = 500.0f; // Pixels per second
+        const float playerSpeed = Constants::BASE_PLAYER_SPEED;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
             player.move(-playerSpeed * deltaTime, 0.0f);
@@ -100,6 +112,13 @@ int main()
         // Draw + Display
         view.setCenter(player.getPosition());
         window.setView(view);
+
+        // Set the background sprite position
+        sf::Vector2f viewPos = view.getCenter() - view.getSize() / 2.0f;
+        background.setPosition(viewPos);
+        background.setTextureRect(sf::IntRect(
+            viewPos.x, viewPos.y,
+            view.getSize().x, view.getSize().y));
 
         window.clear(sf::Color(31, 31, 31));
         window.draw(background);
