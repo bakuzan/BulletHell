@@ -3,14 +3,15 @@
 
 #include "Constants.h"
 #include "GameState.h"
+#include "InputUtils.h"
 
 GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &window)
-    : gameData(data), stateManager(manager)
+    : gameData(data), stateManager(manager), window(window)
 {
     // Load background
     if (!backgroundTexture.loadFromFile("resources/background.png"))
     {
-        std::cerr << "Failed to load background image!" << std::endl;
+        throw std::runtime_error("Failed to load background image!");
     }
     backgroundTexture.setRepeated(true);
     background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
@@ -19,7 +20,7 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
     // Load player
     if (!spaceshipsTexture.loadFromFile("resources/spaceships_brighter.png"))
     {
-        std::cerr << "Failed to load player texture!" << std::endl;
+        throw std::runtime_error("Failed to load spaceships texture!");
     }
 
     player.setTexture(spaceshipsTexture);
@@ -44,10 +45,19 @@ void GameState::handleEvent(const sf::Event &event)
 {
     if (event.type == sf::Event::Resized)
     {
-        // Adjust view and background size
-        float aspectRatio = float(event.size.width) / float(event.size.height);
+        // Maintain the height of the view to match the window height
+        float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
         view.setSize(Constants::VIEW_HEIGHT * aspectRatio, Constants::VIEW_HEIGHT);
-        background.setSize(sf::Vector2f(event.size.width, event.size.height));
+
+        // Resize the background to match the new window size
+        background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
+
+        // Adjust texture rect for seamless tiling
+        background.setTextureRect(sf::IntRect(
+            view.getCenter().x - view.getSize().x / 2.0f,
+            view.getCenter().y - view.getSize().y / 2.0f,
+            window.getSize().x,
+            window.getSize().y));
     }
 }
 
@@ -55,19 +65,19 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
     // Move the player
     const float playerSpeed = Constants::BASE_PLAYER_SPEED;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Left, sf::Keyboard::A}))
     {
         player.move(-playerSpeed * deltaTime.asSeconds(), 0);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Right, sf::Keyboard::D}))
     {
         player.move(playerSpeed * deltaTime.asSeconds(), 0);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Up, sf::Keyboard::W}))
     {
         player.move(0, -playerSpeed * deltaTime.asSeconds());
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Down, sf::Keyboard::S}))
     {
         player.move(0, playerSpeed * deltaTime.asSeconds());
     }
@@ -88,7 +98,8 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
     // Update background texture rect for tiling
     sf::Vector2f viewPos = view.getCenter() - view.getSize() / 2.0f;
     background.setPosition(viewPos);
-    background.setTextureRect(sf::IntRect(viewPos.x, viewPos.y, view.getSize().x, view.getSize().y));
+    background.setTextureRect(sf::IntRect(viewPos.x, viewPos.y,
+                                          view.getSize().x, view.getSize().y));
 
     // Update player position in GameData
     gameData.setPlayerPosition(player.getPosition());
@@ -96,8 +107,6 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 
 void GameState::render(sf::RenderWindow &window)
 {
-
-    // Draw
     window.setView(view);
     window.draw(background);
     window.draw(player);

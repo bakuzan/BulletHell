@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "GameData.h"
-#include "GameState.h"
+#include "MenuState.h"
 #include "StateManager.h"
 
 void LoadWindowIcon(sf::Window &window)
@@ -27,7 +27,7 @@ int main()
     StateManager stateManager;
 
     // Push initial state (GameState)
-    stateManager.pushState(std::make_unique<GameState>(gameData, stateManager, window));
+    stateManager.pushState(std::make_unique<MenuState>(gameData, stateManager, window));
 
     sf::Clock clock;
     while (window.isOpen())

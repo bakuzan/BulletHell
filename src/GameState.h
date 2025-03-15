@@ -12,6 +12,8 @@ class GameState : public State
 private:
     GameData &gameData;
     StateManager &stateManager;
+    sf::RenderWindow &window;
+
     sf::Texture backgroundTexture;
     sf::Texture spaceshipsTexture;
     sf::RectangleShape background;
