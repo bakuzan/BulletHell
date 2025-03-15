@@ -14,7 +14,7 @@ void MenuState::handleEvent(const sf::Event &event)
 {
 }
 
-void MenuState::update(sf::Time deltaTime)
+void MenuState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
 }
 

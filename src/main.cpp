@@ -51,7 +51,7 @@ int main()
         sf::Time deltaTime = clock.restart();
         if (stateManager.getCurrentState())
         {
-            stateManager.getCurrentState()->update(deltaTime);
+            stateManager.getCurrentState()->update(deltaTime, window);
         }
 
         // Draw and Display

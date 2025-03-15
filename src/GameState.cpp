@@ -51,8 +51,9 @@ void GameState::handleEvent(const sf::Event &event)
     }
 }
 
-void GameState::update(sf::Time deltaTime)
+void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
+    // Move the player
     const float playerSpeed = Constants::BASE_PLAYER_SPEED;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
@@ -71,6 +72,16 @@ void GameState::update(sf::Time deltaTime)
         player.move(0, playerSpeed * deltaTime.asSeconds());
     }
 
+    // Turn the player to face the mouse position
+    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+    sf::Vector2f worldMousePosition = window.mapPixelToCoords(mousePosition);
+    sf::Vector2f currentPlayerPos = player.getPosition();
+
+    float dx = worldMousePosition.x - currentPlayerPos.x;
+    float dy = worldMousePosition.y - currentPlayerPos.y;
+    float angle = std::atan2(dy, dx) * 180.f / 3.14159f; // Convert to degrees
+    player.setRotation(angle + 270.f);                   // Adjust for sprite alignment
+
     // Update view to follow player
     view.setCenter(player.getPosition());
 
@@ -85,15 +96,6 @@ void GameState::update(sf::Time deltaTime)
 
 void GameState::render(sf::RenderWindow &window)
 {
-    // Turn the player to face the mouse position
-    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-    sf::Vector2f worldMousePosition = window.mapPixelToCoords(mousePosition);
-    sf::Vector2f currentPlayerPos = player.getPosition();
-
-    float dx = worldMousePosition.x - currentPlayerPos.x;
-    float dy = worldMousePosition.y - currentPlayerPos.y;
-    float angle = std::atan2(dy, dx) * 180.f / 3.14159f; // Convert to degrees
-    player.setRotation(angle + 270.f);                   // Adjust for sprite alignment
 
     // Draw
     window.setView(view);
