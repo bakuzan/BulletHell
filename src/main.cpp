@@ -1,9 +1,10 @@
 #include <SFML/Graphics.hpp>
 
-#include <cmath>
 #include <iostream>
 
-#include "Constants.h"
+#include "GameData.h"
+#include "GameState.h"
+#include "StateManager.h"
 
 void LoadWindowIcon(sf::Window &window)
 {
@@ -20,124 +21,45 @@ void LoadWindowIcon(sf::Window &window)
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Bullet Hell");
-    sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT));
-
     LoadWindowIcon(window);
 
-    // Objects
-    sf::Clock gameClock;
+    GameData gameData;
+    StateManager stateManager;
 
-    // Background
-    sf::Texture backgroundTexture;
-    if (!backgroundTexture.loadFromFile("resources/background.png"))
-    {
-        // Handle error
-        std::cerr << "Failed to load background image!" << std::endl;
-    }
-    backgroundTexture.setRepeated(true);
+    // Push initial state (GameState)
+    stateManager.pushState(std::make_unique<GameState>(gameData, stateManager, window));
 
-    sf::RectangleShape background(sf::Vector2f(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT));
-    background.setTexture(&backgroundTexture);
-
-    // Entities
-    sf::Texture spaceshipsTexture;
-    if (!spaceshipsTexture.loadFromFile("resources/spaceships_brighter.png"))
-    {
-        std::cerr << "Failed to load spaceships texture!" << std::endl;
-    }
-
-    // Player
-    sf::Sprite player;
-    player.setTexture(spaceshipsTexture);
-    player.setTextureRect(sf::IntRect(3 * Constants::SPRITE_SIZE, 0, Constants::SPRITE_SIZE, Constants::SPRITE_SIZE));
-    player.setScale(0.25f, 0.25f);
-    player.setOrigin(Constants::SPRITE_SIZE / 2.f, Constants::SPRITE_SIZE / 2.f);
-    player.setPosition(100.0f, 100.0f);
-
+    sf::Clock clock;
     while (window.isOpen())
     {
-        // Timing
-        float deltaTime = gameClock.restart().asSeconds();
-
-        // Input
         sf::Event event;
         while (window.pollEvent(event))
         {
-            switch (event.type)
+            if (event.type == sf::Event::Closed)
             {
-            case sf::Event::Closed:
                 window.close();
-                break;
-            case sf::Event::Resized:
+            }
+
+            // Input
+            if (stateManager.getCurrentState())
             {
-                // Maintain the height of the view to match the window height
-                float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
-                view.setSize(Constants::VIEW_HEIGHT * aspectRatio, Constants::VIEW_HEIGHT);
-
-                // Resize the background to match the new window size
-                background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
-
-                // Adjust texture rect for seamless tiling
-                background.setTextureRect(sf::IntRect(
-                    view.getCenter().x - view.getSize().x / 2.0f,
-                    view.getCenter().y - view.getSize().y / 2.0f,
-                    window.getSize().x,
-                    window.getSize().y));
-
-                break;
-            }
-            default:
-                break;
+                stateManager.getCurrentState()->handleEvent(event);
             }
         }
 
-        // Turn the player to face the mouse location
-        sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-        sf::Vector2f worldMousePosition = window.mapPixelToCoords(mousePosition);
-
-        // Calculate the angle between the player and mouse
-        sf::Vector2f currentPlayerPos = player.getPosition();
-        float dx = worldMousePosition.x - currentPlayerPos.x;
-        float dy = worldMousePosition.y - currentPlayerPos.y;
-        float angle = std::atan2(dy, dx) * 180.f / 3.14159f; // Convert to degrees
-        player.setRotation(angle + 270.f);                   // Add 90 degrees to align sprite properly
-
-        const float playerSpeed = Constants::BASE_PLAYER_SPEED;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        // Update (Logic)
+        sf::Time deltaTime = clock.restart();
+        if (stateManager.getCurrentState())
         {
-            player.move(-playerSpeed * deltaTime, 0.0f);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            player.move(playerSpeed * deltaTime, 0.0f);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            player.move(0.0f, -playerSpeed * deltaTime);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            player.move(0.0f, playerSpeed * deltaTime);
+            stateManager.getCurrentState()->update(deltaTime);
         }
 
-        // Logic
-
-        // Draw + Display
-        view.setCenter(player.getPosition());
-        window.setView(view);
-
-        // Set the background sprite position
-        sf::Vector2f viewPos = view.getCenter() - view.getSize() / 2.0f;
-        background.setPosition(viewPos);
-        background.setTextureRect(sf::IntRect(
-            viewPos.x, viewPos.y,
-            view.getSize().x, view.getSize().y));
-
-        window.clear(sf::Color(31, 31, 31));
-        window.draw(background);
-        window.draw(player);
-
-        // Display
+        // Draw and Display
+        window.clear();
+        if (stateManager.getCurrentState())
+        {
+            stateManager.getCurrentState()->render(window);
+        }
         window.display();
     }
 
