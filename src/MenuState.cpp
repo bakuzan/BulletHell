@@ -3,7 +3,7 @@
 #include "MenuState.h"
 
 MenuState::MenuState(GameData &data, StateManager &manager, sf::RenderWindow &window)
-    : gameData(data), stateManager(stateManager), window(window)
+    : gameData(data), stateManager(manager), window(window)
 {
     // Load font
     if (!font.loadFromFile("resources/fonts/PressStart2P-Regular.ttf"))
