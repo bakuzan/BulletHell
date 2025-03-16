@@ -12,9 +12,19 @@ GameData::~GameData()
 
 // Publics
 
-void GameData::setPlayerPosition(sf::Vector2f playerPosition)
+std::vector<Projectile> &GameData::getProjectiles()
 {
-    this->playerPosition = playerPosition;
+    return projectiles;
+}
+
+void GameData::addProjectile(const Projectile &projectile)
+{
+    projectiles.push_back(projectile);
+}
+
+void GameData::removeProjectile(size_t index)
+{
+    projectiles.erase(projectiles.begin() + index);
 }
 
 void GameData::reset()

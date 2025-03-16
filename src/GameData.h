@@ -3,16 +3,20 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include "Projectile.h"
+
 class GameData
 {
 private:
-    sf::Vector2f playerPosition;
+    std::vector<Projectile> projectiles;
 
 public:
     GameData();
     ~GameData();
 
-    void setPlayerPosition(sf::Vector2f playerPosition);
+    std::vector<Projectile> &getProjectiles();
+    void addProjectile(const Projectile &projectile);
+    void removeProjectile(size_t index);
     void reset();
 };
 

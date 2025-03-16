@@ -59,6 +59,17 @@ void GameState::handleEvent(const sf::Event &event)
             window.getSize().x,
             window.getSize().y));
     }
+
+    if (event.type == sf::Event::MouseButtonPressed &&
+        event.mouseButton.button == sf::Mouse::Left)
+    {
+        shootProjectile = true;
+    }
+
+    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Space}))
+    {
+        shootProjectile = true;
+    }
 }
 
 void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
@@ -89,8 +100,42 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 
     float dx = worldMousePosition.x - currentPlayerPos.x;
     float dy = worldMousePosition.y - currentPlayerPos.y;
-    float angle = std::atan2(dy, dx) * 180.f / 3.14159f; // Convert to degrees
-    player.setRotation(angle + 270.f);                   // Adjust for sprite alignment
+    float angleRadians = std::atan2(dy, dx);
+    float angle = angleRadians * (180.f / 3.14159f); // Convert to degrees
+    player.setRotation(angle + 270.f);               // Adjust for sprite alignment
+
+    // Did the player shoot? Create projectile(s)
+    if (shootProjectile)
+    {
+        // Calculate the bullet's velocity based on the player's rotation
+        sf::Vector2f direction(std::cos(angleRadians), std::sin(angleRadians));
+        sf::Vector2f bulletVelocity = direction * (Constants::PROJECTILE_SPEED_BULLET);
+
+        // Calculate bullet spawn position (front-center of the player)
+        float playerScale = player.getScale().x; // Assume it is the same both x/y
+        sf::Vector2f spawnPosition = player.getPosition() + direction * ((Constants::SPRITE_SIZE * playerScale) / 2.0f);
+
+        auto &projectiles = gameData.getProjectiles();
+        projectiles.emplace_back(spawnPosition.x, spawnPosition.y, 5.0f, 10.0f, bulletVelocity);
+
+        shootProjectile = false;
+    }
+
+    // Update projectiles
+    auto &projectiles = gameData.getProjectiles();
+    for (auto it = projectiles.begin(); it != projectiles.end();)
+    {
+        it->update(deltaTime);
+
+        if (it->isOffScreen(window))
+        {
+            it = projectiles.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 
     // Update view to follow player
     view.setCenter(player.getPosition());
@@ -100,14 +145,18 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
     background.setPosition(viewPos);
     background.setTextureRect(sf::IntRect(viewPos.x, viewPos.y,
                                           view.getSize().x, view.getSize().y));
-
-    // Update player position in GameData
-    gameData.setPlayerPosition(player.getPosition());
 }
 
 void GameState::render(sf::RenderWindow &window)
 {
     window.setView(view);
     window.draw(background);
+
+    auto &projectiles = gameData.getProjectiles();
+    for (const auto &projectile : projectiles)
+    {
+        projectile.render(window);
+    }
+
     window.draw(player);
 }

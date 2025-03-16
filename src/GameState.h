@@ -20,6 +20,8 @@ private:
     sf::Sprite player;
     sf::View view;
 
+    bool shootProjectile;
+
 public:
     GameState(GameData &data, StateManager &manager, sf::RenderWindow &window);
     ~GameState();
