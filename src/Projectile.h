@@ -3,14 +3,19 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "ProjectileType.h"
+
 class Projectile
 {
 private:
-    sf::RectangleShape shape;
+    sf::Sprite sprite;
     sf::Vector2f velocity;
+    ProjectileType type;
 
 public:
-    Projectile(float x, float y, float width, float height, sf::Vector2f velocity);
+    Projectile(float x, float y,
+               sf::Texture &texture, sf::IntRect textureRect,
+               sf::Vector2f velocity, ProjectileType type);
     ~Projectile();
 
     void update(sf::Time deltaTime);

@@ -4,11 +4,15 @@
 #include <SFML/System/Vector2.hpp>
 
 #include "Projectile.h"
+#include "ProjectileTextureManager.h"
 
 class GameData
 {
 private:
     std::vector<Projectile> projectiles;
+
+public:
+    ProjectileTextureManager projectileTextureManager;
 
 public:
     GameData();

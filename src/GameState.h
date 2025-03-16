@@ -16,6 +16,7 @@ private:
 
     sf::Texture backgroundTexture;
     sf::Texture spaceshipsTexture;
+    sf::Texture projectileTexture;
     sf::RectangleShape background;
     sf::Sprite player;
     sf::View view;

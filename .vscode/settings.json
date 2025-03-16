@@ -69,6 +69,8 @@
     "xtree": "cpp",
     "xutility": "cpp",
     "iostream": "cpp",
-    "istream": "cpp"
+    "istream": "cpp",
+    "list": "cpp",
+    "xhash": "cpp"
   }
 }

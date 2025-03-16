@@ -29,6 +29,12 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
     player.setOrigin(Constants::SPRITE_SIZE / 2.0f, Constants::SPRITE_SIZE / 2.0f);
     player.setPosition(100.0f, 100.0f);
 
+    // Load projectiles
+    if (!projectileTexture.loadFromFile("resources/projectiles.png"))
+    {
+        throw std::runtime_error("Failed to load projectiles texture!");
+    }
+
     // Set up the view
     view.setSize(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT);
     view.setCenter(player.getPosition());
@@ -112,11 +118,22 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         sf::Vector2f bulletVelocity = direction * (Constants::PROJECTILE_SPEED_BULLET);
 
         // Calculate bullet spawn position (front-center of the player)
-        float playerScale = player.getScale().x; // Assume it is the same both x/y
-        sf::Vector2f spawnPosition = player.getPosition() + direction * ((Constants::SPRITE_SIZE * playerScale) / 2.0f);
+        float playerScale = player.getScale().x;                                          // Assume it is the same both x/y
+        float bulletWidth = 25.0f;                                                        // (size is the sprite size (500) * sprite scale (0.05))
+        float bulletHeight = 25.0f;                                                       // (size is the sprite size (500) * sprite scale (0.05))
+        sf::Vector2f offset = direction * ((Constants::SPRITE_SIZE * playerScale) / 2.f); // Move to front
+        sf::Vector2f rotatedCenterOffset = sf::Vector2f(
+            -bulletWidth / 2.f * std::cos(angleRadians) + bulletHeight / 2.f * std::sin(angleRadians),
+            -bulletWidth / 2.f * std::sin(angleRadians) - bulletHeight / 2.f * std::cos(angleRadians));
+
+        // Calculate final spawn position
+        sf::Vector2f spawnPosition = player.getPosition() + offset + rotatedCenterOffset;
 
         auto &projectiles = gameData.getProjectiles();
-        projectiles.emplace_back(spawnPosition.x, spawnPosition.y, 5.0f, 10.0f, bulletVelocity);
+        const auto &textureRect = gameData.projectileTextureManager.getTextureRect(ProjectileType::BULLET);
+        projectiles.emplace_back(spawnPosition.x, spawnPosition.y,
+                                 projectileTexture, textureRect,
+                                 bulletVelocity, ProjectileType::BULLET);
 
         shootProjectile = false;
     }
