@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 
+#include "BasicEnemy.h"
 #include "Constants.h"
 #include "GameState.h"
 #include "InputUtils.h"
@@ -80,7 +81,42 @@ void GameState::handleEvent(const sf::Event &event)
 
 void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
-    // Move the player
+    spawnEnemies(deltaTime.asSeconds(), spaceshipsTexture);
+    updateEnemies(deltaTime.asSeconds(), player.getPosition());
+
+    movePlayer(deltaTime);
+    aimAndShoot(window);
+
+    updateProjectiles(deltaTime, window);
+
+    // Update view to follow player
+    view.setCenter(player.getPosition());
+
+    // Update background texture rect for tiling
+    sf::Vector2f viewPos = view.getCenter() - view.getSize() / 2.0f;
+    background.setPosition(viewPos);
+    background.setTextureRect(sf::IntRect(viewPos.x, viewPos.y,
+                                          view.getSize().x, view.getSize().y));
+}
+
+void GameState::render(sf::RenderWindow &window)
+{
+    window.setView(view);
+    window.draw(background);
+
+    auto &projectiles = gameData.getProjectiles();
+    for (const auto &projectile : projectiles)
+    {
+        projectile.render(window);
+    }
+
+    window.draw(player);
+}
+
+// Private
+
+void GameState::movePlayer(sf::Time &deltaTime)
+{
     const float playerSpeed = Constants::BASE_PLAYER_SPEED;
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Left, sf::Keyboard::A}))
     {
@@ -98,7 +134,10 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
     {
         player.move(0, playerSpeed * deltaTime.asSeconds());
     }
+}
 
+void GameState::aimAndShoot(sf::RenderWindow &window)
+{
     // Turn the player to face the mouse position
     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
     sf::Vector2f worldMousePosition = window.mapPixelToCoords(mousePosition);
@@ -131,14 +170,16 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 
         auto &projectiles = gameData.getProjectiles();
         const auto &textureRect = gameData.projectileTextureManager.getTextureRect(ProjectileType::BULLET);
-        projectiles.emplace_back(spawnPosition.x, spawnPosition.y,
+        projectiles.emplace_back(ProjectileType::BULLET,
                                  projectileTexture, textureRect,
-                                 bulletVelocity, ProjectileType::BULLET);
+                                 spawnPosition, bulletVelocity);
 
         shootProjectile = false;
     }
+}
 
-    // Update projectiles
+void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &window)
+{
     auto &projectiles = gameData.getProjectiles();
     for (auto it = projectiles.begin(); it != projectiles.end();)
     {
@@ -153,27 +194,85 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
             ++it;
         }
     }
-
-    // Update view to follow player
-    view.setCenter(player.getPosition());
-
-    // Update background texture rect for tiling
-    sf::Vector2f viewPos = view.getCenter() - view.getSize() / 2.0f;
-    background.setPosition(viewPos);
-    background.setTextureRect(sf::IntRect(viewPos.x, viewPos.y,
-                                          view.getSize().x, view.getSize().y));
 }
 
-void GameState::render(sf::RenderWindow &window)
+std::unique_ptr<Enemy> GameState::spawnEnemy(
+    EnemyType type,
+    const sf::Texture &texture,
+    sf::IntRect textureRect,
+    sf::Vector2f spawnPosition,
+    float speed)
 {
-    window.setView(view);
-    window.draw(background);
-
-    auto &projectiles = gameData.getProjectiles();
-    for (const auto &projectile : projectiles)
+    switch (type)
     {
-        projectile.render(window);
+    case EnemyType::BASIC:
+        return std::make_unique<BasicEnemy>(texture, textureRect, spawnPosition, speed);
+    default:
+        return nullptr;
     }
+}
 
-    window.draw(player);
+void GameState::spawnEnemies(float deltaTime, const sf::Texture &enemiesTexture)
+{
+    static float spawnAccumulator = 0.0f;
+
+    // Calculate number of enemies to spawn this frame
+    spawnAccumulator += Constants::ENEMY_SPAWN_RATE * deltaTime;
+    int enemiesToSpawn = static_cast<int>(spawnAccumulator);
+    spawnAccumulator -= enemiesToSpawn; // Track fractional spawns
+
+    const float enemySpeed = Constants::BASE_PLAYER_SPEED * 1.2f;
+    const auto &textureRect = gameData.enemyTextureManager.getTextureRect(EnemyType::BASIC);
+    for (int i = 0; i < enemiesToSpawn; ++i)
+    {
+        sf::Vector2f spawnPosition = getRandomSpawnPosition(view);
+        gameData.addEnemy(
+            spawnEnemy(EnemyType::BASIC,
+                       enemiesTexture, textureRect,
+                       spawnPosition, enemySpeed));
+    }
+}
+
+void GameState::updateEnemies(float deltaTime, sf::Vector2f playerPosition)
+{
+    auto &enemies = gameData.getEnemies();
+    for (auto it = enemies.begin(); it != enemies.end();)
+    {
+        (*it)->update(deltaTime, playerPosition);
+
+        if ((*it)->getType() == EnemyType::BASIC &&
+            (*it)->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
+        {
+            //  TODO Handle damage logic here
+            it = enemies.erase(it); // Enemy has suicided, so remove after collision
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+sf::Vector2f GameState::getRandomSpawnPosition(const sf::View &view)
+{
+    sf::FloatRect bounds = view.getViewport();
+    int side = rand() % 4;
+
+    switch (side)
+    {
+    case 0: // Top
+        return {bounds.left + static_cast<float>(rand() % static_cast<int>(bounds.width)),
+                bounds.top - Constants::ENEMY_SPAWN_OFFSET};
+    case 1: // Left
+        return {bounds.left - Constants::ENEMY_SPAWN_OFFSET,
+                bounds.top + static_cast<float>(rand() % static_cast<int>(bounds.height))};
+    case 2: // Right
+        return {bounds.left + bounds.width + Constants::ENEMY_SPAWN_OFFSET,
+                bounds.top + static_cast<float>(rand() % static_cast<int>(bounds.height))};
+    case 3: // Bottom
+        return {bounds.left + static_cast<float>(rand() % static_cast<int>(bounds.width)),
+                bounds.top + bounds.height + Constants::ENEMY_SPAWN_OFFSET};
+    default:
+        return {0.f, 0.f};
+    }
 }

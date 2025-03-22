@@ -2,15 +2,15 @@
 
 #include "Projectile.h"
 
-Projectile::Projectile(float x, float y,
-                       sf::Texture &texture, sf::IntRect textureRect,
-                       sf::Vector2f velocity, ProjectileType type)
+Projectile::Projectile(ProjectileType type,
+                       const sf::Texture &texture, sf::IntRect textureRect,
+                       sf::Vector2f spawnPosition, sf::Vector2f velocity)
     : velocity(velocity), type(type)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
     sprite.setScale(0.05f, 0.05f);
-    sprite.setPosition(x, y);
+    sprite.setPosition(spawnPosition);
 }
 
 Projectile::~Projectile()

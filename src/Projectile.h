@@ -13,9 +13,9 @@ private:
     ProjectileType type;
 
 public:
-    Projectile(float x, float y,
-               sf::Texture &texture, sf::IntRect textureRect,
-               sf::Vector2f velocity, ProjectileType type);
+    Projectile(ProjectileType type,
+               const sf::Texture &texture, sf::IntRect textureRect,
+               sf::Vector2f spawnPosition, sf::Vector2f velocity);
     ~Projectile();
 
     void update(sf::Time deltaTime);
