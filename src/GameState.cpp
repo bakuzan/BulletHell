@@ -201,7 +201,9 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
         {
             if (projIt->getSprite().getGlobalBounds().intersects((*enemyIt)->getSprite().getGlobalBounds()))
             {
-                // TODO add points handling
+                // Effects of shooting enemy
+                gameData.updateScore((*enemyIt)->getPointsValue());
+
                 enemyIt = enemies.erase(enemyIt);
                 projIt = projectiles.erase(projIt);
                 projectileRemoved = true;
@@ -276,8 +278,10 @@ void GameState::updateEnemies(float deltaTime, sf::Vector2f playerPosition)
         if ((*it)->getType() == EnemyType::BASIC &&
             (*it)->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
         {
-            //  TODO Handle damage logic here
             it = enemies.erase(it); // Enemy has suicided, so remove after collision
+            // Effects of hitting player
+            gameData.updatePlayerHealth(-10);
+            // TODO has player died?
         }
         else
         {

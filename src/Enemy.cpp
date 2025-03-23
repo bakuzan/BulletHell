@@ -1,7 +1,9 @@
 #include "Enemy.h"
 
-Enemy::Enemy(EnemyType t, const sf::Texture &texture, sf::IntRect textureRect, sf::Vector2f spawnPosition, float movementSpeed)
-    : type(t), speed(movementSpeed)
+Enemy::Enemy(EnemyType t,
+             const sf::Texture &texture, sf::IntRect textureRect,
+             sf::Vector2f spawnPosition, float movementSpeed, int pointsValue)
+    : type(t), speed(movementSpeed), pointsValue(pointsValue)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -28,6 +30,11 @@ const EnemyType Enemy::getType() const
 const sf::Sprite &Enemy::getSprite() const
 {
     return sprite;
+}
+
+const int Enemy::getPointsValue() const
+{
+    return pointsValue;
 }
 
 void Enemy::setPosition(sf::Vector2f position)

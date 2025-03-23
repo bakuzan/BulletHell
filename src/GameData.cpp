@@ -2,7 +2,8 @@
 
 GameData::GameData()
 {
-    // Constructor
+    playerHealth = 100.0f;
+    playerScore = 0;
 }
 
 GameData::~GameData()
@@ -44,6 +45,33 @@ void GameData::removeEnemy(size_t index)
     enemies.erase(enemies.begin() + index);
 }
 
+// Player attributes
+const float GameData::getPlayerHealth() const
+{
+    return playerHealth;
+}
+
+void GameData::updatePlayerHealth(float adjustment)
+{
+    playerScore += adjustment;
+}
+
+const int GameData::getScore() const
+{
+    return playerScore;
+}
+
+void GameData::updateScore(int adjustment)
+{
+    playerScore += adjustment;
+}
+
+// State handling
 void GameData::reset()
 {
+    projectiles.clear();
+    enemies.clear();
+
+    playerHealth = 100.0f;
+    playerScore = 0;
 }

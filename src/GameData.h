@@ -16,6 +16,9 @@ private:
     std::vector<Projectile> projectiles;
     std::vector<std::unique_ptr<Enemy>> enemies;
 
+    float playerHealth;
+    int playerScore;
+
 public:
     ProjectileTextureManager projectileTextureManager;
     EnemyTextureManager enemyTextureManager;
@@ -31,6 +34,11 @@ public:
     std::vector<std::unique_ptr<Enemy>> &getEnemies();
     void addEnemy(std::unique_ptr<Enemy> enemy);
     void removeEnemy(size_t index);
+
+    const float getPlayerHealth() const;
+    void updatePlayerHealth(float adjustment);
+    const int getScore() const;
+    void updateScore(int adjustment);
 
     void reset();
 };

@@ -16,4 +16,6 @@ namespace Constants
 
     const float ENEMY_SPAWN_OFFSET = 5.0f;
     const float ENEMY_SPAWN_RATE = 5.0f;
+
+    extern const int ENEMY_POINTS_BASIC = 10.0f;
 };
