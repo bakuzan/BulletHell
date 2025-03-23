@@ -1,8 +1,9 @@
+#include "Constants.h"
 #include "EnemyTextureManager.h"
 
 EnemyTextureManager::EnemyTextureManager()
 {
-    textureRects[EnemyType::BASIC] = sf::IntRect(0, 0, 500, 500);
+    textureRects[EnemyType::BASIC] = sf::IntRect(520, Constants::SPRITE_OFFSET_Y, Constants::SPRITE_WIDTH_BASIC, Constants::SPRITE_HEIGHT_BASIC);
 }
 
 EnemyTextureManager::~EnemyTextureManager()

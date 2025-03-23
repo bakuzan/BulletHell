@@ -6,7 +6,11 @@ namespace Constants
     extern const float VIEW_WIDTH;
     extern const float VIEW_HEIGHT;
 
-    extern const float SPRITE_SIZE;
+    extern const float SPRITE_OFFSET_Y;
+    extern const float SPRITE_WIDTH_PLAYER;
+    extern const float SPRITE_HEIGHT_PLAYER;
+    extern const float SPRITE_WIDTH_BASIC;
+    extern const float SPRITE_HEIGHT_BASIC;
 
     extern const float BASE_PLAYER_SPEED;
     extern const float PROJECTILE_SPEED_BULLET;

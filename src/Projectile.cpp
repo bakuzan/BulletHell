@@ -33,6 +33,11 @@ void Projectile::render(sf::RenderWindow &window) const
     window.draw(sprite);
 }
 
+const sf::Sprite &Projectile::getSprite() const
+{
+    return sprite;
+}
+
 bool Projectile::isOffScreen(sf::RenderWindow &window)
 {
     sf::View view = window.getView();

@@ -1,9 +1,10 @@
-#include <cmath>
 #include <iostream>
+#include <random>
 
 #include "BasicEnemy.h"
 #include "Constants.h"
 #include "GameState.h"
+#include "GameUtils.h"
 #include "InputUtils.h"
 
 GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &window)
@@ -25,9 +26,9 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
     }
 
     player.setTexture(spaceshipsTexture);
-    player.setTextureRect(sf::IntRect(3 * Constants::SPRITE_SIZE, 0, Constants::SPRITE_SIZE, Constants::SPRITE_SIZE));
+    player.setTextureRect(sf::IntRect(392, Constants::SPRITE_OFFSET_Y, Constants::SPRITE_WIDTH_PLAYER, Constants::SPRITE_HEIGHT_PLAYER));
     player.setScale(0.25f, 0.25f);
-    player.setOrigin(Constants::SPRITE_SIZE / 2.0f, Constants::SPRITE_SIZE / 2.0f);
+    player.setOrigin(Constants::SPRITE_WIDTH_PLAYER / 2.0f, Constants::SPRITE_HEIGHT_PLAYER / 2.0f);
     player.setPosition(100.0f, 100.0f);
 
     // Load projectiles
@@ -111,6 +112,12 @@ void GameState::render(sf::RenderWindow &window)
     }
 
     window.draw(player);
+
+    auto &enemies = gameData.getEnemies();
+    for (const auto &enemy : enemies)
+    {
+        enemy->render(window);
+    }
 }
 
 // Private
@@ -143,11 +150,11 @@ void GameState::aimAndShoot(sf::RenderWindow &window)
     sf::Vector2f worldMousePosition = window.mapPixelToCoords(mousePosition);
     sf::Vector2f currentPlayerPos = player.getPosition();
 
-    float dx = worldMousePosition.x - currentPlayerPos.x;
-    float dy = worldMousePosition.y - currentPlayerPos.y;
-    float angleRadians = std::atan2(dy, dx);
-    float angle = angleRadians * (180.f / 3.14159f); // Convert to degrees
-    player.setRotation(angle + 270.f);               // Adjust for sprite alignment
+    float angleRadians = GameUtils::rotateTowards(
+        player,
+        currentPlayerPos,
+        worldMousePosition,
+        270.0f);
 
     // Did the player shoot? Create projectile(s)
     if (shootProjectile)
@@ -157,10 +164,10 @@ void GameState::aimAndShoot(sf::RenderWindow &window)
         sf::Vector2f bulletVelocity = direction * (Constants::PROJECTILE_SPEED_BULLET);
 
         // Calculate bullet spawn position (front-center of the player)
-        float playerScale = player.getScale().x;                                          // Assume it is the same both x/y
-        float bulletWidth = 25.0f;                                                        // (size is the sprite size (500) * sprite scale (0.05))
-        float bulletHeight = 25.0f;                                                       // (size is the sprite size (500) * sprite scale (0.05))
-        sf::Vector2f offset = direction * ((Constants::SPRITE_SIZE * playerScale) / 2.f); // Move to front
+        float playerScale = player.getScale().x;                                                  // Assume it is the same both x/y
+        float bulletWidth = 25.0f;                                                                // (size is the sprite size (500) * sprite scale (0.05))
+        float bulletHeight = 25.0f;                                                               // (size is the sprite size (500) * sprite scale (0.05))
+        sf::Vector2f offset = direction * ((Constants::SPRITE_WIDTH_PLAYER * playerScale) / 2.f); // Move to front
         sf::Vector2f rotatedCenterOffset = sf::Vector2f(
             -bulletWidth / 2.f * std::cos(angleRadians) + bulletHeight / 2.f * std::sin(angleRadians),
             -bulletWidth / 2.f * std::sin(angleRadians) - bulletHeight / 2.f * std::cos(angleRadians));
@@ -181,17 +188,41 @@ void GameState::aimAndShoot(sf::RenderWindow &window)
 void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &window)
 {
     auto &projectiles = gameData.getProjectiles();
-    for (auto it = projectiles.begin(); it != projectiles.end();)
-    {
-        it->update(deltaTime);
+    auto &enemies = gameData.getEnemies();
 
-        if (it->isOffScreen(window))
+    for (auto projIt = projectiles.begin(); projIt != projectiles.end();)
+    {
+        projIt->update(deltaTime);
+
+        bool projectileRemoved = false;
+
+        // Check collision with enemies
+        for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
         {
-            it = projectiles.erase(it);
+            if (projIt->getSprite().getGlobalBounds().intersects((*enemyIt)->getSprite().getGlobalBounds()))
+            {
+                // TODO add points handling
+                enemyIt = enemies.erase(enemyIt);
+                projIt = projectiles.erase(projIt);
+                projectileRemoved = true;
+                break;
+            }
+            else
+            {
+                ++enemyIt;
+            }
         }
-        else
+
+        if (!projectileRemoved)
         {
-            ++it;
+            if (projIt->isOffScreen(window))
+            {
+                projIt = projectiles.erase(projIt);
+            }
+            else
+            {
+                ++projIt;
+            }
         }
     }
 }
@@ -221,11 +252,13 @@ void GameState::spawnEnemies(float deltaTime, const sf::Texture &enemiesTexture)
     int enemiesToSpawn = static_cast<int>(spawnAccumulator);
     spawnAccumulator -= enemiesToSpawn; // Track fractional spawns
 
-    const float enemySpeed = Constants::BASE_PLAYER_SPEED * 1.2f;
+    const float enemySpeed = Constants::BASE_PLAYER_SPEED * 0.33f;
     const auto &textureRect = gameData.enemyTextureManager.getTextureRect(EnemyType::BASIC);
+    sf::Vector2f playerPos = player.getPosition();
+
     for (int i = 0; i < enemiesToSpawn; ++i)
     {
-        sf::Vector2f spawnPosition = getRandomSpawnPosition(view);
+        sf::Vector2f spawnPosition = getRandomSpawnPosition(playerPos, window);
         gameData.addEnemy(
             spawnEnemy(EnemyType::BASIC,
                        enemiesTexture, textureRect,
@@ -253,26 +286,28 @@ void GameState::updateEnemies(float deltaTime, sf::Vector2f playerPosition)
     }
 }
 
-sf::Vector2f GameState::getRandomSpawnPosition(const sf::View &view)
+sf::Vector2f GameState::getRandomSpawnPosition(
+    const sf::Vector2f &playerPosition,
+    const sf::RenderWindow &window)
 {
-    sf::FloatRect bounds = view.getViewport();
-    int side = rand() % 4;
+    sf::Vector2u windowSize = window.getSize();
+    int side = rand() % 4; // Choose a random side around the player
 
     switch (side)
     {
     case 0: // Top
-        return {bounds.left + static_cast<float>(rand() % static_cast<int>(bounds.width)),
-                bounds.top - Constants::ENEMY_SPAWN_OFFSET};
+        return {playerPosition.x + static_cast<float>(rand() % windowSize.x) - (windowSize.x / 2.f),
+                playerPosition.y - (windowSize.y / 2.f) - Constants::ENEMY_SPAWN_OFFSET};
     case 1: // Left
-        return {bounds.left - Constants::ENEMY_SPAWN_OFFSET,
-                bounds.top + static_cast<float>(rand() % static_cast<int>(bounds.height))};
+        return {playerPosition.x - (windowSize.x / 2.f) - Constants::ENEMY_SPAWN_OFFSET,
+                playerPosition.y + static_cast<float>(rand() % windowSize.y) - (windowSize.y / 2.f)};
     case 2: // Right
-        return {bounds.left + bounds.width + Constants::ENEMY_SPAWN_OFFSET,
-                bounds.top + static_cast<float>(rand() % static_cast<int>(bounds.height))};
+        return {playerPosition.x + (windowSize.x / 2.f) + Constants::ENEMY_SPAWN_OFFSET,
+                playerPosition.y + static_cast<float>(rand() % windowSize.y) - (windowSize.y / 2.f)};
     case 3: // Bottom
-        return {bounds.left + static_cast<float>(rand() % static_cast<int>(bounds.width)),
-                bounds.top + bounds.height + Constants::ENEMY_SPAWN_OFFSET};
+        return {playerPosition.x + static_cast<float>(rand() % windowSize.x) - (windowSize.x / 2.f),
+                playerPosition.y + (windowSize.y / 2.f) + Constants::ENEMY_SPAWN_OFFSET};
     default:
-        return {0.f, 0.f};
+        return {0.f, 0.f}; // Fallback (this should never occur)
     }
 }

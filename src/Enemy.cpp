@@ -15,6 +15,11 @@ Enemy::~Enemy()
 
 // Publics
 
+void Enemy::render(sf::RenderWindow &window) const
+{
+    window.draw(sprite);
+}
+
 const EnemyType Enemy::getType() const
 {
     return type;

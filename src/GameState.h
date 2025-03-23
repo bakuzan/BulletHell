@@ -37,7 +37,7 @@ private:
     void spawnEnemies(float deltaTime, const sf::Texture &basicEnemyTexture);
     void updateEnemies(float deltaTime, sf::Vector2f playerPosition);
 
-    sf::Vector2f getRandomSpawnPosition(const sf::View &view);
+    sf::Vector2f getRandomSpawnPosition(const sf::Vector2f &playerPosition, const sf::RenderWindow &window);
 
 public:
     GameState(GameData &data, StateManager &manager, sf::RenderWindow &window);

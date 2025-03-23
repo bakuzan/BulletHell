@@ -20,6 +20,8 @@ public:
 
     void update(sf::Time deltaTime);
     void render(sf::RenderWindow &window) const;
+
+    const sf::Sprite &getSprite() const;
     bool isOffScreen(sf::RenderWindow &window);
 };
 

@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 
 #include "GameData.h"
@@ -20,6 +22,8 @@ void LoadWindowIcon(sf::Window &window)
 
 int main()
 {
+    std::srand(std::time(0)); // Seed for rand
+
     sf::RenderWindow window(sf::VideoMode(800, 600), "Bullet Hell");
     LoadWindowIcon(window);
 

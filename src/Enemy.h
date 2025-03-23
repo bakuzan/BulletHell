@@ -18,6 +18,8 @@ public:
     virtual void update(float deltaTime, sf::Vector2f playerPosition) = 0;
     virtual ~Enemy();
 
+    void render(sf::RenderWindow &window) const;
+
     const EnemyType getType() const;
     const sf::Sprite &getSprite() const;
     void setPosition(sf::Vector2f position);
