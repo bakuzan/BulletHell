@@ -48,25 +48,16 @@ int main()
             }
 
             // Input
-            if (stateManager.getCurrentState())
-            {
-                stateManager.getCurrentState()->handleEvent(event);
-            }
+            stateManager.handleEvent(event);
         }
 
         // Update (Logic)
         sf::Time deltaTime = clock.restart();
-        if (stateManager.getCurrentState())
-        {
-            stateManager.getCurrentState()->update(deltaTime, window);
-        }
+        stateManager.update(deltaTime, window);
 
         // Draw and Display
         window.clear();
-        if (stateManager.getCurrentState())
-        {
-            stateManager.getCurrentState()->render(window);
-        }
+        stateManager.render(window);
         window.display();
     }
 

@@ -73,6 +73,8 @@
     "list": "cpp",
     "xhash": "cpp",
     "csignal": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "iomanip": "cpp",
+    "sstream": "cpp"
   }
 }

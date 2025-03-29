@@ -8,11 +8,15 @@
 class StateManager
 {
 private:
-    std::stack<std::unique_ptr<State>> states;
+    std::vector<std::unique_ptr<State>> states;
 
 public:
     StateManager();
     ~StateManager();
+
+    void handleEvent(const sf::Event &event);
+    void update(sf::Time deltaTime, sf::RenderWindow &window);
+    void render(sf::RenderWindow &window);
 
     void pushState(std::unique_ptr<State> state);
     void popState();

@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "GameUtils.h"
 #include "InputUtils.h"
+#include "PauseState.h"
 
 GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &window)
     : gameData(data), stateManager(manager), window(window), healthBar(gameData.textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
@@ -63,6 +64,12 @@ void GameState::handleEvent(const sf::Event &event)
             view.getCenter().y - view.getSize().y / 2.0f,
             window.getSize().x,
             window.getSize().y));
+    }
+
+    if (event.type == sf::Event::KeyPressed &&
+        InputUtils::isAnyKeyPressed(event.key.code, {sf::Keyboard::Escape, sf::Keyboard::P}))
+    {
+        stateManager.pushState(std::make_unique<PauseState>(gameData, stateManager, window));
     }
 
     if (event.type == sf::Event::MouseButtonPressed &&
