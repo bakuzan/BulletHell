@@ -21,6 +21,8 @@ private:
     int playerScore;
 
 public:
+    sf::Font gameFont;
+
     TextureManager textureManager;
     ProjectileTextureManager projectileTextureManager;
     EnemyTextureManager enemyTextureManager;

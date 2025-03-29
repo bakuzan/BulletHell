@@ -1,5 +1,7 @@
+#include <iomanip>
 #include <iostream>
 #include <random>
+#include <sstream>
 
 #include "BasicEnemy.h"
 #include "Constants.h"
@@ -24,6 +26,13 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
     player.setScale(0.25f, 0.25f);
     player.setOrigin(Constants::SPRITE_WIDTH_PLAYER / 2.0f, Constants::SPRITE_HEIGHT_PLAYER / 2.0f);
     player.setPosition(100.0f, 100.0f);
+
+    // Setup points display
+    scoreText.setFont(gameData.gameFont);
+    scoreText.setString(std::string(8, '0'));
+    scoreText.setCharacterSize(24);
+    scoreText.setFillColor(sf::Color::Yellow);
+    scoreText.setPosition(10, 50);
 
     // Set up the view
     view.setSize(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT);
@@ -108,6 +117,7 @@ void GameState::render(sf::RenderWindow &window)
     }
 
     healthBar.render(window, view);
+    renderScoreText(window, view);
 }
 
 // Private
@@ -193,6 +203,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
             {
                 // Effects of shooting enemy
                 gameData.updateScore((*enemyIt)->getPointsValue());
+                updateScoreText(gameData.getScore());
 
                 enemyIt = enemies.erase(enemyIt);
                 projIt = projectiles.erase(projIt);
@@ -305,4 +316,22 @@ sf::Vector2f GameState::getRandomSpawnPosition(
     default:
         return {0.f, 0.f}; // Fallback (this should never occur)
     }
+}
+
+void GameState::renderScoreText(sf::RenderWindow &window, const sf::View &view)
+{
+    float margin = 10.0f;
+    scoreText.setPosition(
+        view.getCenter().x + view.getSize().x / 2.0f - scoreText.getGlobalBounds().width - margin,
+        view.getCenter().y - view.getSize().y / 2.0f + margin);
+
+    window.draw(scoreText);
+}
+
+void GameState::updateScoreText(int score)
+{
+    std::stringstream ss;
+    ss << std::setw(8) << std::setfill('0') << score;
+
+    scoreText.setString(ss.str());
 }

@@ -5,26 +5,20 @@
 MenuState::MenuState(GameData &data, StateManager &manager, sf::RenderWindow &window)
     : gameData(data), stateManager(manager), window(window)
 {
-    // Load font
-    if (!font.loadFromFile("resources/fonts/PressStart2P-Regular.ttf"))
-    {
-        throw std::runtime_error("Failed to load font");
-    }
-
     // Setup title
-    gameTitle.setFont(font);
+    gameTitle.setFont(gameData.gameFont);
     gameTitle.setString("Bullet Hell");
     gameTitle.setCharacterSize(48);
     gameTitle.setFillColor(sf::Color::White);
 
     // Set up the "New Game" button
-    newGameButton.setFont(font);
+    newGameButton.setFont(gameData.gameFont);
     newGameButton.setString("New Game");
     newGameButton.setCharacterSize(36);
     newGameButton.setFillColor(sf::Color::White);
 
     // Set up the "Quit" button
-    quitButton.setFont(font);
+    quitButton.setFont(gameData.gameFont);
     quitButton.setString("Quit");
     quitButton.setCharacterSize(36);
     quitButton.setFillColor(sf::Color::White);

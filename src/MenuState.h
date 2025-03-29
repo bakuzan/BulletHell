@@ -8,7 +8,6 @@
 class MenuState : public State
 {
 private:
-    sf::Font font;
     sf::Text gameTitle;
     sf::Text newGameButton;
     sf::Text quitButton;

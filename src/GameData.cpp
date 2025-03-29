@@ -8,6 +8,12 @@ GameData::GameData()
     textureManager.loadTexture(TextureId::HEALTHBAR_BORDER, "resources/healthbar_border.png");
     textureManager.loadTexture(TextureId::HEALTHBAR_FILLING, "resources/healthbar_filling.png");
 
+    // Load font
+    if (!gameFont.loadFromFile("resources/fonts/PressStart2P-Regular.ttf"))
+    {
+        throw std::runtime_error("Failed to load font");
+    }
+
     playerHealth = 100.0f;
     playerScore = 0;
 }

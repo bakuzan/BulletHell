@@ -19,7 +19,9 @@ private:
 
     sf::RectangleShape background;
     sf::Sprite player;
+
     HealthBar healthBar;
+    sf::Text scoreText;
 
     bool shootProjectile;
 
@@ -37,6 +39,9 @@ private:
     void updateEnemies(float deltaTime, sf::Vector2f playerPosition);
 
     sf::Vector2f getRandomSpawnPosition(const sf::Vector2f &playerPosition, const sf::RenderWindow &window);
+
+    void renderScoreText(sf::RenderWindow &window, const sf::View &view);
+    void updateScoreText(int score);
 
 public:
     GameState(GameData &data, StateManager &manager, sf::RenderWindow &window);
