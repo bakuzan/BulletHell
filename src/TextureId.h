@@ -1,0 +1,10 @@
+#pragma once
+
+enum TextureId
+{
+    BACKGROUND,
+    SPACESHIPS,
+    PROJECTILES,
+    HEALTHBAR_BORDER,
+    HEALTHBAR_FILLING
+};

@@ -9,6 +9,7 @@
 #include "EnemyTextureManager.h"
 #include "Projectile.h"
 #include "ProjectileTextureManager.h"
+#include "TextureManager.h"
 
 class GameData
 {
@@ -20,6 +21,7 @@ private:
     int playerScore;
 
 public:
+    TextureManager textureManager;
     ProjectileTextureManager projectileTextureManager;
     EnemyTextureManager enemyTextureManager;
 

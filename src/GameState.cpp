@@ -8,34 +8,22 @@
 #include "InputUtils.h"
 
 GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &window)
-    : gameData(data), stateManager(manager), window(window)
+    : gameData(data), stateManager(manager), window(window), healthBar(gameData.textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
+                                                                       gameData.textureManager.getTexture(TextureId::HEALTHBAR_FILLING),
+                                                                       100.0f)
 {
     // Load background
-    if (!backgroundTexture.loadFromFile("resources/background.png"))
-    {
-        throw std::runtime_error("Failed to load background image!");
-    }
-    backgroundTexture.setRepeated(true);
+    const sf::Texture &backgroundTexture = gameData.textureManager.getTexture(TextureId::BACKGROUND);
     background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
     background.setTexture(&backgroundTexture);
 
     // Load player
-    if (!spaceshipsTexture.loadFromFile("resources/spaceships_brighter.png"))
-    {
-        throw std::runtime_error("Failed to load spaceships texture!");
-    }
-
+    const sf::Texture &spaceshipsTexture = gameData.textureManager.getTexture(TextureId::SPACESHIPS);
     player.setTexture(spaceshipsTexture);
     player.setTextureRect(sf::IntRect(392, Constants::SPRITE_OFFSET_Y, Constants::SPRITE_WIDTH_PLAYER, Constants::SPRITE_HEIGHT_PLAYER));
     player.setScale(0.25f, 0.25f);
     player.setOrigin(Constants::SPRITE_WIDTH_PLAYER / 2.0f, Constants::SPRITE_HEIGHT_PLAYER / 2.0f);
     player.setPosition(100.0f, 100.0f);
-
-    // Load projectiles
-    if (!projectileTexture.loadFromFile("resources/projectiles.png"))
-    {
-        throw std::runtime_error("Failed to load projectiles texture!");
-    }
 
     // Set up the view
     view.setSize(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT);
@@ -82,7 +70,7 @@ void GameState::handleEvent(const sf::Event &event)
 
 void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
-    spawnEnemies(deltaTime.asSeconds(), spaceshipsTexture);
+    spawnEnemies(deltaTime.asSeconds(), gameData.textureManager.getTexture(TextureId::SPACESHIPS));
     updateEnemies(deltaTime.asSeconds(), player.getPosition());
 
     movePlayer(deltaTime);
@@ -118,6 +106,8 @@ void GameState::render(sf::RenderWindow &window)
     {
         enemy->render(window);
     }
+
+    healthBar.render(window, view);
 }
 
 // Private
@@ -176,9 +166,9 @@ void GameState::aimAndShoot(sf::RenderWindow &window)
         sf::Vector2f spawnPosition = player.getPosition() + offset + rotatedCenterOffset;
 
         auto &projectiles = gameData.getProjectiles();
-        const auto &textureRect = gameData.projectileTextureManager.getTextureRect(ProjectileType::BULLET);
         projectiles.emplace_back(ProjectileType::BULLET,
-                                 projectileTexture, textureRect,
+                                 gameData.textureManager.getTexture(TextureId::PROJECTILES),
+                                 gameData.projectileTextureManager.getTextureRect(ProjectileType::BULLET),
                                  spawnPosition, bulletVelocity);
 
         shootProjectile = false;
@@ -281,6 +271,7 @@ void GameState::updateEnemies(float deltaTime, sf::Vector2f playerPosition)
             it = enemies.erase(it); // Enemy has suicided, so remove after collision
             // Effects of hitting player
             gameData.updatePlayerHealth(-10);
+            healthBar.setHealth(gameData.getPlayerHealth());
             // TODO has player died?
         }
         else

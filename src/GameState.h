@@ -5,6 +5,7 @@
 
 #include "Enemy.h"
 #include "GameData.h"
+#include "HealthBar.h"
 #include "State.h"
 #include "StateManager.h"
 
@@ -14,13 +15,11 @@ private:
     GameData &gameData;
     StateManager &stateManager;
     sf::RenderWindow &window;
+    sf::View view;
 
-    sf::Texture backgroundTexture;
-    sf::Texture spaceshipsTexture;
-    sf::Texture projectileTexture;
     sf::RectangleShape background;
     sf::Sprite player;
-    sf::View view;
+    HealthBar healthBar;
 
     bool shootProjectile;
 

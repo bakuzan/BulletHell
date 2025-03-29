@@ -2,6 +2,12 @@
 
 GameData::GameData()
 {
+    textureManager.loadTexture(TextureId::BACKGROUND, "resources/background.png", true);
+    textureManager.loadTexture(TextureId::SPACESHIPS, "resources/spaceships_brighter.png");
+    textureManager.loadTexture(TextureId::PROJECTILES, "resources/projectiles.png");
+    textureManager.loadTexture(TextureId::HEALTHBAR_BORDER, "resources/healthbar_border.png");
+    textureManager.loadTexture(TextureId::HEALTHBAR_FILLING, "resources/healthbar_filling.png");
+
     playerHealth = 100.0f;
     playerScore = 0;
 }
@@ -53,7 +59,7 @@ const float GameData::getPlayerHealth() const
 
 void GameData::updatePlayerHealth(float adjustment)
 {
-    playerScore += adjustment;
+    playerHealth = std::max(0.0f, playerHealth + adjustment); // Clamp at 0
 }
 
 const int GameData::getScore() const

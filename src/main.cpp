@@ -4,6 +4,7 @@
 #include <ctime>
 #include <iostream>
 
+#include "ErrorHandling.h"
 #include "GameData.h"
 #include "MenuState.h"
 #include "StateManager.h"
@@ -22,6 +23,8 @@ void LoadWindowIcon(sf::Window &window)
 
 int main()
 {
+    RegisterSignalHandlers();
+
     std::srand(std::time(0)); // Seed for rand
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Bullet Hell");
