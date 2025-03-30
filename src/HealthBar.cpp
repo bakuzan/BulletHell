@@ -20,9 +20,10 @@ HealthBar::~HealthBar()
 
 void HealthBar::render(sf::RenderWindow &window, const sf::View &view)
 {
-    float fillingWidth = (currentHealth / totalHealth) * borderSprite.getGlobalBounds().width;
-    fillingSprite.setScale(1.0f, 1.0f); // reset scale
-    fillingSprite.setScale(fillingWidth / fillingSprite.getGlobalBounds().width, borderSprite.getScale().y);
+    sf::Vector2u fillingSpriteSize = fillingSprite.getTexture()->getSize();
+    float healthPercentage = currentHealth / totalHealth;
+    int fillingWidth = static_cast<int>(healthPercentage * fillingSpriteSize.x);
+    fillingSprite.setTextureRect(sf::IntRect(0, 0, fillingWidth, fillingSpriteSize.y));
 
     // Positioning relative to the view
     borderSprite.setPosition(view.getCenter().x - view.getSize().x / 2.0f + 20.0f,
