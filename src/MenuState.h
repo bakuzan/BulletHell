@@ -1,6 +1,7 @@
 #ifndef MENUSTATE_H
 #define MENUSTATE_H
 
+#include "Button.h"
 #include "GameData.h"
 #include "State.h"
 #include "StateManager.h"
@@ -8,19 +9,18 @@
 class MenuState : public State
 {
 private:
-    sf::Text gameTitle;
-    sf::Text newGameButton;
-    sf::Text quitButton;
     GameData &gameData;
     StateManager &stateManager;
     sf::RenderWindow &window;
 
     sf::RectangleShape background;
+    sf::Text gameTitle;
+    float buttonSpacing;
+    std::vector<Button> buttons;
     int selectedButtonIndex = 0;
 
 private:
     void updateMenuItemPositions();
-    void onNewGameClick();
 
 public:
     MenuState(GameData &data, StateManager &manager, sf::RenderWindow &window);

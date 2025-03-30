@@ -21,8 +21,7 @@ public:
     void pushState(std::unique_ptr<State> state);
     void popState();
     void changeState(std::unique_ptr<State> state);
-
-    State *getCurrentState();
+    void replaceStates(std::unique_ptr<State> state);
 };
 
 #endif // STATEMANAGER_H

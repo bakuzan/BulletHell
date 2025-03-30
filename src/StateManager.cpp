@@ -59,7 +59,8 @@ void StateManager::changeState(std::unique_ptr<State> state)
     states.push_back(std::move(state));
 }
 
-State *StateManager::getCurrentState()
+void StateManager::replaceStates(std::unique_ptr<State> state)
 {
-    return states.empty() ? nullptr : states.back().get();
+    states.clear();
+    states.push_back(std::move(state));
 }

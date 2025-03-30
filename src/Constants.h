@@ -6,6 +6,9 @@ namespace Constants
     extern const float VIEW_WIDTH;
     extern const float VIEW_HEIGHT;
 
+    extern const float BUTTON_WIDTH;
+    extern const float BUTTON_HEIGHT;
+
     extern const float SPRITE_OFFSET_Y;
     extern const float SPRITE_WIDTH_PLAYER;
     extern const float SPRITE_HEIGHT_PLAYER;

@@ -5,6 +5,9 @@ namespace Constants
     const float VIEW_WIDTH = 800.0f;
     const float VIEW_HEIGHT = 600.0f;
 
+    const float BUTTON_WIDTH = 250.0f;
+    const float BUTTON_HEIGHT = 50.0f;
+
     const float SPRITE_OFFSET_Y = 16.0f;
     const float SPRITE_WIDTH_PLAYER = 112.0f;
     const float SPRITE_HEIGHT_PLAYER = 105.0f;

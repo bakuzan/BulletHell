@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Button.h"
 #include "GameData.h"
 #include "State.h"
 #include "StateManager.h"
@@ -14,7 +15,14 @@ private:
     StateManager &stateManager;
     sf::RenderWindow &window;
 
+    sf::RectangleShape background;
     sf::Text pauseText;
+    float buttonSpacing;
+    std::vector<Button> buttons;
+    int selectedButtonIndex = 0;
+
+private:
+    void updateMenuItemPositions();
 
 public:
     PauseState(GameData &data, StateManager &manager, sf::RenderWindow &window);

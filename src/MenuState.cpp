@@ -1,30 +1,28 @@
+#include "Constants.h"
 #include "GameState.h"
 #include "InputUtils.h"
 #include "MenuState.h"
 
-MenuState::MenuState(GameData &data, StateManager &manager, sf::RenderWindow &window)
-    : gameData(data), stateManager(manager), window(window)
+MenuState::MenuState(GameData &data, StateManager &manager, sf::RenderWindow &win)
+    : gameData(data), stateManager(manager), window(win)
 {
+    buttonSpacing = Constants::BUTTON_HEIGHT + 10.f;
+    sf::View view = window.getView();
+    sf::Vector2f center(view.getCenter());
+
     // Setup title
     gameTitle.setFont(gameData.gameFont);
     gameTitle.setString("Bullet Hell");
     gameTitle.setCharacterSize(48);
     gameTitle.setFillColor(sf::Color::White);
 
-    // Set up the "New Game" button
-    newGameButton.setFont(gameData.gameFont);
-    newGameButton.setString("New Game");
-    newGameButton.setCharacterSize(36);
-    newGameButton.setFillColor(sf::Color::White);
-
-    // Set up the "Quit" button
-    quitButton.setFont(gameData.gameFont);
-    quitButton.setString("Quit");
-    quitButton.setCharacterSize(36);
-    quitButton.setFillColor(sf::Color::White);
-
-    // Highlight the first button initially
-    newGameButton.setFillColor(sf::Color::Yellow);
+    // Add buttons
+    buttons.emplace_back(data.gameFont, "New Game", sf::Vector2f(center.x - 100.f, center.y - 60.f),
+                         [this]()
+                         { stateManager.changeState(std::make_unique<GameState>(gameData, stateManager, window)); });
+    buttons.emplace_back(data.gameFont, "Exit", sf::Vector2f(center.x - 100.f, center.y + buttonSpacing),
+                         [this]()
+                         { window.close(); });
 
     // Set up the background
     background.setSize(sf::Vector2f(800, 600));
@@ -43,72 +41,56 @@ MenuState::~MenuState()
 
 void MenuState::handleEvent(const sf::Event &event)
 {
-
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePos);
-    bool isMouseOverNewGame = newGameButton.getGlobalBounds().contains(worldMousePos);
-    bool isMouseOverQuit = quitButton.getGlobalBounds().contains(worldMousePos);
-
-    // Check button hovered and highlight
-    if (isMouseOverNewGame)
-    {
-        selectedButtonIndex = 0;
-    }
-    else if (isMouseOverQuit)
-    {
-        selectedButtonIndex = 1;
-    }
 
     if (event.type == sf::Event::KeyPressed)
     {
-        auto keyCode = event.key.code;
-        if (!isMouseOverNewGame && !isMouseOverQuit)
+        if (event.key.code == sf::Keyboard::Up)
         {
-            if (InputUtils::isAnyKeyPressed(keyCode, {sf::Keyboard::Up, sf::Keyboard::W}))
-            {
-                selectedButtonIndex = (selectedButtonIndex - 1 + 2) % 2;
-            }
-            else if (InputUtils::isAnyKeyPressed(keyCode, {sf::Keyboard::Down, sf::Keyboard::S}))
-            {
-                selectedButtonIndex = (selectedButtonIndex + 1) % 2;
-            }
+            selectedButtonIndex = (selectedButtonIndex - 1 + buttons.size()) % buttons.size();
         }
-
-        if (keyCode == sf::Keyboard::Enter)
+        else if (event.key.code == sf::Keyboard::Down)
         {
-            if (selectedButtonIndex == 0)
+            selectedButtonIndex = (selectedButtonIndex + 1) % buttons.size();
+        }
+        else if (event.key.code == sf::Keyboard::Enter)
+        {
+            buttons[selectedButtonIndex].trigger();
+        }
+    }
+    else if (event.type == sf::Event::MouseMoved)
+    {
+        for (size_t i = 0; i < buttons.size(); ++i)
+        {
+            if (buttons[i].isMouseOver(mousePos, window))
             {
-                onNewGameClick();
-            }
-            else if (selectedButtonIndex == 1)
-            {
-                window.close();
+                selectedButtonIndex = static_cast<int>(i);
+                break;
             }
         }
     }
     else if (event.type == sf::Event::MouseButtonPressed &&
              event.mouseButton.button == sf::Mouse::Left)
     {
-        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePos);
-
-        if (newGameButton.getGlobalBounds().contains(worldMousePos))
+        for (const auto &button : buttons)
         {
-            onNewGameClick();
-        }
-        else if (quitButton.getGlobalBounds().contains(worldMousePos))
-        {
-            window.close();
+            if (button.isMouseOver(mousePos, window))
+            {
+                button.trigger();
+            }
         }
     }
-    else if (event.type == sf::Event::Resized)
+
+    // Update button hover state
+    for (size_t i = 0; i < buttons.size(); ++i)
+    {
+        buttons[i].onHover(i == selectedButtonIndex);
+    }
+
+    if (event.type == sf::Event::Resized)
     {
         updateMenuItemPositions();
     }
-
-    // Update button colors based on selection
-    newGameButton.setFillColor(selectedButtonIndex == 0 ? sf::Color::Yellow : sf::Color::White);
-    quitButton.setFillColor(selectedButtonIndex == 1 ? sf::Color::Yellow : sf::Color::White);
 }
 
 void MenuState::update(sf::Time deltaTime, sf::RenderWindow &window)
@@ -119,8 +101,11 @@ void MenuState::render(sf::RenderWindow &window)
 {
     window.draw(background);
     window.draw(gameTitle);
-    window.draw(newGameButton);
-    window.draw(quitButton);
+
+    for (const auto &button : buttons)
+    {
+        button.render(window);
+    }
 }
 
 // Privates
@@ -130,23 +115,13 @@ void MenuState::updateMenuItemPositions()
     sf::Vector2f viewCenter = view.getCenter();
     sf::Vector2f viewSize = view.getSize();
 
-    // Resize background
     background.setSize(viewSize);
     background.setPosition(viewCenter - viewSize / 2.0f);
 
-    float buttonX = viewCenter.x;
+    gameTitle.setPosition(viewCenter.x - viewSize.x / 2.f + 25.f,
+                          viewCenter.y - viewSize.y / 2.f + 25.f);
 
-    // Set positions relative to the view's center and size
-    newGameButton.setPosition(buttonX - newGameButton.getGlobalBounds().width / 2.0f,
-                              viewCenter.y - 100.0f);
-
-    quitButton.setPosition(buttonX - quitButton.getGlobalBounds().width / 2.0f,
-                           viewCenter.y);
-
-    gameTitle.setPosition(25.0f, 25.0f);
-}
-
-void MenuState::onNewGameClick()
-{
-    stateManager.changeState(std::make_unique<GameState>(gameData, stateManager, window));
+    float offsetX = Constants::BUTTON_WIDTH / 2.0f;
+    buttons[0].setPosition(sf::Vector2f(viewCenter.x - offsetX, viewCenter.y - (buttonSpacing / 2.0f)));
+    buttons[1].setPosition(sf::Vector2f(viewCenter.x - offsetX, viewCenter.y + (buttonSpacing / 2.0f)));
 }
