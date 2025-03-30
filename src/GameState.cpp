@@ -11,9 +11,13 @@
 #include "PauseState.h"
 
 GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &window)
-    : gameData(data), stateManager(manager), window(window), healthBar(gameData.textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
-                                                                       gameData.textureManager.getTexture(TextureId::HEALTHBAR_FILLING),
-                                                                       100.0f)
+    : gameData(data),
+      stateManager(manager),
+      window(window),
+      healthBar(gameData.textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
+                gameData.textureManager.getTexture(TextureId::HEALTHBAR_FILLING),
+                100.0f),
+      shootProjectile(false)
 {
     // Load background
     const sf::Texture &backgroundTexture = gameData.textureManager.getTexture(TextureId::BACKGROUND);
