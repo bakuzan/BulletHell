@@ -5,10 +5,10 @@
 
 #include <memory>
 
-#include "Enemy.h"
-#include "EnemyTextureManager.h"
-#include "Projectile.h"
-#include "ProjectileTextureManager.h"
+#include "entities/Enemy.h"
+#include "entities/Projectile.h"
+#include "components/EnemyTextureManager.h"
+#include "components/ProjectileTextureManager.h"
 #include "TextureManager.h"
 
 class GameData

@@ -3,11 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Enemy.h"
-#include "GameData.h"
-#include "HealthBar.h"
-#include "State.h"
-#include "StateManager.h"
+#include "core/GameData.h"
+#include "core/State.h"
+#include "core/StateManager.h"
+#include "entities/Enemy.h"
+#include "ui/HealthBar.h"
 
 class GameState : public State
 {

@@ -4,10 +4,10 @@
 #include <ctime>
 #include <iostream>
 
-#include "ErrorHandling.h"
-#include "GameData.h"
-#include "MenuState.h"
-#include "StateManager.h"
+#include "utils/ErrorHandling.h"
+#include "core/GameData.h"
+#include "states/MenuState.h"
+#include "core/StateManager.h"
 
 void LoadWindowIcon(sf::Window &window)
 {

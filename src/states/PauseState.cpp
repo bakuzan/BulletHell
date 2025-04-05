@@ -1,7 +1,7 @@
 #include <memory>
 
 #include "Constants.h"
-#include "InputUtils.h"
+#include "utils/InputUtils.h"
 #include "MenuState.h"
 #include "PauseState.h"
 

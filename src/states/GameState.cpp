@@ -3,11 +3,11 @@
 #include <random>
 #include <sstream>
 
-#include "BasicEnemy.h"
+#include "entities/BasicEnemy.h"
+#include "utils/GameUtils.h"
+#include "utils/InputUtils.h"
 #include "Constants.h"
 #include "GameState.h"
-#include "GameUtils.h"
-#include "InputUtils.h"
 #include "PauseState.h"
 #include "GameOverState.h"
 

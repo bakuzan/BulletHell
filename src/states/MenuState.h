@@ -1,14 +1,12 @@
-#ifndef PAUSESTATE_H
-#define PAUSESTATE_H
+#ifndef MENUSTATE_H
+#define MENUSTATE_H
 
-#include <SFML/Graphics.hpp>
+#include "ui/Button.h"
+#include "core/GameData.h"
+#include "core/State.h"
+#include "core/StateManager.h"
 
-#include "Button.h"
-#include "GameData.h"
-#include "State.h"
-#include "StateManager.h"
-
-class PauseState : public State
+class MenuState : public State
 {
 private:
     GameData &gameData;
@@ -16,7 +14,7 @@ private:
     sf::RenderWindow &window;
 
     sf::RectangleShape background;
-    sf::Text pauseText;
+    sf::Text gameTitle;
     float buttonSpacing;
     std::vector<Button> buttons;
     int selectedButtonIndex = 0;
@@ -25,12 +23,12 @@ private:
     void updateMenuItemPositions();
 
 public:
-    PauseState(GameData &data, StateManager &manager, sf::RenderWindow &window);
-    ~PauseState();
+    MenuState(GameData &data, StateManager &manager, sf::RenderWindow &window);
+    ~MenuState();
 
     void handleEvent(const sf::Event &event) override;
     void update(sf::Time deltaTime, sf::RenderWindow &window) override;
     void render(sf::RenderWindow &window) override;
 };
 
-#endif // PAUSESTATE_H
+#endif // MENUSTATE_H

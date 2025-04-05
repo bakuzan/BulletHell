@@ -12,6 +12,9 @@ file(GLOB_RECURSE SOURCES "src/**/*.cpp" "src/*.cpp")
 message(STATUS "Source files: ${SOURCES}")
 add_executable(BulletHell ${SOURCES})
 
+# Include directories
+target_include_directories(BulletHell PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
 # Link SFML libraries
 target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
 

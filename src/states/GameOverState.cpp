@@ -1,8 +1,8 @@
 #include <memory>
 
 #include "Constants.h"
-#include "InputUtils.h"
-#include "GameUtils.h"
+#include "utils/InputUtils.h"
+#include "utils/GameUtils.h"
 #include "GameState.h"
 #include "MenuState.h"
 #include "GameOverState.h"

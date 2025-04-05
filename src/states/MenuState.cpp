@@ -1,6 +1,6 @@
 #include "Constants.h"
 #include "GameState.h"
-#include "InputUtils.h"
+#include "utils/InputUtils.h"
 #include "MenuState.h"
 
 MenuState::MenuState(GameData &data, StateManager &manager, sf::RenderWindow &win)

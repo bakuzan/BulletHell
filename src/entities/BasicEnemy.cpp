@@ -2,7 +2,7 @@
 
 #include "BasicEnemy.h"
 #include "Constants.h"
-#include "GameUtils.h"
+#include "utils/GameUtils.h"
 
 BasicEnemy::BasicEnemy(const sf::Texture &texture, sf::IntRect textureRect, sf::Vector2f spawnPosition, float movementSpeed)
     : Enemy(EnemyType::BASIC, texture, textureRect, spawnPosition, movementSpeed, Constants::ENEMY_POINTS_BASIC)
