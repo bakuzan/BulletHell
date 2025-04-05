@@ -2,7 +2,7 @@
 
 GameData::GameData()
 {
-    textureManager.loadTexture(TextureId::BACKGROUND, "resources/background.png", true);
+    textureManager.loadTexture(TextureId::BACKGROUND, "resources/background_2.png", true);
     textureManager.loadTexture(TextureId::SPACESHIPS, "resources/spaceships_brighter.png");
     textureManager.loadTexture(TextureId::PROJECTILES, "resources/projectiles.png");
     textureManager.loadTexture(TextureId::HEALTHBAR_BORDER, "resources/healthbar_border.png");

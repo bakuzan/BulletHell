@@ -38,10 +38,16 @@ private:
     void spawnEnemies(float deltaTime, const sf::Texture &basicEnemyTexture);
     void updateEnemies(float deltaTime, sf::Vector2f playerPosition);
 
-    sf::Vector2f getRandomSpawnPosition(const sf::Vector2f &playerPosition, const sf::RenderWindow &window);
+    sf::Vector2f getRandomSpawnPosition(
+        const sf::Vector2f &playerPosition,
+        const sf::View &view);
 
     void renderScoreText(sf::RenderWindow &window, const sf::View &view);
     void updateScoreText(int score);
+
+    void ensureBackgroundSizeIsLinkedToViewSize(
+        const sf::Vector2f &viewPos,
+        const sf::Vector2f &viewSize);
 
 public:
     GameState(GameData &data, StateManager &manager, sf::RenderWindow &window);

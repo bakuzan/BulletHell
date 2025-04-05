@@ -1,4 +1,6 @@
 #include <cmath>
+#include <iomanip>
+#include <sstream>
 
 #include "GameUtils.h"
 
@@ -19,6 +21,13 @@ namespace GameUtils
         sprite.setRotation(angle + alignmentOffset); // Adjust for sprite alignment
 
         return angleRadians;
+    }
+
+    std::string formatScoreText(int score)
+    {
+        std::stringstream ss;
+        ss << std::setw(8) << std::setfill('0') << score;
+        return ss.str();
     }
 
 }

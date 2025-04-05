@@ -10,6 +10,8 @@ namespace GameUtils
         const sf::Vector2f &sourcePosition,
         const sf::Vector2f &targetPosition,
         float alignmentOffset = 0.0f);
+
+    std::string formatScoreText(int score);
 };
 
 #endif // GAMEUTILS_H

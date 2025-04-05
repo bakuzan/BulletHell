@@ -9,6 +9,7 @@
 #include "GameUtils.h"
 #include "InputUtils.h"
 #include "PauseState.h"
+#include "GameOverState.h"
 
 GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &window)
     : gameData(data),
@@ -21,7 +22,6 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
 {
     // Load background
     const sf::Texture &backgroundTexture = gameData.textureManager.getTexture(TextureId::BACKGROUND);
-    background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
     background.setTexture(&backgroundTexture);
 
     // Load player
@@ -39,9 +39,12 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
     scoreText.setFillColor(sf::Color::Yellow);
     scoreText.setPosition(10, 50);
 
-    // Set up the view
+    // Set up the view + adjust background
     view.setSize(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT);
     view.setCenter(player.getPosition());
+    ensureBackgroundSizeIsLinkedToViewSize(
+        view.getCenter() - view.getSize() / 2.0f,
+        view.getSize());
 }
 
 GameState::~GameState()
@@ -58,16 +61,9 @@ void GameState::handleEvent(const sf::Event &event)
         // Maintain the height of the view to match the window height
         float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
         view.setSize(Constants::VIEW_HEIGHT * aspectRatio, Constants::VIEW_HEIGHT);
-
-        // Resize the background to match the new window size
-        background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
-
-        // Adjust texture rect for seamless tiling
-        background.setTextureRect(sf::IntRect(
-            view.getCenter().x - view.getSize().x / 2.0f,
-            view.getCenter().y - view.getSize().y / 2.0f,
-            window.getSize().x,
-            window.getSize().y));
+        ensureBackgroundSizeIsLinkedToViewSize(
+            view.getCenter() - view.getSize() / 2.0f,
+            view.getSize());
     }
 
     if (event.type == sf::Event::KeyPressed &&
@@ -101,11 +97,11 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
     // Update view to follow player
     view.setCenter(player.getPosition());
 
-    // Update background texture rect for tiling
+    // Update background texture rect for tiling by matching the view
     sf::Vector2f viewPos = view.getCenter() - view.getSize() / 2.0f;
-    background.setPosition(viewPos);
-    background.setTextureRect(sf::IntRect(viewPos.x, viewPos.y,
-                                          view.getSize().x, view.getSize().y));
+    ensureBackgroundSizeIsLinkedToViewSize(
+        viewPos,
+        view.getSize());
 }
 
 void GameState::render(sf::RenderWindow &window)
@@ -272,7 +268,7 @@ void GameState::spawnEnemies(float deltaTime, const sf::Texture &enemiesTexture)
 
     for (int i = 0; i < enemiesToSpawn; ++i)
     {
-        sf::Vector2f spawnPosition = getRandomSpawnPosition(playerPos, window);
+        sf::Vector2f spawnPosition = getRandomSpawnPosition(playerPos, view);
         gameData.addEnemy(
             spawnEnemy(EnemyType::BASIC,
                        enemiesTexture, textureRect,
@@ -291,10 +287,15 @@ void GameState::updateEnemies(float deltaTime, sf::Vector2f playerPosition)
             (*it)->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
         {
             it = enemies.erase(it); // Enemy has suicided, so remove after collision
+
             // Effects of hitting player
             gameData.updatePlayerHealth(-10);
             healthBar.setHealth(gameData.getPlayerHealth());
-            // TODO has player died?
+
+            if (gameData.getPlayerHealth() <= 0)
+            {
+                stateManager.pushState(std::make_unique<GameOverState>(gameData, stateManager, window));
+            }
         }
         else
         {
@@ -305,25 +306,26 @@ void GameState::updateEnemies(float deltaTime, sf::Vector2f playerPosition)
 
 sf::Vector2f GameState::getRandomSpawnPosition(
     const sf::Vector2f &playerPosition,
-    const sf::RenderWindow &window)
+    const sf::View &view)
 {
-    sf::Vector2u windowSize = window.getSize();
+    sf::Vector2f viewSize = view.getSize();
+    sf::Vector2f viewCenter = view.getCenter();
     int side = rand() % 4; // Choose a random side around the player
 
     switch (side)
     {
     case 0: // Top
-        return {playerPosition.x + static_cast<float>(rand() % windowSize.x) - (windowSize.x / 2.f),
-                playerPosition.y - (windowSize.y / 2.f) - Constants::ENEMY_SPAWN_OFFSET};
+        return {viewCenter.x - viewSize.x / 2.f + static_cast<float>(rand() % int(viewSize.x)),
+                viewCenter.y - viewSize.y / 2.f - Constants::ENEMY_SPAWN_OFFSET};
     case 1: // Left
-        return {playerPosition.x - (windowSize.x / 2.f) - Constants::ENEMY_SPAWN_OFFSET,
-                playerPosition.y + static_cast<float>(rand() % windowSize.y) - (windowSize.y / 2.f)};
+        return {viewCenter.x - viewSize.x / 2.f - Constants::ENEMY_SPAWN_OFFSET,
+                viewCenter.y - viewSize.y / 2.f + static_cast<float>(rand() % int(viewSize.y))};
     case 2: // Right
-        return {playerPosition.x + (windowSize.x / 2.f) + Constants::ENEMY_SPAWN_OFFSET,
-                playerPosition.y + static_cast<float>(rand() % windowSize.y) - (windowSize.y / 2.f)};
+        return {viewCenter.x + viewSize.x / 2.f + Constants::ENEMY_SPAWN_OFFSET,
+                viewCenter.y - viewSize.y / 2.f + static_cast<float>(rand() % int(viewSize.y))};
     case 3: // Bottom
-        return {playerPosition.x + static_cast<float>(rand() % windowSize.x) - (windowSize.x / 2.f),
-                playerPosition.y + (windowSize.y / 2.f) + Constants::ENEMY_SPAWN_OFFSET};
+        return {viewCenter.x - viewSize.x / 2.f + static_cast<float>(rand() % int(viewSize.x)),
+                viewCenter.y + viewSize.y / 2.f + Constants::ENEMY_SPAWN_OFFSET};
     default:
         return {0.f, 0.f}; // Fallback (this should never occur)
     }
@@ -341,8 +343,18 @@ void GameState::renderScoreText(sf::RenderWindow &window, const sf::View &view)
 
 void GameState::updateScoreText(int score)
 {
-    std::stringstream ss;
-    ss << std::setw(8) << std::setfill('0') << score;
+    scoreText.setString(GameUtils::formatScoreText(score));
+}
 
-    scoreText.setString(ss.str());
+void GameState::ensureBackgroundSizeIsLinkedToViewSize(
+    const sf::Vector2f &viewPos,
+    const sf::Vector2f &viewSize)
+{
+    background.setSize(viewSize);
+    background.setPosition(viewPos);
+    background.setTextureRect(sf::IntRect(
+        static_cast<int>(viewPos.x),
+        static_cast<int>(viewPos.y),
+        static_cast<int>(viewSize.x),
+        static_cast<int>(viewSize.y)));
 }
