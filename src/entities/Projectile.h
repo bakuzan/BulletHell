@@ -11,11 +11,13 @@ private:
     sf::Sprite sprite;
     sf::Vector2f velocity;
     ProjectileType type;
+    float damage;
 
 public:
     Projectile(ProjectileType type,
                const sf::Texture &texture, sf::IntRect textureRect,
-               sf::Vector2f spawnPosition, sf::Vector2f velocity);
+               sf::Vector2f spawnPosition, sf::Vector2f velocity,
+               float damage);
     ~Projectile();
 
     void update(sf::Time deltaTime);

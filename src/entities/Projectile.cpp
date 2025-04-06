@@ -4,8 +4,9 @@
 
 Projectile::Projectile(ProjectileType type,
                        const sf::Texture &texture, sf::IntRect textureRect,
-                       sf::Vector2f spawnPosition, sf::Vector2f velocity)
-    : velocity(velocity), type(type)
+                       sf::Vector2f spawnPosition, sf::Vector2f velocity,
+                       float damage)
+    : velocity(velocity), type(type), damage(damage)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);

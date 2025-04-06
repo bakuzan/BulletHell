@@ -2,5 +2,6 @@
 
 enum ProjectileType
 {
-    BULLET = 0
+    BULLET = 0,
+    BULLET_ALIEN,
 };

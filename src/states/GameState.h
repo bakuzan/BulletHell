@@ -36,7 +36,8 @@ private:
         const sf::Texture &texture, sf::IntRect textureRect,
         sf::Vector2f spawnPosition, float speed);
     void spawnEnemies(float deltaTime, const sf::Texture &basicEnemyTexture);
-    void updateEnemies(float deltaTime, sf::Vector2f playerPosition);
+    void updateEnemies(float deltaTime, const sf::Vector2f &playerPosition);
+    void processEnemyShooting(float deltaTime, const sf::Vector2f &playerPosition);
 
     sf::Vector2f getRandomSpawnPosition(
         const sf::Vector2f &playerPosition,

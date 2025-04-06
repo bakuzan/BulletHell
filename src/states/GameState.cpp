@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "entities/BasicEnemy.h"
+#include "entities/ShooterEnemy.h"
 #include "utils/GameUtils.h"
 #include "utils/InputUtils.h"
 #include "Constants.h"
@@ -88,6 +89,7 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
     spawnEnemies(deltaTime.asSeconds(), gameData.textureManager.getTexture(TextureId::SPACESHIPS));
     updateEnemies(deltaTime.asSeconds(), player.getPosition());
+    processEnemyShooting(deltaTime.asSeconds(), player.getPosition());
 
     movePlayer(deltaTime);
     aimAndShoot(window);
@@ -186,7 +188,9 @@ void GameState::aimAndShoot(sf::RenderWindow &window)
         projectiles.emplace_back(ProjectileType::BULLET,
                                  gameData.textureManager.getTexture(TextureId::PROJECTILES),
                                  gameData.projectileTextureManager.getTextureRect(ProjectileType::BULLET),
-                                 spawnPosition, bulletVelocity);
+                                 spawnPosition,
+                                 bulletVelocity,
+                                 Constants::PROJECTILE_DAMAGE_BULLET);
 
         shootProjectile = false;
     }
@@ -276,7 +280,7 @@ void GameState::spawnEnemies(float deltaTime, const sf::Texture &enemiesTexture)
     }
 }
 
-void GameState::updateEnemies(float deltaTime, sf::Vector2f playerPosition)
+void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPosition)
 {
     auto &enemies = gameData.getEnemies();
     for (auto it = enemies.begin(); it != enemies.end();)
@@ -300,6 +304,28 @@ void GameState::updateEnemies(float deltaTime, sf::Vector2f playerPosition)
         else
         {
             ++it;
+        }
+    }
+}
+
+void GameState::processEnemyShooting(float deltaTime, const sf::Vector2f &playerPosition)
+{
+    auto &enemies = gameData.getEnemies();
+    auto &projectiles = gameData.getProjectiles();
+
+    for (auto &enemy : enemies)
+    {
+        if (auto shooterEnemy = dynamic_cast<ShooterEnemy *>(enemy.get()))
+        {
+            if (auto projectile = shooterEnemy->getShootData(deltaTime, playerPosition))
+            {
+                projectiles.emplace_back(ProjectileType::BULLET_ALIEN,
+                                         gameData.textureManager.getTexture(TextureId::PROJECTILES),
+                                         gameData.projectileTextureManager.getTextureRect(ProjectileType::BULLET_ALIEN),
+                                         projectile->position,
+                                         projectile->direction,
+                                         projectile->damage);
+            }
         }
     }
 }

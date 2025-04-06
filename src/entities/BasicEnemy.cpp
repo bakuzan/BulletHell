@@ -17,16 +17,9 @@ BasicEnemy::~BasicEnemy()
 }
 
 // Publics
-void BasicEnemy::update(float deltaTime, sf::Vector2f playerPosition)
+void BasicEnemy::update(float deltaTime, const sf::Vector2f &playerPosition)
 {
-    sf::Vector2f direction = playerPosition - sprite.getPosition();
-    float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-
-    if (magnitude > 0)
-    {
-        direction /= magnitude; // Normalize the vector
-    }
-
+    sf::Vector2f direction = GameUtils::normaliseVector(playerPosition - sprite.getPosition());
     sprite.move(direction * speed * deltaTime);
 
     GameUtils::rotateTowards(

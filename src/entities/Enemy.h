@@ -18,7 +18,7 @@ public:
           const sf::Texture &texture, sf::IntRect textureRect,
           sf::Vector2f spawnPosition, float movementSpeed, int pointsValue);
 
-    virtual void update(float deltaTime, sf::Vector2f playerPosition) = 0;
+    virtual void update(float deltaTime, const sf::Vector2f &playerPosition) = 0;
 
     virtual ~Enemy();
 

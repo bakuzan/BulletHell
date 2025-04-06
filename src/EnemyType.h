@@ -3,4 +3,5 @@
 enum EnemyType
 {
     BASIC = 0,
+    SHOOTER,
 };

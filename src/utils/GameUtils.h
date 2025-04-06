@@ -5,6 +5,8 @@
 
 namespace GameUtils
 {
+    sf::Vector2f normaliseVector(const sf::Vector2f &vector);
+
     float rotateTowards(
         sf::Sprite &sprite,
         const sf::Vector2f &sourcePosition,
