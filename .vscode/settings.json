@@ -75,6 +75,7 @@
     "csignal": "cpp",
     "fstream": "cpp",
     "iomanip": "cpp",
-    "sstream": "cpp"
+    "sstream": "cpp",
+    "queue": "cpp"
   }
 }

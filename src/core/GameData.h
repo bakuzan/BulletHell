@@ -25,7 +25,6 @@ public:
 
     TextureManager textureManager;
     ProjectileTextureManager projectileTextureManager;
-    EnemyTextureManager enemyTextureManager;
 
 public:
     GameData();

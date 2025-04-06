@@ -8,6 +8,7 @@
 #include "core/StateManager.h"
 #include "entities/Enemy.h"
 #include "ui/HealthBar.h"
+#include "components/EnemySpawnManager.h"
 
 class GameState : public State
 {
@@ -16,6 +17,8 @@ private:
     StateManager &stateManager;
     sf::RenderWindow &window;
     sf::View view;
+
+    EnemySpawnManager enemySpawnManager;
 
     sf::RectangleShape background;
     sf::Sprite player;
@@ -31,17 +34,8 @@ private:
 
     void updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &window);
 
-    std::unique_ptr<Enemy> spawnEnemy(
-        EnemyType type,
-        const sf::Texture &texture, sf::IntRect textureRect,
-        sf::Vector2f spawnPosition, float speed);
-    void spawnEnemies(float deltaTime, const sf::Texture &basicEnemyTexture);
     void updateEnemies(float deltaTime, const sf::Vector2f &playerPosition);
     void processEnemyShooting(float deltaTime, const sf::Vector2f &playerPosition);
-
-    sf::Vector2f getRandomSpawnPosition(
-        const sf::Vector2f &playerPosition,
-        const sf::View &view);
 
     void renderScoreText(sf::RenderWindow &window, const sf::View &view);
     void updateScoreText(int score);

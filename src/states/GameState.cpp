@@ -87,7 +87,13 @@ void GameState::handleEvent(const sf::Event &event)
 
 void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
-    spawnEnemies(deltaTime.asSeconds(), gameData.textureManager.getTexture(TextureId::SPACESHIPS));
+    enemySpawnManager.spawnEnemies(
+        deltaTime.asSeconds(),
+        gameData.getEnemies(),
+        gameData.textureManager.getTexture(TextureId::SPACESHIPS),
+        player.getPosition(),
+        view);
+
     updateEnemies(deltaTime.asSeconds(), player.getPosition());
     processEnemyShooting(deltaTime.asSeconds(), player.getPosition());
 
@@ -174,7 +180,7 @@ void GameState::aimAndShoot(sf::RenderWindow &window)
 
         // Calculate bullet spawn position (front-center of the player)
         float playerScale = player.getScale().x;                                                  // Assume it is the same both x/y
-        float bulletWidth = 25.0f;                                                                // (size is the sprite size (500) * sprite scale (0.05))
+        float bulletWidth = 15.0f;                                                                // (size is the sprite size (300) * sprite scale (0.05))
         float bulletHeight = 25.0f;                                                               // (size is the sprite size (500) * sprite scale (0.05))
         sf::Vector2f offset = direction * ((Constants::SPRITE_WIDTH_PLAYER * playerScale) / 2.f); // Move to front
         sf::Vector2f rotatedCenterOffset = sf::Vector2f(
@@ -241,45 +247,6 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
     }
 }
 
-std::unique_ptr<Enemy> GameState::spawnEnemy(
-    EnemyType type,
-    const sf::Texture &texture,
-    sf::IntRect textureRect,
-    sf::Vector2f spawnPosition,
-    float speed)
-{
-    switch (type)
-    {
-    case EnemyType::BASIC:
-        return std::make_unique<BasicEnemy>(texture, textureRect, spawnPosition, speed);
-    default:
-        return nullptr;
-    }
-}
-
-void GameState::spawnEnemies(float deltaTime, const sf::Texture &enemiesTexture)
-{
-    static float spawnAccumulator = 0.0f;
-
-    // Calculate number of enemies to spawn this frame
-    spawnAccumulator += Constants::ENEMY_SPAWN_RATE * deltaTime;
-    int enemiesToSpawn = static_cast<int>(spawnAccumulator);
-    spawnAccumulator -= enemiesToSpawn; // Track fractional spawns
-
-    const float enemySpeed = Constants::BASE_PLAYER_SPEED * 0.33f;
-    const auto &textureRect = gameData.enemyTextureManager.getTextureRect(EnemyType::BASIC);
-    sf::Vector2f playerPos = player.getPosition();
-
-    for (int i = 0; i < enemiesToSpawn; ++i)
-    {
-        sf::Vector2f spawnPosition = getRandomSpawnPosition(playerPos, view);
-        gameData.addEnemy(
-            spawnEnemy(EnemyType::BASIC,
-                       enemiesTexture, textureRect,
-                       spawnPosition, enemySpeed));
-    }
-}
-
 void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPosition)
 {
     auto &enemies = gameData.getEnemies();
@@ -327,33 +294,6 @@ void GameState::processEnemyShooting(float deltaTime, const sf::Vector2f &player
                                          projectile->damage);
             }
         }
-    }
-}
-
-sf::Vector2f GameState::getRandomSpawnPosition(
-    const sf::Vector2f &playerPosition,
-    const sf::View &view)
-{
-    sf::Vector2f viewSize = view.getSize();
-    sf::Vector2f viewCenter = view.getCenter();
-    int side = rand() % 4; // Choose a random side around the player
-
-    switch (side)
-    {
-    case 0: // Top
-        return {viewCenter.x - viewSize.x / 2.f + static_cast<float>(rand() % int(viewSize.x)),
-                viewCenter.y - viewSize.y / 2.f - Constants::ENEMY_SPAWN_OFFSET};
-    case 1: // Left
-        return {viewCenter.x - viewSize.x / 2.f - Constants::ENEMY_SPAWN_OFFSET,
-                viewCenter.y - viewSize.y / 2.f + static_cast<float>(rand() % int(viewSize.y))};
-    case 2: // Right
-        return {viewCenter.x + viewSize.x / 2.f + Constants::ENEMY_SPAWN_OFFSET,
-                viewCenter.y - viewSize.y / 2.f + static_cast<float>(rand() % int(viewSize.y))};
-    case 3: // Bottom
-        return {viewCenter.x - viewSize.x / 2.f + static_cast<float>(rand() % int(viewSize.x)),
-                viewCenter.y + viewSize.y / 2.f + Constants::ENEMY_SPAWN_OFFSET};
-    default:
-        return {0.f, 0.f}; // Fallback (this should never occur)
     }
 }
 

@@ -9,7 +9,7 @@
 class ShooterEnemy : public Enemy
 {
 private:
-    bool ShooterEnemy::shouldShoot(float deltaTime);
+    bool shouldShoot(float deltaTime);
 
 public:
     ShooterEnemy(const sf::Texture &texture, sf::IntRect textureRect, sf::Vector2f spawnPosition, float movementSpeed);

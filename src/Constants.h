@@ -27,6 +27,8 @@ namespace Constants
     extern const float ENEMY_SPAWN_OFFSET;
     extern const float ENEMY_SPAWN_RATE;
 
+    extern const float ENEMY_SPAWN_FACTOR_SHOOTER;
+
     extern const int ENEMY_POINTS_BASIC;
     extern const int ENEMY_POINTS_SHOOTER;
 
