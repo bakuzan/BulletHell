@@ -47,6 +47,11 @@ const ProjectileOrigin Projectile::getOrigin() const
     throw std::logic_error("Unhandled ProjectileType in Projectile::getOrigin()");
 }
 
+const float Projectile::getDamageInflicts() const
+{
+    return damage;
+}
+
 const sf::Sprite &Projectile::getSprite() const
 {
     return sprite;

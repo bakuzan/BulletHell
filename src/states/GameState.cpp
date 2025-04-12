@@ -213,24 +213,40 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
         bool projectileRemoved = false;
 
-        // Check collision with enemies
-        for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
+        if (projIt->getOrigin() == ProjectileOrigin::PLAYER)
         {
-            if (projIt->getOrigin() == ProjectileOrigin::PLAYER &&
-                projIt->getSprite().getGlobalBounds().intersects((*enemyIt)->getSprite().getGlobalBounds()))
+            for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
             {
-                // Effects of shooting enemy
-                gameData.updateScore((*enemyIt)->getPointsValue());
-                updateScoreText(gameData.getScore());
+                if (projIt->getSprite().getGlobalBounds().intersects((*enemyIt)->getSprite().getGlobalBounds()))
+                {
+                    // Effects of shooting enemy
+                    gameData.updateScore((*enemyIt)->getPointsValue());
+                    updateScoreText(gameData.getScore());
 
-                enemyIt = enemies.erase(enemyIt);
-                projIt = projectiles.erase(projIt);
-                projectileRemoved = true;
-                break;
+                    enemyIt = enemies.erase(enemyIt);
+                    projIt = projectiles.erase(projIt);
+                    projectileRemoved = true;
+                    break;
+                }
+                else
+                {
+                    ++enemyIt;
+                }
             }
-            else
+        }
+        else if (projIt->getOrigin() == ProjectileOrigin::ENEMY &&
+                 projIt->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
+        {
+            projIt = projectiles.erase(projIt);
+            projectileRemoved = true;
+
+            // Effects of player being hit
+            gameData.updatePlayerHealth(-projIt->getDamageInflicts());
+            healthBar.setHealth(gameData.getPlayerHealth());
+
+            if (gameData.getPlayerHealth() <= 0)
             {
-                ++enemyIt;
+                stateManager.pushState(std::make_unique<GameOverState>(gameData, stateManager, window));
             }
         }
 

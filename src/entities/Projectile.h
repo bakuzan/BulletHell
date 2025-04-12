@@ -25,6 +25,7 @@ public:
     void render(sf::RenderWindow &window) const;
 
     const ProjectileOrigin getOrigin() const;
+    const float getDamageInflicts() const;
     const sf::Sprite &getSprite() const;
     bool isOffScreen(sf::RenderWindow &window);
 };
