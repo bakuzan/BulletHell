@@ -32,6 +32,9 @@ namespace Constants
     extern const int ENEMY_POINTS_BASIC;
     extern const int ENEMY_POINTS_SHOOTER;
 
+    extern const float ENEMY_HEALTH_BASIC;
+    extern const float ENEMY_HEALTH_SHOOTER;
+
     extern const float ENEMY_SHOOTER_DISTANCE;
 };
 

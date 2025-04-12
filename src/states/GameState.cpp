@@ -220,10 +220,15 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                 if (projIt->getSprite().getGlobalBounds().intersects((*enemyIt)->getSprite().getGlobalBounds()))
                 {
                     // Effects of shooting enemy
-                    gameData.updateScore((*enemyIt)->getPointsValue());
-                    updateScoreText(gameData.getScore());
+                    (*enemyIt)->updateHealth(-projIt->getDamageInflicts());
+                    if ((*enemyIt)->getHealth() <= 0.0f)
+                    {
+                        gameData.updateScore((*enemyIt)->getPointsValue());
+                        updateScoreText(gameData.getScore());
 
-                    enemyIt = enemies.erase(enemyIt);
+                        enemyIt = enemies.erase(enemyIt);
+                    }
+
                     projIt = projectiles.erase(projIt);
                     projectileRemoved = true;
                     break;
@@ -267,18 +272,18 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPosition)
 {
     auto &enemies = gameData.getEnemies();
-    for (auto it = enemies.begin(); it != enemies.end();)
+    for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
     {
-        (*it)->update(deltaTime, playerPosition);
+        (*enemyIt)->update(deltaTime, playerPosition);
 
-        if ((*it)->getType() == EnemyType::BASIC &&
-            (*it)->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
+        if ((*enemyIt)->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
         {
-            it = enemies.erase(it); // Enemy has suicided, so remove after collision
-
             // Effects of hitting player
-            gameData.updatePlayerHealth(-10);
+            float collisionDamage = (*enemyIt)->getHealth() * 0.4f;
+            gameData.updatePlayerHealth(-collisionDamage);
             healthBar.setHealth(gameData.getPlayerHealth());
+
+            enemyIt = enemies.erase(enemyIt); // Current assumption will be enemies die on collision!
 
             if (gameData.getPlayerHealth() <= 0)
             {
@@ -287,7 +292,7 @@ void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPositio
         }
         else
         {
-            ++it;
+            ++enemyIt;
         }
     }
 }

@@ -33,12 +33,6 @@ void EnemySpawnManager::spawnEnemies(
         int enemiesToSpawn = static_cast<int>(spawnInfo.spawnAccumulator);
         spawnInfo.spawnAccumulator -= enemiesToSpawn;
 
-        // DEBUGGING LINE
-        if (enemyType == EnemyType::BASIC)
-        {
-            continue;
-        }
-
         for (int i = 0; i < enemiesToSpawn; ++i)
         {
             sf::Vector2f spawnPosition = getRandomSpawnPosition(playerPos, view);
