@@ -34,6 +34,19 @@ void Projectile::render(sf::RenderWindow &window) const
     window.draw(sprite);
 }
 
+const ProjectileOrigin Projectile::getOrigin() const
+{
+    switch (type)
+    {
+    case ProjectileType::BULLET:
+        return ProjectileOrigin::PLAYER;
+    case ProjectileType::BULLET_ALIEN:
+        return ProjectileOrigin::ENEMY;
+    }
+
+    throw std::logic_error("Unhandled ProjectileType in Projectile::getOrigin()");
+}
+
 const sf::Sprite &Projectile::getSprite() const
 {
     return sprite;

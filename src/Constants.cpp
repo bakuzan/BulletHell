@@ -31,5 +31,5 @@ namespace Constants
     const int ENEMY_POINTS_BASIC = 10.0f;
     const int ENEMY_POINTS_SHOOTER = 50.0f;
 
-    const float ENEMY_SHOOTER_DISTANCE = 100.0f;
+    const float ENEMY_SHOOTER_DISTANCE = 500.0f;
 };

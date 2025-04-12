@@ -9,7 +9,7 @@ ShooterEnemy::ShooterEnemy(
     sf::Vector2f spawnPosition, float movementSpeed)
     : Enemy(EnemyType::SHOOTER, texture, textureRect, spawnPosition, movementSpeed, Constants::ENEMY_POINTS_SHOOTER)
 {
-    sprite.setScale(0.4, 0.4);
+    sprite.setScale(0.5, 0.5);
     sprite.setOrigin(Constants::SPRITE_WIDTH_SHOOTER / 2.0f, Constants::SPRITE_HEIGHT_SHOOTER / 2.0f);
 }
 

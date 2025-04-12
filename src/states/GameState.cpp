@@ -29,7 +29,7 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
     const sf::Texture &spaceshipsTexture = gameData.textureManager.getTexture(TextureId::SPACESHIPS);
     player.setTexture(spaceshipsTexture);
     player.setTextureRect(sf::IntRect(392, Constants::SPRITE_OFFSET_Y, Constants::SPRITE_WIDTH_PLAYER, Constants::SPRITE_HEIGHT_PLAYER));
-    player.setScale(0.25f, 0.25f);
+    player.setScale(0.3f, 0.3f);
     player.setOrigin(Constants::SPRITE_WIDTH_PLAYER / 2.0f, Constants::SPRITE_HEIGHT_PLAYER / 2.0f);
     player.setPosition(100.0f, 100.0f);
 
@@ -216,7 +216,8 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
         // Check collision with enemies
         for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
         {
-            if (projIt->getSprite().getGlobalBounds().intersects((*enemyIt)->getSprite().getGlobalBounds()))
+            if (projIt->getOrigin() == ProjectileOrigin::PLAYER &&
+                projIt->getSprite().getGlobalBounds().intersects((*enemyIt)->getSprite().getGlobalBounds()))
             {
                 // Effects of shooting enemy
                 gameData.updateScore((*enemyIt)->getPointsValue());
