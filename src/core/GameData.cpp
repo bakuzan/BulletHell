@@ -7,6 +7,7 @@ GameData::GameData()
     textureManager.loadTexture(TextureId::PROJECTILES, "resources/projectiles.png");
     textureManager.loadTexture(TextureId::HEALTHBAR_BORDER, "resources/healthbar_border.png");
     textureManager.loadTexture(TextureId::HEALTHBAR_FILLING, "resources/healthbar_filling.png");
+    textureManager.loadTexture(TextureId::UPGRADE_BOXES, "resources/upgrade_boxes.png");
 
     // Load font
     if (!gameFont.loadFromFile("resources/fonts/PressStart2P-Regular.ttf"))
@@ -57,6 +58,22 @@ void GameData::removeEnemy(size_t index)
     enemies.erase(enemies.begin() + index);
 }
 
+// UpgradeBoxes
+std::vector<UpgradeBox> &GameData::getUpgradeBoxes()
+{
+    return upgradeBoxes;
+}
+
+void GameData::addUpgradeBox(const UpgradeBox &upgrade)
+{
+    upgradeBoxes.push_back(upgrade);
+}
+
+void GameData::removeUpgradeBox(size_t index)
+{
+    upgradeBoxes.erase(upgradeBoxes.begin() + index);
+}
+
 // Player attributes
 const float GameData::getPlayerHealth() const
 {
@@ -83,6 +100,7 @@ void GameData::reset()
 {
     projectiles.clear();
     enemies.clear();
+    upgradeBoxes.clear();
 
     playerHealth = 100.0f;
     playerScore = 0;

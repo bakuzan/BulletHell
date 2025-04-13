@@ -102,6 +102,15 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 
     updateProjectiles(deltaTime, window);
 
+    upgradeBoxSpawnManager.spawnUpgradeBoxes(
+        deltaTime.asSeconds(),
+        gameData.getUpgradeBoxes(),
+        gameData.textureManager.getTexture(TextureId::UPGRADE_BOXES),
+        player.getPosition(),
+        playerLastDirectionMoved,
+        view);
+    updateUpgradeBoxes(deltaTime);
+
     // Update view to follow player
     view.setCenter(player.getPosition());
 
@@ -117,10 +126,10 @@ void GameState::render(sf::RenderWindow &window)
     window.setView(view);
     window.draw(background);
 
-    auto &projectiles = gameData.getProjectiles();
-    for (const auto &projectile : projectiles)
+    auto &upgrades = gameData.getUpgradeBoxes();
+    for (const auto &upgrade : upgrades)
     {
-        projectile.render(window);
+        upgrade.render(window);
     }
 
     window.draw(player);
@@ -131,6 +140,13 @@ void GameState::render(sf::RenderWindow &window)
         enemy->render(window);
     }
 
+    auto &projectiles = gameData.getProjectiles();
+    for (const auto &projectile : projectiles)
+    {
+        projectile.render(window);
+    }
+
+    // UI Elements
     healthBar.render(window, view);
     renderScoreText(window, view);
 }
@@ -143,18 +159,22 @@ void GameState::movePlayer(sf::Time &deltaTime)
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Left, sf::Keyboard::A}))
     {
         player.move(-playerSpeed * deltaTime.asSeconds(), 0);
+        playerLastDirectionMoved = sf::Vector2f(-1.f, 0.f);
     }
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Right, sf::Keyboard::D}))
     {
         player.move(playerSpeed * deltaTime.asSeconds(), 0);
+        playerLastDirectionMoved = sf::Vector2f(1.f, 0.f);
     }
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Up, sf::Keyboard::W}))
     {
         player.move(0, -playerSpeed * deltaTime.asSeconds());
+        playerLastDirectionMoved = sf::Vector2f(0.f, -1.f);
     }
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Down, sf::Keyboard::S}))
     {
         player.move(0, playerSpeed * deltaTime.asSeconds());
+        playerLastDirectionMoved = sf::Vector2f(0.f, 1.f);
     }
 }
 
@@ -265,6 +285,31 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
             {
                 ++projIt;
             }
+        }
+    }
+}
+
+void GameState::updateUpgradeBoxes(const sf::Time &deltaTime)
+{
+    auto &boxes = gameData.getUpgradeBoxes();
+
+    for (auto boxIt = boxes.begin(); boxIt != boxes.end();)
+    {
+        boxIt->update(deltaTime);
+
+        if (boxIt->isExpired())
+        {
+            boxIt = boxes.erase(boxIt);
+        }
+        else if (boxIt->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
+        {
+            // TODO Do pick up upgrade logic
+
+            boxIt = boxes.erase(boxIt);
+        }
+        else
+        {
+            ++boxIt;
         }
     }
 }

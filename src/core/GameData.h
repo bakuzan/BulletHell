@@ -7,8 +7,10 @@
 
 #include "entities/Enemy.h"
 #include "entities/Projectile.h"
+#include "entities/UpgradeBox.h"
 #include "components/EnemyTextureManager.h"
 #include "components/ProjectileTextureManager.h"
+#include "components/UpgradeBoxTextureManager.h"
 #include "TextureManager.h"
 
 class GameData
@@ -16,6 +18,7 @@ class GameData
 private:
     std::vector<Projectile> projectiles;
     std::vector<std::unique_ptr<Enemy>> enemies;
+    std::vector<UpgradeBox> upgradeBoxes;
 
     float playerHealth;
     int playerScore;
@@ -25,6 +28,7 @@ public:
 
     TextureManager textureManager;
     ProjectileTextureManager projectileTextureManager;
+    UpgradeBoxTextureManager upgradeBoxTextureManager;
 
 public:
     GameData();
@@ -37,6 +41,10 @@ public:
     std::vector<std::unique_ptr<Enemy>> &getEnemies();
     void addEnemy(std::unique_ptr<Enemy> enemy);
     void removeEnemy(size_t index);
+
+    std::vector<UpgradeBox> &getUpgradeBoxes();
+    void addUpgradeBox(const UpgradeBox &upgrade);
+    void removeUpgradeBox(size_t index);
 
     const float getPlayerHealth() const;
     void updatePlayerHealth(float adjustment);

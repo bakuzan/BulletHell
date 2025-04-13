@@ -36,6 +36,9 @@ namespace Constants
     extern const float ENEMY_HEALTH_SHOOTER;
 
     extern const float ENEMY_SHOOTER_DISTANCE;
+
+    extern const float UPGRADE_BOX_LIFETIME_LIMIT;
+    extern const float UPGRADE_BOX_SPAWN_OFFSET;
 };
 
 #endif // CONSTANTS_H

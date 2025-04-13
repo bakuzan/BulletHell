@@ -9,6 +9,7 @@
 #include "entities/Enemy.h"
 #include "ui/HealthBar.h"
 #include "components/EnemySpawnManager.h"
+#include "components/UpgradeBoxSpawnManager.h"
 
 class GameState : public State
 {
@@ -19,9 +20,11 @@ private:
     sf::View view;
 
     EnemySpawnManager enemySpawnManager;
+    UpgradeBoxSpawnManager upgradeBoxSpawnManager;
 
     sf::RectangleShape background;
     sf::Sprite player;
+    sf::Vector2f playerLastDirectionMoved;
 
     HealthBar healthBar;
     sf::Text scoreText;
@@ -33,6 +36,7 @@ private:
     void aimAndShoot(sf::RenderWindow &window);
 
     void updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &window);
+    void updateUpgradeBoxes(const sf::Time &deltaTime);
 
     void updateEnemies(float deltaTime, const sf::Vector2f &playerPosition);
     void processEnemyShooting(float deltaTime, const sf::Vector2f &playerPosition);
