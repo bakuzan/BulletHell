@@ -33,7 +33,6 @@ private:
         float speed);
 
     sf::Vector2f getRandomSpawnPosition(
-        const sf::Vector2f &playerPosition,
         const sf::View &view);
 
 public:
@@ -44,7 +43,6 @@ public:
         float deltaTime,
         std::vector<std::unique_ptr<Enemy>> &enemies,
         const sf::Texture &enemiesTexture,
-        const sf::Vector2f &playerPos,
         const sf::View &view);
 };
 

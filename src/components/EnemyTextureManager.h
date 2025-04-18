@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 
-#include "EnemyType.h"
+#include "constants/EnemyType.h"
 
 class EnemyTextureManager
 {

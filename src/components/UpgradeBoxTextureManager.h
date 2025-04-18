@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 
-#include "UpgradeBoxType.h"
+#include "constants/UpgradeBoxType.h"
 
 class UpgradeBoxTextureManager
 {

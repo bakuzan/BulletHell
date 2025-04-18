@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "ProjectileOrigin.h"
-#include "ProjectileType.h"
+#include "constants/ProjectileOrigin.h"
+#include "constants/ProjectileType.h"
 
 class Projectile
 {

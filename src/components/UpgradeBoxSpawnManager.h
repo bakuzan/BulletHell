@@ -1,7 +1,8 @@
 #ifndef UPGRADEBOXSPAWNMANAGER_H
 #define UPGRADEBOXSPAWNMANAGER_H
 
-#include "UpgradeBoxType.h"
+#include "constants/Direction.h"
+#include "constants/UpgradeBoxType.h"
 #include "entities/UpgradeBox.h"
 #include "UpgradeBoxTextureManager.h"
 
@@ -16,13 +17,12 @@ private:
 private:
     UpgradeBox spawnBox(UpgradeBoxType boxType,
                         const sf::Texture &texture,
-                        const sf::Vector2f &playerPosition,
-                        const sf::Vector2f &playerDirection,
+                        const Direction &playerDirection,
                         const sf::View &view);
 
-    sf::Vector2f calculateSpawnPosition(const sf::Vector2f &playerPosition,
-                                        const sf::Vector2f &playerDirection,
-                                        const sf::View &view);
+    sf::Vector2f calculateSpawnPosition(
+        const Direction &playerDirection,
+        const sf::View &view);
 
     UpgradeBoxType randomWeaponType();
 
@@ -36,8 +36,7 @@ public:
     void spawnUpgradeBoxes(float deltaTime,
                            std::vector<UpgradeBox> &upgradeBoxes,
                            const sf::Texture &upgradeBoxesTexture,
-                           const sf::Vector2f &playerPosition,
-                           const sf::Vector2f &playerDirection,
+                           const Direction &playerDirection,
                            const sf::View &view);
 };
 

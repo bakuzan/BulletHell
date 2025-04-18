@@ -24,7 +24,7 @@ private:
 
     sf::RectangleShape background;
     sf::Sprite player;
-    sf::Vector2f playerLastDirectionMoved;
+    Direction playerLastDirectionMoved;
 
     HealthBar healthBar;
     sf::Text scoreText;

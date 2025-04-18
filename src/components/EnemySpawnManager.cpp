@@ -1,8 +1,9 @@
-#include "Constants.h"
+#include "constants/Constants.h"
 #include "EnemySpawnManager.h"
 
 #include "entities/BasicEnemy.h"
 #include "entities/ShooterEnemy.h"
+#include "utils/GameUtils.h"
 
 EnemySpawnManager::EnemySpawnManager()
 {
@@ -24,7 +25,6 @@ void EnemySpawnManager::spawnEnemies(
     float deltaTime,
     std::vector<std::unique_ptr<Enemy>> &enemies,
     const sf::Texture &enemiesTexture,
-    const sf::Vector2f &playerPos,
     const sf::View &view)
 {
     for (auto &[enemyType, spawnInfo] : spawnData)
@@ -35,7 +35,7 @@ void EnemySpawnManager::spawnEnemies(
 
         for (int i = 0; i < enemiesToSpawn; ++i)
         {
-            sf::Vector2f spawnPosition = getRandomSpawnPosition(playerPos, view);
+            sf::Vector2f spawnPosition = getRandomSpawnPosition(view);
             const auto &textureRect = enemyTextureManager.getTextureRect(enemyType);
             float enemySpeed = enemySpeedMap[enemyType];
 
@@ -68,28 +68,9 @@ std::unique_ptr<Enemy> EnemySpawnManager::spawnEnemy(
 }
 
 sf::Vector2f EnemySpawnManager::getRandomSpawnPosition(
-    const sf::Vector2f &playerPosition,
     const sf::View &view)
 {
-    sf::Vector2f viewSize = view.getSize();
-    sf::Vector2f viewCenter = view.getCenter();
-    int side = rand() % 4; // Choose a random side around the player
-
-    switch (side)
-    {
-    case 0: // Top
-        return {viewCenter.x - viewSize.x / 2.f + static_cast<float>(rand() % int(viewSize.x)),
-                viewCenter.y - viewSize.y / 2.f - Constants::ENEMY_SPAWN_OFFSET};
-    case 1: // Left
-        return {viewCenter.x - viewSize.x / 2.f - Constants::ENEMY_SPAWN_OFFSET,
-                viewCenter.y - viewSize.y / 2.f + static_cast<float>(rand() % int(viewSize.y))};
-    case 2: // Right
-        return {viewCenter.x + viewSize.x / 2.f + Constants::ENEMY_SPAWN_OFFSET,
-                viewCenter.y - viewSize.y / 2.f + static_cast<float>(rand() % int(viewSize.y))};
-    case 3: // Bottom
-        return {viewCenter.x - viewSize.x / 2.f + static_cast<float>(rand() % int(viewSize.x)),
-                viewCenter.y + viewSize.y / 2.f + Constants::ENEMY_SPAWN_OFFSET};
-    default:
-        return {0.f, 0.f}; // Fallback (this should never occur)
-    }
+    int side = (rand() % 4) + 1; // Choose a random side around the player
+    Direction dir = static_cast<Direction>(side);
+    return GameUtils::GetRandomPositionOnSide(view, dir, Constants::ENEMY_SPAWN_OFFSET);
 }

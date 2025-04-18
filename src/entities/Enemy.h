@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "EnemyType.h"
+#include "constants/EnemyType.h"
 
 class Enemy
 {

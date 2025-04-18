@@ -1,6 +1,6 @@
 #include <memory>
 
-#include "Constants.h"
+#include "constants/Constants.h"
 #include "utils/InputUtils.h"
 #include "MenuState.h"
 #include "PauseState.h"

@@ -1,5 +1,6 @@
-#include "Constants.h"
+#include "constants/Constants.h"
 #include "UpgradeBoxSpawnManager.h"
+#include "utils/GameUtils.h"
 
 UpgradeBoxSpawnManager::UpgradeBoxSpawnManager()
 {
@@ -17,8 +18,7 @@ UpgradeBoxSpawnManager::~UpgradeBoxSpawnManager()
 void UpgradeBoxSpawnManager::spawnUpgradeBoxes(float deltaTime,
                                                std::vector<UpgradeBox> &upgradeBoxes,
                                                const sf::Texture &upgradeBoxesTexture,
-                                               const sf::Vector2f &playerPosition,
-                                               const sf::Vector2f &playerDirection,
+                                               const Direction &playerDirection,
                                                const sf::View &view)
 {
     weaponBoxTimer -= deltaTime;
@@ -30,7 +30,7 @@ void UpgradeBoxSpawnManager::spawnUpgradeBoxes(float deltaTime,
         upgradeBoxes.emplace_back(
             spawnBox(UpgradeBoxType::HEALTH,
                      upgradeBoxesTexture,
-                     playerPosition, playerDirection,
+                     playerDirection,
                      view));
 
         resetHealthBoxTimer();
@@ -42,7 +42,7 @@ void UpgradeBoxSpawnManager::spawnUpgradeBoxes(float deltaTime,
         upgradeBoxes.emplace_back(
             spawnBox(randomWeaponType(),
                      upgradeBoxesTexture,
-                     playerPosition, playerDirection,
+                     playerDirection,
                      view));
 
         resetWeaponBoxTimer();
@@ -53,11 +53,10 @@ void UpgradeBoxSpawnManager::spawnUpgradeBoxes(float deltaTime,
 
 UpgradeBox UpgradeBoxSpawnManager::spawnBox(UpgradeBoxType boxType,
                                             const sf::Texture &texture,
-                                            const sf::Vector2f &playerPosition,
-                                            const sf::Vector2f &playerDirection,
+                                            const Direction &playerDirection,
                                             const sf::View &view)
 {
-    sf::Vector2f spawnPosition = calculateSpawnPosition(playerPosition, playerDirection, view);
+    sf::Vector2f spawnPosition = calculateSpawnPosition(playerDirection, view);
     float lifetime = 30.0f;
 
     return UpgradeBox(boxType,
@@ -65,23 +64,18 @@ UpgradeBox UpgradeBoxSpawnManager::spawnBox(UpgradeBoxType boxType,
                       spawnPosition, lifetime);
 }
 
-sf::Vector2f UpgradeBoxSpawnManager::calculateSpawnPosition(const sf::Vector2f &playerPosition,
-                                                            const sf::Vector2f &playerDirection,
-                                                            const sf::View &view)
+sf::Vector2f UpgradeBoxSpawnManager::calculateSpawnPosition(
+    const Direction &playerDirection,
+    const sf::View &view)
 {
-    sf::Vector2f viewSize = view.getSize();
-
-    // If no movement, spawn out top right
-    if (playerDirection == sf::Vector2f(0.f, 0.f))
+    Direction side = playerDirection;
+    if (playerDirection == Direction::NONE)
     {
-        return playerPosition + sf::Vector2f(viewSize.x / 2.f + Constants::UPGRADE_BOX_SPAWN_OFFSET,
-                                             viewSize.y / 2.f + Constants::UPGRADE_BOX_SPAWN_OFFSET);
+        int randomInt = (rand() % 4) + 1; // Choose a random side around the player
+        side = static_cast<Direction>(randomInt);
     }
 
-    sf::Vector2f offscreenOffset = sf::Vector2f(playerDirection.x * Constants::UPGRADE_BOX_SPAWN_OFFSET,
-                                                playerDirection.y * Constants::UPGRADE_BOX_SPAWN_OFFSET);
-    sf::Vector2f spawnOffset = playerDirection * std::max(viewSize.x, viewSize.y) / 2.f + offscreenOffset;
-    return playerPosition + spawnOffset;
+    return GameUtils::GetRandomPositionOnSide(view, side, Constants::UPGRADE_BOX_SPAWN_OFFSET);
 }
 
 UpgradeBoxType UpgradeBoxSpawnManager::randomWeaponType()

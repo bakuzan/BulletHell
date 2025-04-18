@@ -37,5 +37,5 @@ namespace Constants
     const float ENEMY_SHOOTER_DISTANCE = 500.0f;
 
     const float UPGRADE_BOX_LIFETIME_LIMIT = 30.0f;
-    const float UPGRADE_BOX_SPAWN_OFFSET = 5.0f;
+    const float UPGRADE_BOX_SPAWN_OFFSET = 64.0f;
 };

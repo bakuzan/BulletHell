@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include "ShooterEnemy.h"
-#include "Constants.h"
+#include "constants/Constants.h"
 #include "utils/GameUtils.h"
 
 ShooterEnemy::ShooterEnemy(

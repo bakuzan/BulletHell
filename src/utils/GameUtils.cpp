@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "constants/Constants.h"
 #include "GameUtils.h"
 
 namespace GameUtils
@@ -32,6 +33,34 @@ namespace GameUtils
         sprite.setRotation(angle + alignmentOffset); // Adjust for sprite alignment
 
         return angleRadians;
+    }
+
+    const sf::Vector2f GetRandomPositionOnSide(
+        const sf::View &view,
+        Direction side,
+        float offset)
+    {
+        sf::Vector2f viewSize = view.getSize();
+        sf::Vector2f viewCenter = view.getCenter();
+
+        switch (side)
+        {
+        case Direction::UP:
+            return {viewCenter.x - viewSize.x / 2.f + static_cast<float>(rand() % int(viewSize.x)),
+                    viewCenter.y - viewSize.y / 2.f - offset};
+        case Direction::LEFT:
+            return {viewCenter.x - viewSize.x / 2.f - offset,
+                    viewCenter.y - viewSize.y / 2.f + static_cast<float>(rand() % int(viewSize.y))};
+        case Direction::RIGHT:
+            return {viewCenter.x + viewSize.x / 2.f + offset,
+                    viewCenter.y - viewSize.y / 2.f + static_cast<float>(rand() % int(viewSize.y))};
+        case Direction::DOWN:
+            return {viewCenter.x - viewSize.x / 2.f + static_cast<float>(rand() % int(viewSize.x)),
+                    viewCenter.y + viewSize.y / 2.f + offset};
+        case Direction::NONE:
+        default:
+            return {0.f, 0.f}; // Fallback (this should never occur)
+        }
     }
 
     std::string formatScoreText(int score)

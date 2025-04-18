@@ -7,7 +7,7 @@
 #include "entities/ShooterEnemy.h"
 #include "utils/GameUtils.h"
 #include "utils/InputUtils.h"
-#include "Constants.h"
+#include "constants/Constants.h"
 #include "GameState.h"
 #include "PauseState.h"
 #include "GameOverState.h"
@@ -19,7 +19,8 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
       healthBar(gameData.textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
                 gameData.textureManager.getTexture(TextureId::HEALTHBAR_FILLING),
                 100.0f),
-      shootProjectile(false)
+      shootProjectile(false),
+      playerLastDirectionMoved(Direction::NONE)
 {
     // Load background
     const sf::Texture &backgroundTexture = gameData.textureManager.getTexture(TextureId::BACKGROUND);
@@ -91,7 +92,6 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         deltaTime.asSeconds(),
         gameData.getEnemies(),
         gameData.textureManager.getTexture(TextureId::SPACESHIPS),
-        player.getPosition(),
         view);
 
     updateEnemies(deltaTime.asSeconds(), player.getPosition());
@@ -106,7 +106,6 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         deltaTime.asSeconds(),
         gameData.getUpgradeBoxes(),
         gameData.textureManager.getTexture(TextureId::UPGRADE_BOXES),
-        player.getPosition(),
         playerLastDirectionMoved,
         view);
     updateUpgradeBoxes(deltaTime);
@@ -159,22 +158,22 @@ void GameState::movePlayer(sf::Time &deltaTime)
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Left, sf::Keyboard::A}))
     {
         player.move(-playerSpeed * deltaTime.asSeconds(), 0);
-        playerLastDirectionMoved = sf::Vector2f(-1.f, 0.f);
+        playerLastDirectionMoved = Direction::LEFT;
     }
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Right, sf::Keyboard::D}))
     {
         player.move(playerSpeed * deltaTime.asSeconds(), 0);
-        playerLastDirectionMoved = sf::Vector2f(1.f, 0.f);
+        playerLastDirectionMoved = Direction::RIGHT;
     }
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Up, sf::Keyboard::W}))
     {
         player.move(0, -playerSpeed * deltaTime.asSeconds());
-        playerLastDirectionMoved = sf::Vector2f(0.f, -1.f);
+        playerLastDirectionMoved = Direction::UP;
     }
     if (InputUtils::isAnyKeyPressed({sf::Keyboard::Down, sf::Keyboard::S}))
     {
         player.move(0, playerSpeed * deltaTime.asSeconds());
-        playerLastDirectionMoved = sf::Vector2f(0.f, 1.f);
+        playerLastDirectionMoved = Direction::DOWN;
     }
 }
 

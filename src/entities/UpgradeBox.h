@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "UpgradeBoxType.h"
+#include "constants/UpgradeBoxType.h"
 
 class UpgradeBox
 {

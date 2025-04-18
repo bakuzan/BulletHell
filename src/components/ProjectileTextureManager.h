@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 
-#include "ProjectileType.h"
+#include "constants/ProjectileType.h"
 
 class ProjectileTextureManager
 {
