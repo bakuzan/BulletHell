@@ -27,9 +27,8 @@ public:
     Player(const sf::Texture &texture, sf::IntRect textureRect);
     ~Player();
 
-    void handleEvent(sf::Event evnt);
-    void update(float deltaTime,
-                sf::RenderWindow &window);
+    void handleEvent(const sf::Event &event);
+    void update(float deltaTime, sf::RenderWindow &window);
     void render(sf::RenderWindow &window) const;
     void reset();
 

@@ -24,7 +24,7 @@ Player::~Player()
 
 // Publics
 
-void Player::handleEvent(sf::Event event)
+void Player::handleEvent(const sf::Event &event)
 {
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left)
