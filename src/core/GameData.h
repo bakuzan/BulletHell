@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "entities/Enemy.h"
+#include "entities/Player.h"
 #include "entities/Projectile.h"
 #include "entities/UpgradeBox.h"
 #include "components/EnemyTextureManager.h"
@@ -20,15 +21,13 @@ private:
     std::vector<std::unique_ptr<Enemy>> enemies;
     std::vector<UpgradeBox> upgradeBoxes;
 
-    float playerHealth;
+    std::unique_ptr<Player> player;
     int playerScore;
 
 public:
     sf::Font gameFont;
 
     TextureManager textureManager;
-    ProjectileTextureManager projectileTextureManager;
-    UpgradeBoxTextureManager upgradeBoxTextureManager;
 
 public:
     GameData();
@@ -46,8 +45,8 @@ public:
     void addUpgradeBox(const UpgradeBox &upgrade);
     void removeUpgradeBox(size_t index);
 
-    const float getPlayerHealth() const;
-    void updatePlayerHealth(float adjustment);
+    std::unique_ptr<Player> &getPlayer();
+
     const int getScore() const;
     void updateScore(int adjustment);
 

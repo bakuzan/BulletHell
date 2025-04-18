@@ -18,21 +18,11 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
       window(window),
       healthBar(gameData.textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
                 gameData.textureManager.getTexture(TextureId::HEALTHBAR_FILLING),
-                100.0f),
-      shootProjectile(false),
-      playerLastDirectionMoved(Direction::NONE)
+                100.0f)
 {
     // Load background
     const sf::Texture &backgroundTexture = gameData.textureManager.getTexture(TextureId::BACKGROUND);
     background.setTexture(&backgroundTexture);
-
-    // Load player
-    const sf::Texture &spaceshipsTexture = gameData.textureManager.getTexture(TextureId::SPACESHIPS);
-    player.setTexture(spaceshipsTexture);
-    player.setTextureRect(sf::IntRect(392, Constants::SPRITE_OFFSET_Y, Constants::SPRITE_WIDTH_PLAYER, Constants::SPRITE_HEIGHT_PLAYER));
-    player.setScale(0.3f, 0.3f);
-    player.setOrigin(Constants::SPRITE_WIDTH_PLAYER / 2.0f, Constants::SPRITE_HEIGHT_PLAYER / 2.0f);
-    player.setPosition(100.0f, 100.0f);
 
     // Setup points display
     scoreText.setFont(gameData.gameFont);
@@ -43,7 +33,7 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
 
     // Set up the view + adjust background
     view.setSize(Constants::VIEW_WIDTH, Constants::VIEW_HEIGHT);
-    view.setCenter(player.getPosition());
+    view.setCenter(gameData.getPlayer()->getSprite().getPosition());
     ensureBackgroundSizeIsLinkedToViewSize(
         view.getCenter() - view.getSize() / 2.0f,
         view.getSize());
@@ -74,16 +64,7 @@ void GameState::handleEvent(const sf::Event &event)
         stateManager.pushState(std::make_unique<PauseState>(gameData, stateManager, window));
     }
 
-    if (event.type == sf::Event::MouseButtonPressed &&
-        event.mouseButton.button == sf::Mouse::Left)
-    {
-        shootProjectile = true;
-    }
-
-    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Space}))
-    {
-        shootProjectile = true;
-    }
+    gameData.getPlayer()->handleEvent(event);
 }
 
 void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
@@ -94,11 +75,19 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         gameData.textureManager.getTexture(TextureId::SPACESHIPS),
         view);
 
-    updateEnemies(deltaTime.asSeconds(), player.getPosition());
-    processEnemyShooting(deltaTime.asSeconds(), player.getPosition());
+    auto &player = gameData.getPlayer();
+    auto playerSprite = player->getSprite();
+    updateEnemies(deltaTime.asSeconds(), playerSprite.getPosition());
+    processEnemyShooting(deltaTime.asSeconds(), playerSprite.getPosition());
 
-    movePlayer(deltaTime);
-    aimAndShoot(window);
+    player->update(deltaTime.asSeconds(), window);
+    if (auto playerProjectile = player->getShootData())
+    {
+        projectileSpawnManager.spawnPlayerProjectile(
+            gameData.textureManager.getTexture(TextureId::PROJECTILES),
+            gameData.getProjectiles(),
+            *playerProjectile);
+    }
 
     updateProjectiles(deltaTime, window);
 
@@ -106,12 +95,12 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         deltaTime.asSeconds(),
         gameData.getUpgradeBoxes(),
         gameData.textureManager.getTexture(TextureId::UPGRADE_BOXES),
-        playerLastDirectionMoved,
+        player->getLastDirectionMoved(),
         view);
     updateUpgradeBoxes(deltaTime);
 
     // Update view to follow player
-    view.setCenter(player.getPosition());
+    view.setCenter(playerSprite.getPosition());
 
     // Update background texture rect for tiling by matching the view
     sf::Vector2f viewPos = view.getCenter() - view.getSize() / 2.0f;
@@ -131,7 +120,7 @@ void GameState::render(sf::RenderWindow &window)
         upgrade.render(window);
     }
 
-    window.draw(player);
+    gameData.getPlayer()->render(window);
 
     auto &enemies = gameData.getEnemies();
     for (const auto &enemy : enemies)
@@ -152,79 +141,11 @@ void GameState::render(sf::RenderWindow &window)
 
 // Private
 
-void GameState::movePlayer(sf::Time &deltaTime)
-{
-    const float playerSpeed = Constants::BASE_PLAYER_SPEED;
-    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Left, sf::Keyboard::A}))
-    {
-        player.move(-playerSpeed * deltaTime.asSeconds(), 0);
-        playerLastDirectionMoved = Direction::LEFT;
-    }
-    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Right, sf::Keyboard::D}))
-    {
-        player.move(playerSpeed * deltaTime.asSeconds(), 0);
-        playerLastDirectionMoved = Direction::RIGHT;
-    }
-    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Up, sf::Keyboard::W}))
-    {
-        player.move(0, -playerSpeed * deltaTime.asSeconds());
-        playerLastDirectionMoved = Direction::UP;
-    }
-    if (InputUtils::isAnyKeyPressed({sf::Keyboard::Down, sf::Keyboard::S}))
-    {
-        player.move(0, playerSpeed * deltaTime.asSeconds());
-        playerLastDirectionMoved = Direction::DOWN;
-    }
-}
-
-void GameState::aimAndShoot(sf::RenderWindow &window)
-{
-    // Turn the player to face the mouse position
-    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-    sf::Vector2f worldMousePosition = window.mapPixelToCoords(mousePosition);
-    sf::Vector2f currentPlayerPos = player.getPosition();
-
-    float angleRadians = GameUtils::rotateTowards(
-        player,
-        currentPlayerPos,
-        worldMousePosition,
-        270.0f);
-
-    // Did the player shoot? Create projectile(s)
-    if (shootProjectile)
-    {
-        // Calculate the bullet's velocity based on the player's rotation
-        sf::Vector2f direction(std::cos(angleRadians), std::sin(angleRadians));
-        sf::Vector2f bulletVelocity = direction * (Constants::PROJECTILE_SPEED_BULLET);
-
-        // Calculate bullet spawn position (front-center of the player)
-        float playerScale = player.getScale().x;                                                  // Assume it is the same both x/y
-        float bulletWidth = 15.0f;                                                                // (size is the sprite size (300) * sprite scale (0.05))
-        float bulletHeight = 25.0f;                                                               // (size is the sprite size (500) * sprite scale (0.05))
-        sf::Vector2f offset = direction * ((Constants::SPRITE_WIDTH_PLAYER * playerScale) / 2.f); // Move to front
-        sf::Vector2f rotatedCenterOffset = sf::Vector2f(
-            -bulletWidth / 2.f * std::cos(angleRadians) + bulletHeight / 2.f * std::sin(angleRadians),
-            -bulletWidth / 2.f * std::sin(angleRadians) - bulletHeight / 2.f * std::cos(angleRadians));
-
-        // Calculate final spawn position
-        sf::Vector2f spawnPosition = player.getPosition() + offset + rotatedCenterOffset;
-
-        auto &projectiles = gameData.getProjectiles();
-        projectiles.emplace_back(ProjectileType::BULLET,
-                                 gameData.textureManager.getTexture(TextureId::PROJECTILES),
-                                 gameData.projectileTextureManager.getTextureRect(ProjectileType::BULLET),
-                                 spawnPosition,
-                                 bulletVelocity,
-                                 Constants::PROJECTILE_DAMAGE_BULLET);
-
-        shootProjectile = false;
-    }
-}
-
 void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &window)
 {
     auto &projectiles = gameData.getProjectiles();
     auto &enemies = gameData.getEnemies();
+    auto &player = gameData.getPlayer();
 
     for (auto projIt = projectiles.begin(); projIt != projectiles.end();)
     {
@@ -259,16 +180,16 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
             }
         }
         else if (projIt->getOrigin() == ProjectileOrigin::ENEMY &&
-                 projIt->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
+                 projIt->getSprite().getGlobalBounds().intersects(player->getSprite().getGlobalBounds()))
         {
             projIt = projectiles.erase(projIt);
             projectileRemoved = true;
 
             // Effects of player being hit
-            gameData.updatePlayerHealth(-projIt->getDamageInflicts());
-            healthBar.setHealth(gameData.getPlayerHealth());
+            player->updateHealth(-projIt->getDamageInflicts());
+            healthBar.setHealth(player->getHealth());
 
-            if (gameData.getPlayerHealth() <= 0)
+            if (player->getHealth() <= 0)
             {
                 stateManager.pushState(std::make_unique<GameOverState>(gameData, stateManager, window));
             }
@@ -291,6 +212,8 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 void GameState::updateUpgradeBoxes(const sf::Time &deltaTime)
 {
     auto &boxes = gameData.getUpgradeBoxes();
+    auto &player = gameData.getPlayer();
+    sf::FloatRect playerBounds = player->getSprite().getGlobalBounds();
 
     for (auto boxIt = boxes.begin(); boxIt != boxes.end();)
     {
@@ -300,7 +223,7 @@ void GameState::updateUpgradeBoxes(const sf::Time &deltaTime)
         {
             boxIt = boxes.erase(boxIt);
         }
-        else if (boxIt->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
+        else if (boxIt->getSprite().getGlobalBounds().intersects(playerBounds))
         {
             // TODO Do pick up upgrade logic
 
@@ -316,20 +239,23 @@ void GameState::updateUpgradeBoxes(const sf::Time &deltaTime)
 void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPosition)
 {
     auto &enemies = gameData.getEnemies();
+    auto &player = gameData.getPlayer();
+    sf::FloatRect playerBounds = player->getSprite().getGlobalBounds();
+
     for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
     {
         (*enemyIt)->update(deltaTime, playerPosition);
 
-        if ((*enemyIt)->getSprite().getGlobalBounds().intersects(player.getGlobalBounds()))
+        if ((*enemyIt)->getSprite().getGlobalBounds().intersects(playerBounds))
         {
             // Effects of hitting player
             float collisionDamage = (*enemyIt)->getHealth() * 0.4f;
-            gameData.updatePlayerHealth(-collisionDamage);
-            healthBar.setHealth(gameData.getPlayerHealth());
+            player->updateHealth(-collisionDamage);
+            healthBar.setHealth(player->getHealth());
 
             enemyIt = enemies.erase(enemyIt); // Current assumption will be enemies die on collision!
 
-            if (gameData.getPlayerHealth() <= 0)
+            if (player->getHealth() <= 0)
             {
                 stateManager.pushState(std::make_unique<GameOverState>(gameData, stateManager, window));
             }
@@ -352,12 +278,10 @@ void GameState::processEnemyShooting(float deltaTime, const sf::Vector2f &player
         {
             if (auto projectile = shooterEnemy->getShootData(deltaTime, playerPosition))
             {
-                projectiles.emplace_back(ProjectileType::BULLET_ALIEN,
-                                         gameData.textureManager.getTexture(TextureId::PROJECTILES),
-                                         gameData.projectileTextureManager.getTextureRect(ProjectileType::BULLET_ALIEN),
-                                         projectile->position,
-                                         projectile->direction,
-                                         projectile->damage);
+                projectileSpawnManager.spawnEnemyProjectile(
+                    gameData.textureManager.getTexture(TextureId::PROJECTILES),
+                    projectiles,
+                    *projectile);
             }
         }
     }

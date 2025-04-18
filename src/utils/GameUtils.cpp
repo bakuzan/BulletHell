@@ -28,7 +28,7 @@ namespace GameUtils
         float dy = targetPosition.y - sourcePosition.y;
 
         float angleRadians = std::atan2(dy, dx);
-        float angle = angleRadians * (180.f / 3.14159f); // Convert to degrees
+        float angle = angleRadians * (180.f / M_PI); // Convert to degrees
 
         sprite.setRotation(angle + alignmentOffset); // Adjust for sprite alignment
 

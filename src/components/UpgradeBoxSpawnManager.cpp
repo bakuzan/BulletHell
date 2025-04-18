@@ -89,9 +89,9 @@ UpgradeBoxType UpgradeBoxSpawnManager::randomWeaponType()
 
 void UpgradeBoxSpawnManager::resetHealthBoxTimer()
 {
-    healthBoxTimer = 6.0f;
+    healthBoxTimer = 6.0f; // TODO 48.0f
 }
 void UpgradeBoxSpawnManager::resetWeaponBoxTimer()
 {
-    weaponBoxTimer = 3.0f;
+    weaponBoxTimer = 3.0f; // TODO 35.0f
 }

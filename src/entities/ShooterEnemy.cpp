@@ -2,6 +2,7 @@
 
 #include "ShooterEnemy.h"
 #include "constants/Constants.h"
+#include "constants/ProjectileType.h"
 #include "utils/GameUtils.h"
 
 ShooterEnemy::ShooterEnemy(
@@ -51,6 +52,7 @@ std::optional<ProjectileData> ShooterEnemy::getShootData(float deltaTime, const 
         auto position = sprite.getPosition();
         auto direction = GameUtils::normaliseVector(playerPosition - sprite.getPosition());
         return ProjectileData(
+            ProjectileType::BULLET_ALIEN,
             position,
             direction * Constants::PROJECTILE_SPEED_BULLET_ALIEN,
             Constants::PROJECTILE_DAMAGE_BULLET_ALIEN);

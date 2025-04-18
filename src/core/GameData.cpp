@@ -1,4 +1,5 @@
 #include "GameData.h"
+#include "constants/Constants.h"
 
 GameData::GameData()
 {
@@ -15,8 +16,12 @@ GameData::GameData()
         throw std::runtime_error("Failed to load font");
     }
 
-    playerHealth = 100.0f;
-    playerScore = 0;
+    // Init player
+    player = std::make_unique<Player>(
+        textureManager.getTexture(TextureId::SPACESHIPS),
+        sf::IntRect(392, Constants::SPRITE_OFFSET_Y, Constants::SPRITE_WIDTH_PLAYER, Constants::SPRITE_HEIGHT_PLAYER));
+
+    reset();
 }
 
 GameData::~GameData()
@@ -74,15 +79,10 @@ void GameData::removeUpgradeBox(size_t index)
     upgradeBoxes.erase(upgradeBoxes.begin() + index);
 }
 
-// Player attributes
-const float GameData::getPlayerHealth() const
+// Player
+std::unique_ptr<Player> &GameData::getPlayer()
 {
-    return playerHealth;
-}
-
-void GameData::updatePlayerHealth(float adjustment)
-{
-    playerHealth = std::max(0.0f, playerHealth + adjustment); // Clamp at 0
+    return player;
 }
 
 const int GameData::getScore() const
@@ -102,6 +102,6 @@ void GameData::reset()
     enemies.clear();
     upgradeBoxes.clear();
 
-    playerHealth = 100.0f;
+    player->reset();
     playerScore = 0;
 }
