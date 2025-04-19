@@ -17,7 +17,7 @@
 class GameData
 {
 private:
-    std::vector<Projectile> projectiles;
+    std::vector<std::unique_ptr<Projectile>> projectiles;
     std::vector<std::unique_ptr<Enemy>> enemies;
     std::vector<UpgradeBox> upgradeBoxes;
 
@@ -33,18 +33,9 @@ public:
     GameData();
     ~GameData();
 
-    std::vector<Projectile> &getProjectiles();
-    void addProjectile(const Projectile &projectile);
-    void removeProjectile(size_t index);
-
+    std::vector<std::unique_ptr<Projectile>> &getProjectiles();
     std::vector<std::unique_ptr<Enemy>> &getEnemies();
-    void addEnemy(std::unique_ptr<Enemy> enemy);
-    void removeEnemy(size_t index);
-
     std::vector<UpgradeBox> &getUpgradeBoxes();
-    void addUpgradeBox(const UpgradeBox &upgrade);
-    void removeUpgradeBox(size_t index);
-
     std::unique_ptr<Player> &getPlayer();
 
     const int getScore() const;

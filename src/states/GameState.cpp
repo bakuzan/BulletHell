@@ -87,7 +87,8 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         projectileSpawnManager.spawnPlayerProjectile(
             gameData.textureManager.getTexture(TextureId::PROJECTILES),
             gameData.getProjectiles(),
-            *playerProjectile);
+            *playerProjectile,
+            player->getSprite().getRotation());
     }
 
     updateProjectiles(deltaTime, window);
@@ -132,7 +133,7 @@ void GameState::render(sf::RenderWindow &window)
     auto &projectiles = gameData.getProjectiles();
     for (const auto &projectile : projectiles)
     {
-        projectile.render(window);
+        projectile->render(window);
     }
 
     // UI Elements
@@ -150,26 +151,31 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
     for (auto projIt = projectiles.begin(); projIt != projectiles.end();)
     {
-        projIt->update(deltaTime);
+        auto projectile = projIt->get();
+        projectile->update(deltaTime);
 
         bool projectileRemoved = false;
 
-        if (projIt->getOrigin() == ProjectileOrigin::PLAYER)
+        if (projectile->getOrigin() == ProjectileOrigin::PLAYER)
         {
             for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
             {
-                if (projIt->getSprite().getGlobalBounds().intersects((*enemyIt)->getSprite().getGlobalBounds()))
+                auto &enemy = **enemyIt;
+                if (projectile->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()))
                 {
                     // Effects of shooting enemy
-                    (*enemyIt)->updateHealth(-projIt->getDamageInflicts());
-                    if ((*enemyIt)->getHealth() <= 0.0f)
+                    enemy.updateHealth(-projectile->getDamageInflicts());
+                    if (enemy.getHealth() <= 0.0f)
                     {
-                        gameData.updateScore((*enemyIt)->getPointsValue());
+                        gameData.updateScore(enemy.getPointsValue());
                         updateScoreText(gameData.getScore());
 
                         enemyIt = enemies.erase(enemyIt);
                     }
 
+                    // TODO handle different projectile types!!
+                    // Lazer    - I will need to think about this as it will require a lot of checking
+                    // Missile  - Should spawn a "shockwave"
                     projIt = projectiles.erase(projIt);
                     projectileRemoved = true;
                     break;
@@ -180,14 +186,14 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                 }
             }
         }
-        else if (projIt->getOrigin() == ProjectileOrigin::ENEMY &&
-                 projIt->getSprite().getGlobalBounds().intersects(player->getSprite().getGlobalBounds()))
+        else if (projectile->getOrigin() == ProjectileOrigin::ENEMY &&
+                 projectile->getSprite().getGlobalBounds().intersects(player->getSprite().getGlobalBounds()))
         {
             projIt = projectiles.erase(projIt);
             projectileRemoved = true;
 
             // Effects of player being hit
-            player->updateHealth(-projIt->getDamageInflicts());
+            player->updateHealth(-projectile->getDamageInflicts());
             healthBar.setHealth(player->getHealth());
 
             if (player->getHealth() <= 0)
@@ -198,7 +204,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
         if (!projectileRemoved)
         {
-            if (projIt->isOffScreen(window))
+            if (projectile->isOffScreen(window))
             {
                 projIt = projectiles.erase(projIt);
             }
@@ -249,12 +255,16 @@ void GameState::processUpgradeBoxPickUp(const UpgradeBox &upgradeBox)
     }
     case UpgradeBoxType::DOUBLE_SHOT:
     case UpgradeBoxType::LAZER:
-    case UpgradeBoxType::MISSLE:
+    case UpgradeBoxType::MISSILE:
+    {
+        auto &player = gameData.getPlayer();
+        player->setWeaponType(mapUpgradeBoxToWeapon(upgradeBox.getType()));
         break;
+    }
     case UpgradeBoxType::COUNT:
     default:
         std::cerr << "Unknown upgrade box type! = "
-                  << std::to_string(upgradeBox.getType())
+                  << std::to_string(static_cast<int>(upgradeBox.getType()))
                   << std::endl;
         break;
     }
@@ -268,12 +278,13 @@ void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPositio
 
     for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
     {
-        (*enemyIt)->update(deltaTime, playerPosition);
+        auto enemy = enemyIt->get();
+        enemy->update(deltaTime, playerPosition);
 
-        if ((*enemyIt)->getSprite().getGlobalBounds().intersects(playerBounds))
+        if (enemy->getSprite().getGlobalBounds().intersects(playerBounds))
         {
             // Effects of hitting player
-            float collisionDamage = (*enemyIt)->getHealth() * 0.4f;
+            float collisionDamage = enemy->getHealth() * 0.4f;
             player->updateHealth(-collisionDamage);
             healthBar.setHealth(player->getHealth());
 
@@ -337,4 +348,21 @@ void GameState::ensureBackgroundSizeIsLinkedToViewSize(
         static_cast<int>(viewPos.y),
         static_cast<int>(viewSize.x),
         static_cast<int>(viewSize.y)));
+}
+
+WeaponType GameState::mapUpgradeBoxToWeapon(UpgradeBoxType upgradeType)
+{
+    switch (upgradeType)
+    {
+    case UpgradeBoxType::DOUBLE_SHOT:
+        return WeaponType::DOUBLE_SHOT;
+    case UpgradeBoxType::LAZER:
+        return WeaponType::LAZER;
+    case UpgradeBoxType::MISSILE:
+        return WeaponType::MISSILE;
+    case UpgradeBoxType::HEALTH:
+    case UpgradeBoxType::COUNT:
+    default:
+        return WeaponType::BASIC; // Shouldn't hit!
+    }
 }

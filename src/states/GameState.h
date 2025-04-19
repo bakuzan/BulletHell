@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "constants/UpgradeBoxType.h"
+#include "constants/WeaponType.h"
 #include "core/GameData.h"
 #include "core/State.h"
 #include "core/StateManager.h"
@@ -45,6 +47,8 @@ private:
     void ensureBackgroundSizeIsLinkedToViewSize(
         const sf::Vector2f &viewPos,
         const sf::Vector2f &viewSize);
+
+    WeaponType mapUpgradeBoxToWeapon(UpgradeBoxType upgradeType);
 
 public:
     GameState(GameData &data, StateManager &manager, sf::RenderWindow &window);

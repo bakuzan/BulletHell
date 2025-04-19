@@ -9,7 +9,8 @@ Player::Player(const sf::Texture &texture, sf::IntRect textureRect,
                float maxHealth, float initHealth)
     : maxHealth(maxHealth), health(initHealth), initHealth(initHealth),
       lastDirectionMoved(Direction::NONE),
-      shoot(false)
+      shoot(false),
+      weaponType(WeaponType::BASIC)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -56,17 +57,31 @@ void Player::update(float deltaTime,
         currentPlayerPos,
         worldMousePosition,
         rotationOffset);
+
+    // Handle weapon
+    if (weaponTimeout > 0.0f)
+    {
+        weaponTimeout -= deltaTime;
+        if (weaponTimeout <= 0.0f)
+        {
+            weaponType = WeaponType::BASIC;
+            weaponTimeout = 0.0f;
+        }
+    }
 }
 
 void Player::render(sf::RenderWindow &window) const
 {
     window.draw(sprite);
+    // TODO Consider ui for weaponType and timeout!
 }
 
 void Player::reset()
 {
     health = initHealth;
     shoot = false;
+    weaponTimeout = 0.0f;
+    weaponType = WeaponType::BASIC;
 }
 
 std::optional<ProjectileData> Player::getShootData()
@@ -96,13 +111,18 @@ std::optional<ProjectileData> Player::getShootData()
         sf::Vector2f spawnPosition = sprite.getPosition() + offset + rotatedCenterOffset;
 
         return ProjectileData(
-            ProjectileType::BULLET,
+            getProjectileTypeForWeapon(weaponType),
             spawnPosition,
             bulletVelocity,
             Constants::PROJECTILE_DAMAGE_BULLET);
     }
 
     return std::nullopt;
+}
+
+const Direction Player::getLastDirectionMoved() const
+{
+    return lastDirectionMoved;
 }
 
 const sf::Sprite &Player::getSprite() const
@@ -120,9 +140,10 @@ void Player::updateHealth(float adjustment)
     health = std::max(0.0f, std::min(health + adjustment, maxHealth)); // Clamp between 0 and maxHealth
 }
 
-const Direction Player::getLastDirectionMoved() const
+void Player::setWeaponType(WeaponType type)
 {
-    return lastDirectionMoved;
+    weaponType = type;
+    weaponTimeout = 10.0f; // All weapons last 10s (for now)
 }
 
 // Privates
@@ -149,5 +170,21 @@ void Player::move(float deltaTime)
     {
         sprite.move(0, playerSpeed * deltaTime);
         lastDirectionMoved = Direction::DOWN;
+    }
+}
+
+ProjectileType Player::getProjectileTypeForWeapon(WeaponType weapon)
+{
+    switch (weapon)
+    {
+    case WeaponType::DOUBLE_SHOT:
+        return ProjectileType::DOUBLE_SHOT;
+    case WeaponType::LAZER:
+        return ProjectileType::LAZER;
+    case WeaponType::MISSILE:
+        return ProjectileType::MISSILE;
+    case WeaponType::BASIC:
+    default:
+        return ProjectileType::BULLET;
     }
 }

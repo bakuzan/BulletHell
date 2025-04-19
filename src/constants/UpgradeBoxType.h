@@ -1,11 +1,11 @@
 #pragma once
 
-enum UpgradeBoxType
+enum class UpgradeBoxType
 {
     HEALTH = 0,
     DOUBLE_SHOT,
     LAZER,
-    MISSLE,
+    MISSILE,
     // Must be LAST is not a real option!!
     COUNT,
 };

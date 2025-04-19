@@ -8,7 +8,7 @@
 
 class Projectile
 {
-private:
+protected:
     sf::Sprite sprite;
     sf::Vector2f velocity;
     ProjectileType type;
@@ -19,9 +19,9 @@ public:
                const sf::Texture &texture, sf::IntRect textureRect,
                sf::Vector2f spawnPosition, sf::Vector2f velocity,
                float damage);
-    ~Projectile();
+    virtual ~Projectile() = default;
 
-    void update(sf::Time deltaTime);
+    virtual void update(sf::Time deltaTime);
     void render(sf::RenderWindow &window) const;
 
     const ProjectileOrigin getOrigin() const;

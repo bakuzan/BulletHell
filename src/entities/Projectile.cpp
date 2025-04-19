@@ -14,19 +14,14 @@ Projectile::Projectile(ProjectileType type,
     sprite.setPosition(spawnPosition);
 }
 
-Projectile::~Projectile()
-{
-    // Destructor
-}
-
 // Publics
 
 void Projectile::update(sf::Time deltaTime)
 {
     sprite.move(velocity * deltaTime.asSeconds()); // Move the bullet
 
-    float angle = std::atan2(velocity.y, velocity.x) * 180.f / 3.14159f; // Convert radians to degrees
-    sprite.setRotation(angle + 90.0f);                                   // Add offset due to position in the spritesheet
+    float angle = std::atan2(velocity.y, velocity.x) * 180.f / M_PI; // Convert radians to degrees
+    sprite.setRotation(angle + 90.0f);                               // Add offset due to position in the spritesheet
 }
 
 void Projectile::render(sf::RenderWindow &window) const
@@ -39,6 +34,9 @@ const ProjectileOrigin Projectile::getOrigin() const
     switch (type)
     {
     case ProjectileType::BULLET:
+    case ProjectileType::DOUBLE_SHOT:
+    case ProjectileType::LAZER:
+    case ProjectileType::MISSILE:
         return ProjectileOrigin::PLAYER;
     case ProjectileType::BULLET_ALIEN:
         return ProjectileOrigin::ENEMY;

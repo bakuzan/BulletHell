@@ -1,6 +1,6 @@
 #pragma once
 
-enum TextureId
+enum class TextureId
 {
     BACKGROUND,
     SPACESHIPS,

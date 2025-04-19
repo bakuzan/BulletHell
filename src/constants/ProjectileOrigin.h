@@ -1,6 +1,6 @@
 #pragma once
 
-enum ProjectileOrigin
+enum class ProjectileOrigin
 {
     PLAYER = 0,
     ENEMY,

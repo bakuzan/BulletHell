@@ -5,6 +5,7 @@
 #include <optional>
 
 #include "constants/Direction.h"
+#include "constants/WeaponType.h"
 #include "data/ProjectileData.h"
 #include "Projectile.h"
 
@@ -18,12 +19,15 @@ private:
     float maxHealth;
 
     bool shoot;
+    float weaponTimeout;
+    WeaponType weaponType;
 
 public:
     static constexpr float rotationOffset = 270.0f;
 
 private:
     void move(float deltaTime);
+    ProjectileType getProjectileTypeForWeapon(WeaponType weapon);
 
 public:
     Player(const sf::Texture &texture, sf::IntRect textureRect,
@@ -36,10 +40,11 @@ public:
     void reset();
 
     std::optional<ProjectileData> getShootData();
+    const Direction getLastDirectionMoved() const;
     const sf::Sprite &getSprite() const;
     const float getHealth() const;
     void updateHealth(float adjustment);
-    const Direction getLastDirectionMoved() const;
+    void setWeaponType(WeaponType type);
 };
 
 #endif // PLAYER_H

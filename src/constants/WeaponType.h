@@ -1,10 +1,9 @@
 #pragma once
 
-enum ProjectileType
+enum class WeaponType
 {
-    BULLET = 0,
+    BASIC = 0,
     DOUBLE_SHOT,
     LAZER,
     MISSILE,
-    BULLET_ALIEN,
 };
