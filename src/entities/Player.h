@@ -14,6 +14,8 @@ private:
     sf::Sprite sprite;
     Direction lastDirectionMoved;
     float health;
+    float initHealth;
+    float maxHealth;
 
     bool shoot;
 
@@ -24,7 +26,8 @@ private:
     void move(float deltaTime);
 
 public:
-    Player(const sf::Texture &texture, sf::IntRect textureRect);
+    Player(const sf::Texture &texture, sf::IntRect textureRect,
+           float maxHealth, float initHealth);
     ~Player();
 
     void handleEvent(const sf::Event &event);

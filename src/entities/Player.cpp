@@ -5,8 +5,11 @@
 #include "utils/GameUtils.h"
 #include "utils/InputUtils.h"
 
-Player::Player(const sf::Texture &texture, sf::IntRect textureRect)
-    : lastDirectionMoved(Direction::NONE), shoot(false)
+Player::Player(const sf::Texture &texture, sf::IntRect textureRect,
+               float maxHealth, float initHealth)
+    : maxHealth(maxHealth), health(initHealth), initHealth(initHealth),
+      lastDirectionMoved(Direction::NONE),
+      shoot(false)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -62,7 +65,7 @@ void Player::render(sf::RenderWindow &window) const
 
 void Player::reset()
 {
-    health = 100.0f;
+    health = initHealth;
     shoot = false;
 }
 
@@ -114,7 +117,7 @@ const float Player::getHealth() const
 
 void Player::updateHealth(float adjustment)
 {
-    health = std::max(0.0f, health + adjustment); // Clamp at 0
+    health = std::max(0.0f, std::min(health + adjustment, maxHealth)); // Clamp between 0 and maxHealth
 }
 
 const Direction Player::getLastDirectionMoved() const

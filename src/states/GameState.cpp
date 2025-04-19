@@ -17,7 +17,8 @@ GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &wi
       stateManager(manager),
       window(window),
       healthBar(gameData.textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
-                gameData.textureManager.getTexture(TextureId::HEALTHBAR_FILLING),
+                gameData.textureManager.getTexture(TextureId::HEALTHBAR_FILLINGS),
+                300.0f,
                 100.0f)
 {
     // Load background
@@ -225,14 +226,30 @@ void GameState::updateUpgradeBoxes(const sf::Time &deltaTime)
         }
         else if (boxIt->getSprite().getGlobalBounds().intersects(playerBounds))
         {
-            // TODO Do pick up upgrade logic
-
+            processUpgradeBoxPickUp(*boxIt);
             boxIt = boxes.erase(boxIt);
         }
         else
         {
             ++boxIt;
         }
+    }
+}
+
+void GameState::processUpgradeBoxPickUp(const UpgradeBox &upgradeBox)
+{
+    switch (upgradeBox.getType())
+    {
+    case UpgradeBoxType::HEALTH:
+    {
+        auto &player = gameData.getPlayer();
+        player->updateHealth(50);
+        healthBar.setHealth(player->getHealth());
+        break;
+    }
+    default:
+        std::cerr << "Unknown upgrade box type!" << std::endl;
+        break;
     }
 }
 

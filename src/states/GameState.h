@@ -34,6 +34,7 @@ private:
 private:
     void updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &window);
     void updateUpgradeBoxes(const sf::Time &deltaTime);
+    void processUpgradeBoxPickUp(const UpgradeBox &upgradeBox);
 
     void updateEnemies(float deltaTime, const sf::Vector2f &playerPosition);
     void processEnemyShooting(float deltaTime, const sf::Vector2f &playerPosition);

@@ -9,10 +9,12 @@ private:
     sf::Sprite borderSprite;
     sf::Sprite fillingSprite;
     float currentHealth;
-    float totalHealth;
+    float singleBarHealth;
+    float absoluteMaxHealth;
 
 public:
-    HealthBar(const sf::Texture &borderTexture, const sf::Texture &fillingTexture, float totalHealth);
+    HealthBar(const sf::Texture &borderTexture, const sf::Texture &fillingTexture,
+              float maxHealth, float initHealth);
     ~HealthBar();
 
     void render(sf::RenderWindow &window, const sf::View &view);

@@ -23,6 +23,7 @@ public:
     void render(sf::RenderWindow &window) const;
 
     const sf::Sprite &getSprite() const;
+    const UpgradeBoxType &getType() const;
     const bool isExpired() const;
 };
 

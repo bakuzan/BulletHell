@@ -33,6 +33,11 @@ const sf::Sprite &UpgradeBox::getSprite() const
     return sprite;
 }
 
+const UpgradeBoxType &UpgradeBox::getType() const
+{
+    return type;
+}
+
 const bool UpgradeBox::isExpired() const
 {
     return lifeTime <= 0.0f;
