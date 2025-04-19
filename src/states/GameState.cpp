@@ -247,8 +247,15 @@ void GameState::processUpgradeBoxPickUp(const UpgradeBox &upgradeBox)
         healthBar.setHealth(player->getHealth());
         break;
     }
+    case UpgradeBoxType::DOUBLE_SHOT:
+    case UpgradeBoxType::LAZER:
+    case UpgradeBoxType::MISSLE:
+        break;
+    case UpgradeBoxType::COUNT:
     default:
-        std::cerr << "Unknown upgrade box type!" << std::endl;
+        std::cerr << "Unknown upgrade box type! = "
+                  << std::to_string(upgradeBox.getType())
+                  << std::endl;
         break;
     }
 }
