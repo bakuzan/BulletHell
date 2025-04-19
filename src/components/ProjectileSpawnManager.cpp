@@ -28,11 +28,10 @@ void ProjectileSpawnManager::spawnPlayerProjectile(
         data.type = ProjectileType::BULLET;
 
         float spacing = 10.0f;
-        float playerRotationRadians = (playerRotation - 90.0f) * M_PI / 180.0f; // Convert to radians
-        float angleOffset = M_PI / 2;                                           // 90 degrees in radians (perpendicular to the player's rotation)
+        float playerRotationRadians = playerRotation * M_PI / 180.0f; // Convert to radians
 
-        float offsetX = spacing * std::cos(playerRotationRadians + angleOffset);
-        float offsetY = spacing * std::sin(playerRotationRadians + angleOffset);
+        float offsetX = spacing * std::cos(playerRotationRadians);
+        float offsetY = spacing * std::sin(playerRotationRadians);
 
         // Left bullet
         data.position.x -= offsetX;
