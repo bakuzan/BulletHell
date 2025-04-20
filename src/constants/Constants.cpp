@@ -18,15 +18,21 @@ namespace Constants
 
     const float BASE_PLAYER_SPEED = 400.0f;
     const float PROJECTILE_SPEED_BULLET = 600.0f;
+    const float PROJECTILE_SPEED_LAZER = 1000.0f;
+    const float PROJECTILE_SPEED_MISSILE = 400.0f;
+    const float PROJECTILE_SPEED_MISSILE_DEBRIS = 600.0f;
     const float PROJECTILE_SPEED_BULLET_ALIEN = 600.0f;
 
     const float PROJECTILE_DAMAGE_BULLET = 25.0f;
+    const float PROJECTILE_DAMAGE_LAZER = 75.0f;
+    const float PROJECTILE_DAMAGE_MISSILE = 50.0f;
+    const float PROJECTILE_DAMAGE_MISSILE_DEBRIS = 25.0f;
     const float PROJECTILE_DAMAGE_BULLET_ALIEN = 25.0f;
 
     const float ENEMY_SPAWN_OFFSET = 5.0f;
-    const float ENEMY_SPAWN_RATE = 5.0f;
 
-    const float ENEMY_SPAWN_FACTOR_SHOOTER = 50.0f;
+    const float ENEMY_SPAWN_RATE = 8.0f;
+    const float ENEMY_SPAWN_FACTOR_SHOOTER = 0.1f;
 
     const int ENEMY_POINTS_BASIC = 10.0f;
     const int ENEMY_POINTS_SHOOTER = 50.0f;

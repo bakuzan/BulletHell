@@ -8,10 +8,10 @@
 EnemySpawnManager::EnemySpawnManager()
 {
     spawnData[EnemyType::BASIC] = {0.0f, Constants::ENEMY_SPAWN_RATE};
-    spawnData[EnemyType::SHOOTER] = {0.0f, Constants::ENEMY_SPAWN_RATE / Constants::ENEMY_SPAWN_FACTOR_SHOOTER};
+    spawnData[EnemyType::SHOOTER] = {0.0f, Constants::ENEMY_SPAWN_RATE * Constants::ENEMY_SPAWN_FACTOR_SHOOTER};
 
-    enemySpeedMap[EnemyType::BASIC] = Constants::BASE_PLAYER_SPEED * 0.33f;
-    enemySpeedMap[EnemyType::SHOOTER] = Constants::BASE_PLAYER_SPEED * 0.2f;
+    enemySpeedMap[EnemyType::BASIC] = Constants::BASE_PLAYER_SPEED * 0.5f;
+    enemySpeedMap[EnemyType::SHOOTER] = Constants::BASE_PLAYER_SPEED * 0.33f;
 }
 
 EnemySpawnManager::~EnemySpawnManager()

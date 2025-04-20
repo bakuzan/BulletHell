@@ -145,6 +145,7 @@ void GameState::render(sf::RenderWindow &window)
 
 void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &window)
 {
+    std::vector<ProjectileData> newProjectilesData;
     auto &projectiles = gameData.getProjectiles();
     auto &enemies = gameData.getEnemies();
     auto &player = gameData.getPlayer();
@@ -174,8 +175,18 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                     }
 
                     // TODO handle different projectile types!!
-                    // Lazer    - I will need to think about this as it will require a lot of checking
-                    // Missile  - Should spawn a "shockwave"
+                    if (projectile->getType() == ProjectileType::LAZER)
+                    {
+                        // Lazer - I will need to think about this as it will require a lot of checking
+                    }
+                    else if (projectile->getType() == ProjectileType::MISSILE)
+                    {
+                        newProjectilesData.push_back(ProjectileData(
+                            ProjectileType::MISSILE_DEBRIS,
+                            projectile->getSprite().getPosition(),
+                            Constants::PROJECTILE_DAMAGE_MISSILE_DEBRIS));
+                    }
+
                     projIt = projectiles.erase(projIt);
                     projectileRemoved = true;
                     break;
@@ -214,6 +225,11 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
             }
         }
     }
+
+    projectileSpawnManager.spawnChainedProjectiles(
+        gameData.textureManager.getTexture(TextureId::PROJECTILES),
+        projectiles,
+        newProjectilesData);
 }
 
 void GameState::updateUpgradeBoxes(const sf::Time &deltaTime)

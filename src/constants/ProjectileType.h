@@ -6,5 +6,6 @@ enum ProjectileType
     DOUBLE_SHOT,
     LAZER,
     MISSILE,
+    MISSILE_DEBRIS,
     BULLET_ALIEN,
 };

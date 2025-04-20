@@ -27,6 +27,7 @@ public:
     const ProjectileOrigin getOrigin() const;
     const float getDamageInflicts() const;
     const sf::Sprite &getSprite() const;
+    const ProjectileType &getType() const;
     bool isOffScreen(sf::RenderWindow &window);
 };
 

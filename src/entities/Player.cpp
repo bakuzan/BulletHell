@@ -4,6 +4,7 @@
 #include "constants/Constants.h"
 #include "utils/GameUtils.h"
 #include "utils/InputUtils.h"
+#include "components/WeaponAttributesManager.h"
 
 Player::Player(const sf::Texture &texture, sf::IntRect textureRect,
                float maxHealth, float initHealth)
@@ -89,6 +90,7 @@ std::optional<ProjectileData> Player::getShootData()
     if (shoot)
     {
         shoot = false;
+        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance().getAttributes(weaponType);
 
         // Get current rotation and convert to radians
         float angleDegrees = sprite.getRotation() - rotationOffset;
@@ -96,7 +98,7 @@ std::optional<ProjectileData> Player::getShootData()
 
         // Calculate the bullet's velocity based on the player's rotation
         sf::Vector2f direction(std::cos(angleRadians), std::sin(angleRadians));
-        sf::Vector2f bulletVelocity = direction * (Constants::PROJECTILE_SPEED_BULLET);
+        sf::Vector2f bulletVelocity = direction * weaponAttrs.speed;
 
         // Calculate bullet spawn position (front-center of the player)
         float playerScale = sprite.getScale().x;                                                  // Assume it is the same both x/y
@@ -111,10 +113,10 @@ std::optional<ProjectileData> Player::getShootData()
         sf::Vector2f spawnPosition = sprite.getPosition() + offset + rotatedCenterOffset;
 
         return ProjectileData(
-            getProjectileTypeForWeapon(weaponType),
+            weaponAttrs.projectileType,
             spawnPosition,
             bulletVelocity,
-            Constants::PROJECTILE_DAMAGE_BULLET);
+            weaponAttrs.damage);
     }
 
     return std::nullopt;
@@ -170,21 +172,5 @@ void Player::move(float deltaTime)
     {
         sprite.move(0, playerSpeed * deltaTime);
         lastDirectionMoved = Direction::DOWN;
-    }
-}
-
-ProjectileType Player::getProjectileTypeForWeapon(WeaponType weapon)
-{
-    switch (weapon)
-    {
-    case WeaponType::DOUBLE_SHOT:
-        return ProjectileType::DOUBLE_SHOT;
-    case WeaponType::LAZER:
-        return ProjectileType::LAZER;
-    case WeaponType::MISSILE:
-        return ProjectileType::MISSILE;
-    case WeaponType::BASIC:
-    default:
-        return ProjectileType::BULLET;
     }
 }

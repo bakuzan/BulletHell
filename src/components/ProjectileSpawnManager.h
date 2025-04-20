@@ -17,7 +17,7 @@ private:
 private:
     std::unique_ptr<Projectile> spawnProjectile(
         const sf::Texture &texture,
-        ProjectileData &data);
+        const ProjectileData &data);
 
 public:
     ProjectileSpawnManager();
@@ -31,6 +31,10 @@ public:
     void spawnEnemyProjectile(const sf::Texture &texture,
                               std::vector<std::unique_ptr<Projectile>> &projectiles,
                               ProjectileData &data);
+
+    void spawnChainedProjectiles(const sf::Texture &texture,
+                                 std::vector<std::unique_ptr<Projectile>> &projectiles,
+                                 const std::vector<ProjectileData> &projectileData);
 };
 
 #endif // PROJECTILESPAWNMANAGER_H

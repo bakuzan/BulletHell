@@ -11,6 +11,11 @@ struct ProjectileData
     sf::Vector2f direction; // Direction of travel (normalized)
     float damage;
 
+    ProjectileData(ProjectileType typ, sf::Vector2f pos, float dmg)
+        : type(typ), position(pos), damage(dmg)
+    {
+    }
+
     ProjectileData(ProjectileType typ, sf::Vector2f pos, sf::Vector2f dir, float dmg)
         : type(typ), position(pos), direction(dir), damage(dmg)
     {

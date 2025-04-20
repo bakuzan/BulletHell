@@ -7,7 +7,6 @@
 #include "constants/Direction.h"
 #include "constants/WeaponType.h"
 #include "data/ProjectileData.h"
-#include "Projectile.h"
 
 class Player
 {
@@ -27,7 +26,6 @@ public:
 
 private:
     void move(float deltaTime);
-    ProjectileType getProjectileTypeForWeapon(WeaponType weapon);
 
 public:
     Player(const sf::Texture &texture, sf::IntRect textureRect,

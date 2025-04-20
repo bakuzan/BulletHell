@@ -37,6 +37,7 @@ const ProjectileOrigin Projectile::getOrigin() const
     case ProjectileType::DOUBLE_SHOT:
     case ProjectileType::LAZER:
     case ProjectileType::MISSILE:
+    case ProjectileType::MISSILE_DEBRIS:
         return ProjectileOrigin::PLAYER;
     case ProjectileType::BULLET_ALIEN:
         return ProjectileOrigin::ENEMY;
@@ -53,6 +54,11 @@ const float Projectile::getDamageInflicts() const
 const sf::Sprite &Projectile::getSprite() const
 {
     return sprite;
+}
+
+const ProjectileType &Projectile::getType() const
+{
+    return type;
 }
 
 bool Projectile::isOffScreen(sf::RenderWindow &window)
