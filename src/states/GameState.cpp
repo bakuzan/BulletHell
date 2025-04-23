@@ -5,6 +5,7 @@
 
 #include "entities/BasicEnemy.h"
 #include "entities/ShooterEnemy.h"
+#include "entities/LazerProjectile.h"
 #include "utils/GameUtils.h"
 #include "utils/InputUtils.h"
 #include "constants/Constants.h"
@@ -156,6 +157,46 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
         projectile->update(deltaTime);
 
         bool projectileRemoved = false;
+        if (projectile->getType() == ProjectileType::LAZER)
+        {
+            auto lazer = dynamic_cast<LazerProjectile *>(projectile);
+
+            if (!lazer->isDamageCalculated())
+            {
+                for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
+                {
+                    auto &enemy = **enemyIt;
+                    if (lazer->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()))
+                    {
+                        enemy.updateHealth(-lazer->getDamageInflicts());
+                        if (enemy.getHealth() <= 0.0f)
+                        {
+                            gameData.updateScore(enemy.getPointsValue());
+                            updateScoreText(gameData.getScore());
+
+                            enemyIt = enemies.erase(enemyIt);
+                        }
+                    }
+                    else
+                    {
+                        ++enemyIt;
+                    }
+                }
+
+                lazer->setDamageCalculated(true);
+            }
+
+            if (lazer->canBeRemoved())
+            {
+                projIt = projectiles.erase(projIt);
+            }
+            else
+            {
+                ++projIt;
+            }
+
+            continue;
+        }
 
         if (projectile->getOrigin() == ProjectileOrigin::PLAYER)
         {
@@ -174,12 +215,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                         enemyIt = enemies.erase(enemyIt);
                     }
 
-                    // TODO handle different projectile types!!
-                    if (projectile->getType() == ProjectileType::LAZER)
-                    {
-                        // Lazer - I will need to think about this as it will require a lot of checking
-                    }
-                    else if (projectile->getType() == ProjectileType::MISSILE)
+                    if (projectile->getType() == ProjectileType::MISSILE)
                     {
                         newProjectilesData.push_back(ProjectileData(
                             ProjectileType::MISSILE_DEBRIS,

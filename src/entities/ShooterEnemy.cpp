@@ -4,6 +4,7 @@
 #include "constants/Constants.h"
 #include "constants/ProjectileType.h"
 #include "utils/GameUtils.h"
+#include "components/WeaponAttributesManager.h"
 
 ShooterEnemy::ShooterEnemy(
     const sf::Texture &texture, sf::IntRect textureRect,
@@ -42,20 +43,28 @@ void ShooterEnemy::update(float deltaTime, const sf::Vector2f &playerPosition)
         sprite,
         sprite.getPosition(),
         playerPosition,
-        270.0f);
+        rotationOffset);
 }
 
-std::optional<ProjectileData> ShooterEnemy::getShootData(float deltaTime, const sf::Vector2f &playerPosition)
+std::optional<ProjectileData> ShooterEnemy::getShootData(
+    float deltaTime,
+    const sf::Vector2f &playerPosition)
 {
     if (shouldShoot(deltaTime))
     {
-        auto position = sprite.getPosition();
-        auto direction = GameUtils::normaliseVector(playerPosition - sprite.getPosition());
+        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance().getAttributes(WeaponType::ALIEN_BASIC);
+
+        SpawnData projectileSpawnData =
+            GameUtils::getSpawnDataForProjectileFromEntity(
+                sprite,
+                weaponAttrs,
+                rotationOffset);
+
         return ProjectileData(
-            ProjectileType::BULLET_ALIEN,
-            position,
-            direction * Constants::PROJECTILE_SPEED_BULLET_ALIEN,
-            Constants::PROJECTILE_DAMAGE_BULLET_ALIEN);
+            weaponAttrs.projectileType,
+            projectileSpawnData.position,
+            projectileSpawnData.velocity,
+            weaponAttrs.damage);
     }
 
     return std::nullopt;

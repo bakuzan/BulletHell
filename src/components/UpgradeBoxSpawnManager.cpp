@@ -75,7 +75,7 @@ sf::Vector2f UpgradeBoxSpawnManager::calculateSpawnPosition(
         side = static_cast<Direction>(randomInt);
     }
 
-    return GameUtils::GetRandomPositionOnSide(view, side, Constants::UPGRADE_BOX_SPAWN_OFFSET);
+    return GameUtils::getRandomPositionOnSide(view, side, Constants::UPGRADE_BOX_SPAWN_OFFSET);
 }
 
 UpgradeBoxType UpgradeBoxSpawnManager::randomWeaponType()

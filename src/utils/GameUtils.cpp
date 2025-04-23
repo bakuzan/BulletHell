@@ -35,7 +35,39 @@ namespace GameUtils
         return angleRadians;
     }
 
-    const sf::Vector2f GetRandomPositionOnSide(
+    SpawnData getSpawnDataForProjectileFromEntity(
+        const sf::Sprite &sprite,
+        const WeaponAttributes &weaponAttrs,
+        float rotationOffset)
+    {
+        // Get current rotation and convert to radians
+        float angleDegrees = sprite.getRotation() - rotationOffset;
+        float angleRadians = angleDegrees * (M_PI / 180.0f);
+
+        // Calculate the bullet's velocity based on the entity's rotation
+        sf::Vector2f direction(std::cos(angleRadians), std::sin(angleRadians));
+        sf::Vector2f bulletVelocity = direction * weaponAttrs.speed;
+
+        // Calculate bullet spawn position (front-center of the entity)
+        float bulletWidth = weaponAttrs.projectileAttrs.width;
+        float bulletHeight = weaponAttrs.projectileAttrs.height;
+        float entityWidth = sprite.getGlobalBounds().width;
+        float entityHeight = sprite.getGlobalBounds().height;
+
+        sf::Vector2f rotatedCenterOffset = sf::Vector2f(
+            -entityWidth / 2.f * std::cos(angleRadians) + entityHeight / 2.f * std::sin(angleRadians),
+            -entityWidth / 2.f * std::sin(angleRadians) - entityHeight / 2.f * std::cos(angleRadians));
+
+        // Offset to the front
+        sf::Vector2f offset = direction * (entityHeight / 2.f + bulletHeight);
+
+        // Calculate final spawn position
+        sf::Vector2f spawnPosition = sprite.getPosition() + offset + rotatedCenterOffset;
+
+        return {spawnPosition, bulletVelocity};
+    }
+
+    const sf::Vector2f getRandomPositionOnSide(
         const sf::View &view,
         Direction side,
         float offset)

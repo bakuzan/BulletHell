@@ -8,8 +8,12 @@
 
 class ShooterEnemy : public Enemy
 {
+
 private:
     bool shouldShoot(float deltaTime);
+
+public:
+    static constexpr float rotationOffset = 270.0f;
 
 public:
     ShooterEnemy(const sf::Texture &texture, sf::IntRect textureRect, sf::Vector2f spawnPosition, float movementSpeed);

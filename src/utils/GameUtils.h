@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "constants/Direction.h"
+#include "data/SpawnData.h"
+#include "data/WeaponAttributes.h"
 
 namespace GameUtils
 {
@@ -15,7 +17,12 @@ namespace GameUtils
         const sf::Vector2f &targetPosition,
         float alignmentOffset = 0.0f);
 
-    const sf::Vector2f GetRandomPositionOnSide(
+    SpawnData getSpawnDataForProjectileFromEntity(
+        const sf::Sprite &sprite,
+        const WeaponAttributes &weaponAttrs,
+        float rotationOffset);
+
+    const sf::Vector2f getRandomPositionOnSide(
         const sf::View &view,
         Direction side,
         float offset);

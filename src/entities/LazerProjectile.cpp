@@ -1,3 +1,6 @@
+#include <cmath>
+#include <iostream>
+
 #include "LazerProjectile.h"
 
 LazerProjectile::LazerProjectile(const sf::Texture &texture, sf::IntRect textureRect,
@@ -6,9 +9,12 @@ LazerProjectile::LazerProjectile(const sf::Texture &texture, sf::IntRect texture
     : Projectile(ProjectileType::LAZER,
                  texture, textureRect,
                  spawnPosition, velocity,
-                 damage)
+                 damage),
+      fadeDuration(0.5f),
+      fadeOutTimeRemaining(0.5f),
+      hasDamageBeenCalculated(false)
 {
-    sprite.setScale(1.0f, 1.0f);
+    sprite.setScale(0.05f, 10.0f);
 }
 
 LazerProjectile::~LazerProjectile()
@@ -19,5 +25,29 @@ LazerProjectile::~LazerProjectile()
 // Publics
 void LazerProjectile::update(sf::Time deltaTime)
 {
-    sprite.move(velocity * deltaTime.asSeconds());
+    if (fadeOutTimeRemaining > 0.0f)
+    {
+        fadeOutTimeRemaining -= deltaTime.asSeconds();
+        float alpha = 255 * (fadeOutTimeRemaining / fadeDuration);
+        sprite.setColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(alpha)));
+    }
+
+    // Ensure lazer is angled correctly
+    float angle = std::atan2(velocity.y, velocity.x) * 180.f / M_PI; // Convert radians to degrees
+    sprite.setRotation(angle + 90.0f);                               // Add offset due to position in the spritesheet
+}
+
+const bool LazerProjectile::canBeRemoved() const
+{
+    return fadeOutTimeRemaining <= 0.0f;
+}
+
+const bool LazerProjectile::isDamageCalculated() const
+{
+    return hasDamageBeenCalculated;
+}
+
+void LazerProjectile::setDamageCalculated(bool isCalculated)
+{
+    hasDamageBeenCalculated = isCalculated;
 }

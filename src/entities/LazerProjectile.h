@@ -5,6 +5,11 @@
 
 class LazerProjectile : public Projectile
 {
+private:
+    float fadeDuration;
+    float fadeOutTimeRemaining;
+    bool hasDamageBeenCalculated;
+
 public:
     LazerProjectile(const sf::Texture &texture, sf::IntRect textureRect,
                     sf::Vector2f spawnPosition, sf::Vector2f velocity,
@@ -13,7 +18,9 @@ public:
 
     void update(sf::Time deltaTime) override;
 
-private:
+    const bool canBeRemoved() const;
+    const bool isDamageCalculated() const;
+    void setDamageCalculated(bool isCalculated);
 };
 
 #endif // LAZERPROJECTILE_H

@@ -11,7 +11,7 @@ Player::Player(const sf::Texture &texture, sf::IntRect textureRect,
     : maxHealth(maxHealth), health(initHealth), initHealth(initHealth),
       lastDirectionMoved(Direction::NONE),
       shoot(false),
-      weaponType(WeaponType::BASIC)
+      weaponType(WeaponType::LAZER)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -65,7 +65,7 @@ void Player::update(float deltaTime,
         weaponTimeout -= deltaTime;
         if (weaponTimeout <= 0.0f)
         {
-            weaponType = WeaponType::BASIC;
+            weaponType = WeaponType::LAZER;
             weaponTimeout = 0.0f;
         }
     }
@@ -82,7 +82,7 @@ void Player::reset()
     health = initHealth;
     shoot = false;
     weaponTimeout = 0.0f;
-    weaponType = WeaponType::BASIC;
+    weaponType = WeaponType::LAZER;
 }
 
 std::optional<ProjectileData> Player::getShootData()
@@ -92,30 +92,16 @@ std::optional<ProjectileData> Player::getShootData()
         shoot = false;
         WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance().getAttributes(weaponType);
 
-        // Get current rotation and convert to radians
-        float angleDegrees = sprite.getRotation() - rotationOffset;
-        float angleRadians = angleDegrees * (M_PI / 180.0f);
-
-        // Calculate the bullet's velocity based on the player's rotation
-        sf::Vector2f direction(std::cos(angleRadians), std::sin(angleRadians));
-        sf::Vector2f bulletVelocity = direction * weaponAttrs.speed;
-
-        // Calculate bullet spawn position (front-center of the player)
-        float playerScale = sprite.getScale().x;                                                  // Assume it is the same both x/y
-        float bulletWidth = 15.0f;                                                                // (size is the sprite size (300) * sprite scale (0.05))
-        float bulletHeight = 25.0f;                                                               // (size is the sprite size (500) * sprite scale (0.05))
-        sf::Vector2f offset = direction * ((Constants::SPRITE_WIDTH_PLAYER * playerScale) / 2.f); // Move to front
-        sf::Vector2f rotatedCenterOffset = sf::Vector2f(
-            -bulletWidth / 2.f * std::cos(angleRadians) + bulletHeight / 2.f * std::sin(angleRadians),
-            -bulletWidth / 2.f * std::sin(angleRadians) - bulletHeight / 2.f * std::cos(angleRadians));
-
-        // Calculate final spawn position
-        sf::Vector2f spawnPosition = sprite.getPosition() + offset + rotatedCenterOffset;
+        SpawnData projectileSpawnData =
+            GameUtils::getSpawnDataForProjectileFromEntity(
+                sprite,
+                weaponAttrs,
+                rotationOffset);
 
         return ProjectileData(
             weaponAttrs.projectileType,
-            spawnPosition,
-            bulletVelocity,
+            projectileSpawnData.position,
+            projectileSpawnData.velocity,
             weaponAttrs.damage);
     }
 

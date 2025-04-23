@@ -6,4 +6,6 @@ enum class WeaponType
     DOUBLE_SHOT,
     LAZER,
     MISSILE,
+
+    ALIEN_BASIC,
 };

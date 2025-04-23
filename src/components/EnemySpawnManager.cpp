@@ -72,5 +72,5 @@ sf::Vector2f EnemySpawnManager::getRandomSpawnPosition(
 {
     int side = (rand() % 4) + 1; // Choose a random side around the player
     Direction dir = static_cast<Direction>(side);
-    return GameUtils::GetRandomPositionOnSide(view, dir, Constants::ENEMY_SPAWN_OFFSET);
+    return GameUtils::getRandomPositionOnSide(view, dir, Constants::ENEMY_SPAWN_OFFSET);
 }
