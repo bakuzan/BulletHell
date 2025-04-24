@@ -54,21 +54,15 @@ namespace GameUtils
         float entityWidth = sprite.getGlobalBounds().width;
         float entityHeight = sprite.getGlobalBounds().height;
 
-        sf::Vector2f rotatedCenterOffset = sf::Vector2f(
-            -entityWidth / 2.f * std::cos(angleRadians) + entityHeight / 2.f * std::sin(angleRadians),
-            -entityWidth / 2.f * std::sin(angleRadians) - entityHeight / 2.f * std::cos(angleRadians));
-
-        // Offset to the front + center
-        sf::Vector2f verticalOffset = direction * ((entityHeight / 2.f) + bulletHeight);
-        sf::Vector2f horizontalOffset = sf::Vector2f(
-            -bulletWidth / 2.f * direction.y,
-            bulletWidth / 2.f * direction.x);
+        sf::Vector2f pushOutOffset = direction * ((entityHeight / 2.f) + bulletHeight);
+        // sf::Vector2f centerOffset = sf::Vector2f(
+        //     bulletWidth / 2.f * -direction.y,
+        //     bulletWidth / 2.f * direction.x);
 
         // Calculate final spawn position
         sf::Vector2f spawnPosition = sprite.getPosition() +
-                                     rotatedCenterOffset +
-                                     verticalOffset +
-                                     horizontalOffset;
+                                     //  centerOffset +
+                                     pushOutOffset;
 
         return {spawnPosition, bulletVelocity};
     }
