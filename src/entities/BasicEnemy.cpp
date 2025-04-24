@@ -10,8 +10,8 @@ BasicEnemy::BasicEnemy(const sf::Texture &texture, sf::IntRect textureRect, sf::
             spawnPosition,
             movementSpeed, Constants::ENEMY_POINTS_BASIC, Constants::ENEMY_HEALTH_BASIC)
 {
-    sprite.setScale(0.4, 0.4);
     sprite.setOrigin(Constants::SPRITE_WIDTH_BASIC / 2.0f, Constants::SPRITE_HEIGHT_BASIC / 2.0f);
+    sprite.setScale(0.4, 0.4);
 }
 
 BasicEnemy::~BasicEnemy()

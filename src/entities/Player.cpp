@@ -15,8 +15,8 @@ Player::Player(const sf::Texture &texture, sf::IntRect textureRect,
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
-    sprite.setScale(0.3f, 0.3f);
     sprite.setOrigin(Constants::SPRITE_WIDTH_PLAYER / 2.0f, Constants::SPRITE_HEIGHT_PLAYER / 2.0f);
+    sprite.setScale(0.3f, 0.3f);
     sprite.setPosition(100.0f, 100.0f);
 
     reset();

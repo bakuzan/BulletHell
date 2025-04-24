@@ -14,8 +14,8 @@ ShooterEnemy::ShooterEnemy(
             spawnPosition,
             movementSpeed, Constants::ENEMY_POINTS_SHOOTER, Constants::ENEMY_HEALTH_SHOOTER)
 {
-    sprite.setScale(0.5, 0.5);
     sprite.setOrigin(Constants::SPRITE_WIDTH_SHOOTER / 2.0f, Constants::SPRITE_HEIGHT_SHOOTER / 2.0f);
+    sprite.setScale(0.5, 0.5);
 }
 
 ShooterEnemy::~ShooterEnemy()
