@@ -131,7 +131,7 @@ void Player::updateHealth(float adjustment)
 void Player::setWeaponType(WeaponType type)
 {
     weaponType = type;
-    weaponTimeout = 5.0f; // All weapons last 5s (for now)
+    weaponTimeout = WeaponAttributesManager::getInstance().getTimeout(type);
 }
 
 // Privates

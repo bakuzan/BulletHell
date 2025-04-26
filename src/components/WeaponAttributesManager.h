@@ -10,6 +10,7 @@ class WeaponAttributesManager
 {
 private:
     std::unordered_map<WeaponType, WeaponAttributes> weaponAttributes;
+    std::unordered_map<WeaponType, float> weaponTimeouts;
 
 private:
     WeaponAttributesManager();
@@ -23,6 +24,7 @@ public:
     }
 
     const WeaponAttributes &getAttributes(WeaponType weapon) const;
+    const float &getTimeout(WeaponType weapon) const;
 };
 
 #endif // WEAPONATTRIBUTESMANAGER_H

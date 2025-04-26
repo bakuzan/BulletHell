@@ -33,6 +33,12 @@ WeaponAttributesManager::WeaponAttributesManager()
         Constants::PROJECTILE_DAMAGE_BULLET_ALIEN,
         Constants::PROJECTILE_SPEED_BULLET_ALIEN,
         {15.f, 10.f}}}};
+
+  weaponTimeouts = {
+      {WeaponType::DOUBLE_SHOT, 12.0f},
+      {WeaponType::LAZER, 8.0f},
+      {WeaponType::MISSILE, 6.0f},
+  };
 }
 
 WeaponAttributesManager::~WeaponAttributesManager()
@@ -45,4 +51,9 @@ WeaponAttributesManager::~WeaponAttributesManager()
 const WeaponAttributes &WeaponAttributesManager::getAttributes(WeaponType weapon) const
 {
   return weaponAttributes.at(weapon);
+}
+
+const float &WeaponAttributesManager::getTimeout(WeaponType weapon) const
+{
+  return weaponTimeouts.at(weapon);
 }
