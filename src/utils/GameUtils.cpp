@@ -47,22 +47,23 @@ namespace GameUtils
         // Calculate the bullet's velocity based on the entity's rotation
         sf::Vector2f direction(std::cos(angleRadians), std::sin(angleRadians));
         sf::Vector2f bulletVelocity = direction * weaponAttrs.speed;
+        sf::Vector2f firingEntityPos = sprite.getPosition();
 
-        // Calculate bullet spawn position (front-center of the entity)
-        float bulletWidth = weaponAttrs.projectileAttrs.width;
-        float bulletHeight = weaponAttrs.projectileAttrs.height;
-        float entityWidth = sprite.getGlobalBounds().width;
-        float entityHeight = sprite.getGlobalBounds().height;
+        float projectileWidth = weaponAttrs.projectileAttrs.width;
+        float projectileHeight = weaponAttrs.projectileAttrs.height;
+        float firingEntityHeight = sprite.getGlobalBounds().height;
 
-        sf::Vector2f pushOutOffset = direction * ((entityHeight / 2.f) + bulletHeight);
-        // sf::Vector2f centerOffset = sf::Vector2f(
-        //     bulletWidth / 2.f * -direction.y,
-        //     bulletWidth / 2.f * direction.x);
+        // Using direction, move projectile outwards
+        sf::Vector2f pushOutOffset = direction * ((firingEntityHeight / 2.f) + projectileHeight);
+
+        // Using perpendicular to direction, move projectile across
+        sf::Vector2f perpendicularVector(-direction.y, direction.x);
+        sf::Vector2f lateralOffset = perpendicularVector * -(projectileWidth / 2.f);
 
         // Calculate final spawn position
-        sf::Vector2f spawnPosition = sprite.getPosition() +
-                                     //  centerOffset +
-                                     pushOutOffset;
+        sf::Vector2f spawnPosition = firingEntityPos +
+                                     pushOutOffset +
+                                     lateralOffset;
 
         return {spawnPosition, bulletVelocity};
     }
