@@ -11,7 +11,7 @@ Player::Player(const sf::Texture &texture, sf::IntRect textureRect,
     : maxHealth(maxHealth), health(initHealth), initHealth(initHealth),
       lastDirectionMoved(Direction::NONE),
       shoot(false),
-      weaponType(WeaponType::LAZER)
+      weaponType(WeaponType::BASIC)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -65,7 +65,7 @@ void Player::update(float deltaTime,
         weaponTimeout -= deltaTime;
         if (weaponTimeout <= 0.0f)
         {
-            weaponType = WeaponType::LAZER;
+            weaponType = WeaponType::BASIC;
             weaponTimeout = 0.0f;
         }
     }
@@ -82,7 +82,7 @@ void Player::reset()
     health = initHealth;
     shoot = false;
     weaponTimeout = 0.0f;
-    weaponType = WeaponType::LAZER;
+    weaponType = WeaponType::BASIC;
 }
 
 std::optional<ProjectileData> Player::getShootData()
@@ -131,7 +131,7 @@ void Player::updateHealth(float adjustment)
 void Player::setWeaponType(WeaponType type)
 {
     weaponType = type;
-    weaponTimeout = 10.0f; // All weapons last 10s (for now)
+    weaponTimeout = 5.0f; // All weapons last 5s (for now)
 }
 
 // Privates

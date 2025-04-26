@@ -6,6 +6,7 @@
 #include "entities/BasicEnemy.h"
 #include "entities/ShooterEnemy.h"
 #include "entities/LazerProjectile.h"
+#include "utils/CollisionUtils.h"
 #include "utils/GameUtils.h"
 #include "utils/InputUtils.h"
 #include "constants/Constants.h"
@@ -166,7 +167,8 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                 for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
                 {
                     auto &enemy = **enemyIt;
-                    if (lazer->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()))
+                    if (lazer->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()) &&
+                        CollisionUtils::CheckSpritesIntersect(lazer->getSprite(), enemy.getSprite()))
                     {
                         enemy.updateHealth(-lazer->getDamageInflicts());
                         if (enemy.getHealth() <= 0.0f)
@@ -203,7 +205,8 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
             for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
             {
                 auto &enemy = **enemyIt;
-                if (projectile->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()))
+                if (projectile->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()) &&
+                    CollisionUtils::CheckSpritesIntersect(projectile->getSprite(), enemy.getSprite()))
                 {
                     // Effects of shooting enemy
                     enemy.updateHealth(-projectile->getDamageInflicts());
@@ -234,7 +237,8 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
             }
         }
         else if (projectile->getOrigin() == ProjectileOrigin::ENEMY &&
-                 projectile->getSprite().getGlobalBounds().intersects(player->getSprite().getGlobalBounds()))
+                 projectile->getSprite().getGlobalBounds().intersects(player->getSprite().getGlobalBounds()) &&
+                 CollisionUtils::CheckSpritesIntersect(projectile->getSprite(), player->getSprite()))
         {
             projIt = projectiles.erase(projIt);
             projectileRemoved = true;
@@ -333,7 +337,8 @@ void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPositio
         auto enemy = enemyIt->get();
         enemy->update(deltaTime, playerPosition);
 
-        if (enemy->getSprite().getGlobalBounds().intersects(playerBounds))
+        if (enemy->getSprite().getGlobalBounds().intersects(playerBounds) &&
+            CollisionUtils::CheckSpritesIntersect(enemy->getSprite(), player->getSprite()))
         {
             // Effects of hitting player
             float collisionDamage = enemy->getHealth() * 0.4f;
