@@ -31,7 +31,7 @@ GameOverState::GameOverState(GameData &data, StateManager &manager, sf::RenderWi
     gameOverText.setFillColor(sf::Color::Red);
 
     finalScoreText.setFont(gameData.gameFont);
-    finalScoreText.setString(GameUtils::formatScoreText(gameData.getScore()));
+    finalScoreText.setString(GameUtils::formatScoreText(calculateFinalScore()));
     finalScoreText.setCharacterSize(48);
     finalScoreText.setFillColor(sf::Color::Yellow);
 
@@ -120,13 +120,17 @@ void GameOverState::render(sf::RenderWindow &window)
 
     if (isAskingForPlayerName)
     {
-        // TODO Fix both positions to be view aware
+        sf::View view = window.getView();
+        sf::Vector2f viewCenter = view.getCenter();
+
         sf::Text prompt("Enter your name: ", gameData.gameFont, 48);
-        prompt.setPosition(100, 200);
+        prompt.setPosition(viewCenter.x - (prompt.getGlobalBounds().width / 2.0f),
+                           viewCenter.y - prompt.getGlobalBounds().height);
         prompt.setFillColor(sf::Color::Yellow);
 
         sf::Text input(playerName, gameData.gameFont, 48);
-        input.setPosition(100, 250);
+        input.setPosition(viewCenter.x - (prompt.getGlobalBounds().width / 2.0f),
+                          viewCenter.y);
         input.setFillColor(sf::Color::White);
 
         window.draw(prompt);
@@ -184,22 +188,25 @@ void GameOverState::displayHighScores(const std::vector<HighScore> &scores, sf::
         timeStream << std::put_time(timeinfo, "%Y-%m-%d %H:%M:%S");
 
         // Combine name, score, and timestamp into a display string
-        std::string displayString = entry.name + " " + std::to_string(entry.score);
-        // TODO
-        // 25 - (name length + score.length (in display format))
-        // use number to create ... between name and score.
+        std::string entryName = entry.name;
+        std::string entryScore = GameUtils::formatScoreText(entry.score);
+        int nameLength = entryName.length();
+        int scoreLength = entryScore.length();
 
-        if (playerHasHighScore &&
-            entry.name == playerName &&
-            entry.score == playerScore)
-        {
-            displayString = "→ " + displayString; // TODO fix this ->
-        }
+        std::string separator(25 - nameLength - scoreLength, '.');
+        std::string displayString = entryName + separator + entryScore;
+
+        bool isCurrentUserScore = playerHasHighScore &&
+                                  entry.name == playerName &&
+                                  entry.score == playerScore;
+
+        std::string prepend = isCurrentUserScore ? "> " : "  ";
+        displayString = prepend + displayString;
 
         sf::Text text(displayString, gameData.gameFont, 36);
         text.setPosition(viewCenter.x - text.getGlobalBounds().width / 2.0f,
-                         viewCenter.y - viewSize.y / 2.0f + gameOverText.getGlobalBounds().height + finalScoreText.getGlobalBounds().height + (buttonSpacing * 3.0f) + i * 50.0f);
-        text.setFillColor(sf::Color::Yellow);
+                         viewCenter.y - viewSize.y / 2.0f + gameOverText.getGlobalBounds().height + finalScoreText.getGlobalBounds().height + (buttonSpacing * 5.0f) + i * 50.0f);
+        text.setFillColor(isCurrentUserScore ? sf::Color::White : sf::Color::Yellow);
         window.draw(text);
     }
 }
