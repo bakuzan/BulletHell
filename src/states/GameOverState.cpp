@@ -4,6 +4,7 @@
 #include "constants/Constants.h"
 #include "utils/InputUtils.h"
 #include "utils/GameUtils.h"
+#include "utils/DataUtils.h"
 #include "GameState.h"
 #include "MenuState.h"
 #include "GameOverState.h"
@@ -90,10 +91,15 @@ void GameOverState::handleEvent(const sf::Event &event)
         if (event.type == sf::Event::KeyPressed &&
             event.key.code == sf::Keyboard::Enter)
         {
-            playerScore = calculateFinalScore();
-            highScoreManager.addScore(playerName, playerScore);
-            highScoreManager.saveToFile("highscores.txt");
-            isAskingForPlayerName = false;
+            playerName = DataUtils::trim(playerName);
+
+            if (!playerName.empty())
+            {
+                playerScore = calculateFinalScore();
+                highScoreManager.addScore(playerName, playerScore);
+                highScoreManager.saveToFile("highscores.txt");
+                isAskingForPlayerName = false;
+            }
         }
     }
     else
