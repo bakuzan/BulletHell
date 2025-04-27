@@ -14,4 +14,12 @@ namespace DataUtils
 
         return str.substr(start, end - start + 1);
     }
+
+    bool isValidInputChar(char inputChar)
+    {
+        unsigned char uchar = static_cast<unsigned char>(inputChar);
+        return std::isalnum(uchar) ||
+               std::isspace(uchar);
+    }
+
 };

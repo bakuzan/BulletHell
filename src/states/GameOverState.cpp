@@ -74,7 +74,9 @@ void GameOverState::handleEvent(const sf::Event &event)
 {
     if (isAskingForPlayerName)
     {
-        if (event.type == sf::Event::TextEntered)
+        if (event.type == sf::Event::TextEntered &&
+            (event.text.unicode != '\r' &&
+             event.text.unicode != '\n'))
         {
             if (event.text.unicode == '\b' &&
                 !playerName.empty())
@@ -84,7 +86,12 @@ void GameOverState::handleEvent(const sf::Event &event)
             else if (event.text.unicode < 128 &&
                      playerName.size() < 15)
             {
-                playerName += static_cast<char>(event.text.unicode);
+                char inputChar = static_cast<char>(event.text.unicode);
+
+                if (DataUtils::isValidInputChar(inputChar))
+                {
+                    playerName += inputChar;
+                }
             }
         }
 
@@ -99,6 +106,10 @@ void GameOverState::handleEvent(const sf::Event &event)
                 highScoreManager.addScore(playerName, playerScore);
                 highScoreManager.saveToFile("highscores.txt");
                 isAskingForPlayerName = false;
+            }
+            else
+            {
+                playerName = "";
             }
         }
     }
