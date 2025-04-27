@@ -72,6 +72,11 @@ void GameState::handleEvent(const sf::Event &event)
 
 void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
+    if (gameData.audioManager.getSoundStatus(AudioId::AMBIENT) != sf::Sound::Status::Playing)
+    {
+        gameData.audioManager.playSound(AudioId::AMBIENT, true);
+    }
+
     enemySpawnManager.spawnEnemies(
         deltaTime.asSeconds(),
         gameData.getEnemies(),
@@ -249,6 +254,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
             if (player->getHealth() <= 0)
             {
+                gameData.audioManager.playSound(AudioId::DEATH_PLAYER);
                 stateManager.pushState(std::make_unique<GameOverState>(gameData, stateManager, window));
             }
         }

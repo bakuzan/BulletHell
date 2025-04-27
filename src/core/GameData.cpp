@@ -3,12 +3,24 @@
 
 GameData::GameData()
 {
+    // Load textures
     textureManager.loadTexture(TextureId::BACKGROUND, "resources/background_2.png", true);
     textureManager.loadTexture(TextureId::SPACESHIPS, "resources/spaceships_brighter.png");
     textureManager.loadTexture(TextureId::PROJECTILES, "resources/projectiles.png");
     textureManager.loadTexture(TextureId::HEALTHBAR_BORDER, "resources/healthbar_border.png");
     textureManager.loadTexture(TextureId::HEALTHBAR_FILLINGS, "resources/healthbar_fillings.png");
     textureManager.loadTexture(TextureId::UPGRADE_BOXES, "resources/upgrade_boxes.png");
+
+    // Load audio
+    audioManager.loadSound(AudioId::AMBIENT, "resources/audio/SpaceAmbience.wav");
+    audioManager.loadSound(AudioId::PROJECTILE_BASIC, "resources/audio/Projectile_Basic.wav");
+    audioManager.loadSound(AudioId::PROJECTILE_LAZER, "resources/audio/Projectile_Lazer.wav");
+    audioManager.loadSound(AudioId::PROJECTILE_MISSILE, "resources/audio/Projectile_Missile.wav");
+    audioManager.loadSound(AudioId::PROJECTILE_MISSILE_DEBRIS, "resources/audio/Projectile_MissileDebris.wav");
+    audioManager.loadSound(AudioId::PROJECTILE_ALIEN_BASIC, "resources/audio/Projectile_AlienBasic.wav");
+    audioManager.loadSound(AudioId::UPGRADEBOX_HEALTH, "resources/audio/UpgradeBox_Health.wav");
+    audioManager.loadSound(AudioId::UPGRADEBOX_WEAPON, "resources/audio/UpgradeBox_Weapon.wav");
+    audioManager.loadSound(AudioId::DEATH_PLAYER, "resources/audio/Death_Player.wav");
 
     // Load font
     if (!gameFont.loadFromFile("resources/fonts/PressStart2P-Regular.ttf"))

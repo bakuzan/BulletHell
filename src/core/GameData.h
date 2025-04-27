@@ -13,6 +13,7 @@
 #include "components/ProjectileTextureManager.h"
 #include "components/UpgradeBoxTextureManager.h"
 #include "TextureManager.h"
+#include "AudioManager.h"
 
 class GameData
 {
@@ -28,6 +29,7 @@ public:
     sf::Font gameFont;
 
     TextureManager textureManager;
+    AudioManager audioManager;
 
 public:
     GameData();
