@@ -65,7 +65,7 @@ void PauseState::handleEvent(const sf::Event &event)
 
 void PauseState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
-    // No game logic while paused
+    gameData.audioManager.cleanupSounds();
 }
 
 void PauseState::render(sf::RenderWindow &window)

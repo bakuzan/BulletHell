@@ -96,6 +96,9 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
             gameData.getProjectiles(),
             *playerProjectile,
             player->getSprite().getRotation());
+
+        AudioId projectileAudioId = GameUtils::getAudioIdForProjectileType(playerProjectile->type);
+        gameData.audioManager.playSound(projectileAudioId);
     }
 
     updateProjectiles(deltaTime, window);
@@ -380,6 +383,9 @@ void GameState::processEnemyShooting(float deltaTime, const sf::Vector2f &player
                     gameData.textureManager.getTexture(TextureId::PROJECTILES),
                     projectiles,
                     *projectile);
+
+                AudioId projectileAudioId = GameUtils::getAudioIdForProjectileType(projectile->type);
+                gameData.audioManager.playPooledSound(projectileAudioId);
             }
         }
     }

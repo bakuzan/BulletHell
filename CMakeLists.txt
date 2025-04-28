@@ -17,7 +17,7 @@ add_executable(BulletHell ${SOURCES})
 target_include_directories(BulletHell PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # Link SFML libraries
-target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
+target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-audio)
 
 # Copy SFML to build location
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -28,6 +28,8 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
         "D:/projects/SFML/bin/sfml-graphics-d-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "D:/projects/SFML/bin/sfml-window-d-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "D:/projects/SFML/bin/sfml-audio-d-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 else()
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -37,12 +39,17 @@ else()
         "D:/projects/SFML/bin/sfml-graphics-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "D:/projects/SFML/bin/sfml-window-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "D:/projects/SFML/bin/sfml-audio-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 endif()
 
 # Copy resources folder to the build directory
+file(GLOB_RECURSE RESOURCE_FILES "${CMAKE_SOURCE_DIR}/resources/*")
+message(STATUS "Resource files: ${RESOURCE_FILES}")
+
 add_custom_command(
-    TARGET BulletHell POST_BUILD
+    TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:BulletHell>/resources
+    ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:${PROJECT_NAME}>/resources
 )

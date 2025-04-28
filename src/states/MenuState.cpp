@@ -51,6 +51,7 @@ void MenuState::handleEvent(const sf::Event &event)
 
 void MenuState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
+    gameData.audioManager.cleanupSounds();
 }
 
 void MenuState::render(sf::RenderWindow &window)

@@ -96,6 +96,24 @@ namespace GameUtils
         }
     }
 
+    const AudioId getAudioIdForProjectileType(ProjectileType projectileType)
+    {
+        switch (projectileType)
+        {
+        case ProjectileType::BULLET:
+            return AudioId::PROJECTILE_BASIC;
+        case ProjectileType::LAZER:
+            return AudioId::PROJECTILE_LAZER;
+        case ProjectileType::MISSILE:
+            return AudioId::PROJECTILE_MISSILE;
+        case ProjectileType::MISSILE_DEBRIS:
+            return AudioId::PROJECTILE_MISSILE_DEBRIS;
+
+        case ProjectileType::BULLET_ALIEN:
+            return AudioId::PROJECTILE_ALIEN_BASIC;
+        }
+    }
+
     std::string formatScoreText(int score)
     {
         std::stringstream ss;

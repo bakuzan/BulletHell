@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "constants/Direction.h"
+#include "constants/AudioId.h"
+#include "constants/ProjectileType.h"
 #include "data/SpawnData.h"
 #include "data/WeaponAttributes.h"
 
@@ -26,6 +28,8 @@ namespace GameUtils
         const sf::View &view,
         Direction side,
         float offset);
+
+    const AudioId getAudioIdForProjectileType(ProjectileType projectileType);
 
     std::string formatScoreText(int score);
 };
