@@ -101,6 +101,7 @@ namespace GameUtils
         switch (projectileType)
         {
         case ProjectileType::BULLET:
+        case ProjectileType::DOUBLE_SHOT:
             return AudioId::PROJECTILE_BASIC;
         case ProjectileType::LAZER:
             return AudioId::PROJECTILE_LAZER;
@@ -112,6 +113,8 @@ namespace GameUtils
         case ProjectileType::BULLET_ALIEN:
             return AudioId::PROJECTILE_ALIEN_BASIC;
         }
+
+        throw std::logic_error("Unhandled ProjectileType in GameUtils::getAudioIdForProjectileType()");
     }
 
     std::string formatScoreText(int score)
