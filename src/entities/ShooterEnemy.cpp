@@ -27,7 +27,7 @@ ShooterEnemy::~ShooterEnemy()
 void ShooterEnemy::update(float deltaTime, const sf::Vector2f &playerPosition)
 {
     sf::Vector2f direction = playerPosition - sprite.getPosition();
-    float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);
 
     if (magnitude > 0)
     {
@@ -50,7 +50,7 @@ std::optional<ProjectileData> ShooterEnemy::getShootData(
     float deltaTime,
     const sf::Vector2f &playerPosition)
 {
-    if (shouldShoot(deltaTime))
+    if (shouldShoot(deltaTime, playerPosition))
     {
         WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance().getAttributes(WeaponType::ALIEN_BASIC);
 
@@ -71,16 +71,29 @@ std::optional<ProjectileData> ShooterEnemy::getShootData(
 }
 
 // Privates
-bool ShooterEnemy::shouldShoot(float deltaTime)
+
+float ShooterEnemy::calculateDistanceToPlayerMagnitude(const sf::Vector2f &playerPosition)
+{
+    sf::Vector2f direction = playerPosition - sprite.getPosition();
+    return std::sqrt(direction.x * direction.x + direction.y * direction.y);
+}
+
+bool ShooterEnemy::shouldShoot(float deltaTime,
+                               const sf::Vector2f &playerPosition)
 {
     static float shootCooldown = 1.0f;
     static float timeSinceLastShot = 0.0f;
-    timeSinceLastShot += deltaTime;
 
-    if (timeSinceLastShot >= shootCooldown)
+    float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);
+    if (magnitude <= Constants::ENEMY_SHOOTER_DISTANCE)
     {
-        timeSinceLastShot -= shootCooldown;
-        return true;
+        timeSinceLastShot += deltaTime;
+
+        if (timeSinceLastShot >= shootCooldown)
+        {
+            timeSinceLastShot -= shootCooldown;
+            return true;
+        }
     }
 
     return false;

@@ -23,6 +23,7 @@ private:
 
 private:
     void initializeVolumeDefaults();
+    void initialiseSoundPool();
 
 public:
     AudioManager();

@@ -3,7 +3,7 @@
 AudioManager::AudioManager()
 {
     initializeVolumeDefaults();
-    soundPool.resize(minimumPoolSize);
+    initialiseSoundPool();
 }
 
 AudioManager::~AudioManager()
@@ -85,7 +85,8 @@ void AudioManager::cleanupSounds()
             std::remove_if(soundPool.begin(), soundPool.end(),
                            [](const std::unique_ptr<sf::Sound> &sound)
                            {
-                               return sound->getStatus() == sf::Sound::Status::Stopped;
+                               return !sound ||
+                                      sound->getStatus() == sf::Sound::Status::Stopped;
                            }),
             soundPool.end());
     }
@@ -112,4 +113,13 @@ void AudioManager::initializeVolumeDefaults()
     volumeMap[AudioId::UPGRADEBOX_WEAPON] = 100.0f;
 
     volumeMap[AudioId::DEATH_PLAYER] = 100.0f;
+}
+
+void AudioManager::initialiseSoundPool()
+{
+    soundPool.resize(minimumPoolSize);
+    for (auto &sound : soundPool)
+    {
+        sound = std::make_unique<sf::Sound>();
+    }
 }

@@ -52,6 +52,11 @@ void MenuState::handleEvent(const sf::Event &event)
 void MenuState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
     gameData.audioManager.cleanupSounds();
+
+    if (gameData.audioManager.getSoundStatus(AudioId::AMBIENT) == sf::Sound::Status::Playing)
+    {
+        gameData.audioManager.stopSound(AudioId::AMBIENT);
+    }
 }
 
 void MenuState::render(sf::RenderWindow &window)

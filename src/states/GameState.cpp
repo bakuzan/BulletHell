@@ -279,6 +279,12 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
         gameData.textureManager.getTexture(TextureId::PROJECTILES),
         projectiles,
         newProjectilesData);
+
+    for (const auto &proj : newProjectilesData)
+    {
+        AudioId projectileAudioId = GameUtils::getAudioIdForProjectileType(proj.type);
+        gameData.audioManager.playPooledSound(projectileAudioId);
+    }
 }
 
 void GameState::updateUpgradeBoxes(const sf::Time &deltaTime)
@@ -316,6 +322,7 @@ void GameState::processUpgradeBoxPickUp(const UpgradeBox &upgradeBox)
         auto &player = gameData.getPlayer();
         player->updateHealth(50);
         healthBar.setHealth(player->getHealth());
+        gameData.audioManager.playSound(AudioId::UPGRADEBOX_HEALTH);
         break;
     }
     case UpgradeBoxType::DOUBLE_SHOT:
@@ -324,6 +331,7 @@ void GameState::processUpgradeBoxPickUp(const UpgradeBox &upgradeBox)
     {
         auto &player = gameData.getPlayer();
         player->setWeaponType(mapUpgradeBoxToWeapon(upgradeBox.getType()));
+        gameData.audioManager.playSound(AudioId::UPGRADEBOX_WEAPON);
         break;
     }
     case UpgradeBoxType::COUNT:

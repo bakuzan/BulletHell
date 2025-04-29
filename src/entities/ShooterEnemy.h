@@ -8,9 +8,9 @@
 
 class ShooterEnemy : public Enemy
 {
-
 private:
-    bool shouldShoot(float deltaTime);
+    bool shouldShoot(float deltaTime, const sf::Vector2f &playerPosition);
+    float calculateDistanceToPlayerMagnitude(const sf::Vector2f &playerPosition);
 
 public:
     static constexpr float rotationOffset = 270.0f;
