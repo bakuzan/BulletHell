@@ -77,14 +77,23 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         gameData.audioManager.playSound(AudioId::AMBIENT, true);
     }
 
-    enemySpawnManager.spawnEnemies(
-        deltaTime.asSeconds(),
-        gameData.getEnemies(),
-        gameData.textureManager.getTexture(TextureId::SPACESHIPS),
-        view);
+    gameFlowManager.update(deltaTime.asSeconds());
 
     auto &player = gameData.getPlayer();
     auto playerSprite = player->getSprite();
+
+    if (gameFlowManager.isWaveActive())
+    {
+        enemySpawnManager.setWaveParameters(
+            gameFlowManager.getSpawnRates());
+
+        enemySpawnManager.spawnEnemies(
+            deltaTime.asSeconds(),
+            gameData.getEnemies(),
+            gameData.textureManager.getTexture(TextureId::SPACESHIPS),
+            view);
+    }
+
     updateEnemies(deltaTime.asSeconds(), playerSprite.getPosition());
     processEnemyShooting(deltaTime.asSeconds(), playerSprite.getPosition());
 
@@ -95,7 +104,7 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
             gameData.textureManager.getTexture(TextureId::PROJECTILES),
             gameData.getProjectiles(),
             *playerProjectile,
-            player->getSprite().getRotation());
+            playerSprite.getRotation());
 
         AudioId projectileAudioId = GameUtils::getAudioIdForProjectileType(playerProjectile->type);
         gameData.audioManager.playSound(projectileAudioId);
@@ -103,12 +112,16 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 
     updateProjectiles(deltaTime, window);
 
-    upgradeBoxSpawnManager.spawnUpgradeBoxes(
-        deltaTime.asSeconds(),
-        gameData.getUpgradeBoxes(),
-        gameData.textureManager.getTexture(TextureId::UPGRADE_BOXES),
-        player->getLastDirectionMoved(),
-        view);
+    if (gameFlowManager.isWaveActive())
+    {
+        upgradeBoxSpawnManager.spawnUpgradeBoxes(
+            deltaTime.asSeconds(),
+            gameData.getUpgradeBoxes(),
+            gameData.textureManager.getTexture(TextureId::UPGRADE_BOXES),
+            player->getLastDirectionMoved(),
+            view);
+    }
+
     updateUpgradeBoxes(deltaTime);
 
     // Update view to follow player

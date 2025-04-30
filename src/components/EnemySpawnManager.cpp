@@ -8,9 +8,9 @@
 
 EnemySpawnManager::EnemySpawnManager()
 {
-    spawnData[EnemyType::BASIC] = {0.0f, Constants::ENEMY_SPAWN_RATE};
-    spawnData[EnemyType::SHOOTER] = {0.0f, Constants::ENEMY_SPAWN_RATE * Constants::ENEMY_SPAWN_FACTOR_SHOOTER};
-    spawnData[EnemyType::SPEEDY] = {0.0f, Constants::ENEMY_SPAWN_RATE * Constants::ENEMY_SPAWN_FACTOR_SPEEDY};
+    spawnData[EnemyType::BASIC] = {0.0f, 0.0f};
+    spawnData[EnemyType::SHOOTER] = {0.0f, 0.0f};
+    spawnData[EnemyType::SPEEDY] = {0.0f, 0.0f};
 
     enemySpeedMap[EnemyType::BASIC] = Constants::BASE_PLAYER_SPEED * 0.50f;
     enemySpeedMap[EnemyType::SHOOTER] = Constants::BASE_PLAYER_SPEED * 0.33f;
@@ -23,6 +23,18 @@ EnemySpawnManager::~EnemySpawnManager()
 }
 
 // Publics
+
+void EnemySpawnManager::setWaveParameters(
+    const std::unordered_map<EnemyType, float> &spawnRates)
+{
+    for (auto &[enemyType, spawnInfo] : spawnData)
+    {
+        if (spawnRates.count(enemyType))
+        {
+            spawnInfo.spawnRate = spawnRates.at(enemyType);
+        }
+    }
+}
 
 void EnemySpawnManager::spawnEnemies(
     float deltaTime,

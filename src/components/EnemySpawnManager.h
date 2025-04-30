@@ -39,6 +39,9 @@ public:
     EnemySpawnManager();
     ~EnemySpawnManager();
 
+    void setWaveParameters(
+        const std::unordered_map<EnemyType, float> &spawnRates);
+
     void spawnEnemies(
         float deltaTime,
         std::vector<std::unique_ptr<Enemy>> &enemies,

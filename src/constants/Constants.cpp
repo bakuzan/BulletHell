@@ -33,10 +33,6 @@ namespace Constants
 
     const float ENEMY_SPAWN_OFFSET = 5.0f;
 
-    const float ENEMY_SPAWN_RATE = 5.0f;
-    const float ENEMY_SPAWN_FACTOR_SHOOTER = 0.10f;
-    const float ENEMY_SPAWN_FACTOR_SPEEDY = 0.16f;
-
     const int ENEMY_POINTS_BASIC = 10.0f;
     const int ENEMY_POINTS_SHOOTER = 50.0f;
     const int ENEMY_POINTS_SPEEDY = 50.0f;
