@@ -37,11 +37,13 @@ private:
 
 private:
     void updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &window);
+    void processChainedProjectiles(std::vector<std::unique_ptr<Projectile>> &projectiles, std::vector<ProjectileData> &newProjectilesData);
+
     void updateUpgradeBoxes(const sf::Time &deltaTime);
     void processUpgradeBoxPickUp(const UpgradeBox &upgradeBox);
 
     void updateEnemies(float deltaTime, const sf::Vector2f &playerPosition);
-    void processEnemyShooting(float deltaTime, const sf::Vector2f &playerPosition);
+    void processEnemyProjectiles(float deltaTime, const sf::Vector2f &playerPosition);
 
     void renderScoreText(sf::RenderWindow &window, const sf::View &view);
     void updateScoreText(int score);

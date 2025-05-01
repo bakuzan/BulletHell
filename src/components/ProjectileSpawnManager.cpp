@@ -62,17 +62,15 @@ void ProjectileSpawnManager::spawnChainedProjectiles(
     std::vector<std::unique_ptr<Projectile>> &projectiles,
     const std::vector<ProjectileData> &projectileData)
 {
-    constexpr int debrisCircleProjectileCount = 16;
-
     for (const auto &data : projectileData)
     {
-        for (int i = 0; i < debrisCircleProjectileCount; ++i)
+        for (int i = 0; i < data.debrisCircleProjectileCount; ++i)
         {
-            float angle = (2 * M_PI / debrisCircleProjectileCount) * i; // Angle (radians)
+            float angle = (2 * M_PI / data.debrisCircleProjectileCount) * i; // Angle (radians)
             sf::Vector2f direction(std::cos(angle), std::sin(angle));
 
             ProjectileData newData = data;
-            newData.direction = direction * Constants::PROJECTILE_SPEED_MISSILE_DEBRIS;
+            newData.direction = direction * data.speed;
 
             projectiles.emplace_back(spawnProjectile(texture, newData));
         }
@@ -97,6 +95,7 @@ std::unique_ptr<Projectile> ProjectileSpawnManager::spawnProjectile(
     case ProjectileType::MISSILE:
     case ProjectileType::MISSILE_DEBRIS:
     case ProjectileType::BULLET_ALIEN:
+    case ProjectileType::BOMBER_DEBRIS:
         return std::make_unique<Projectile>(data.type,
                                             texture,
                                             projectileTextureManager.getTextureRect(data.type),

@@ -93,5 +93,5 @@ void UpgradeBoxSpawnManager::resetHealthBoxTimer()
 }
 void UpgradeBoxSpawnManager::resetWeaponBoxTimer()
 {
-    weaponBoxTimer = 35.0f;
+    weaponBoxTimer = 30.0f;
 }

@@ -4,6 +4,7 @@
 #include "entities/BasicEnemy.h"
 #include "entities/ShooterEnemy.h"
 #include "entities/SpeedyEnemy.h"
+#include "entities/BomberEnemy.h"
 #include "utils/GameUtils.h"
 
 EnemySpawnManager::EnemySpawnManager()
@@ -11,10 +12,12 @@ EnemySpawnManager::EnemySpawnManager()
     spawnData[EnemyType::BASIC] = {0.0f, 0.0f};
     spawnData[EnemyType::SHOOTER] = {0.0f, 0.0f};
     spawnData[EnemyType::SPEEDY] = {0.0f, 0.0f};
+    spawnData[EnemyType::BOMBER] = {0.0f, 0.0f};
 
     enemySpeedMap[EnemyType::BASIC] = Constants::BASE_PLAYER_SPEED * 0.50f;
     enemySpeedMap[EnemyType::SHOOTER] = Constants::BASE_PLAYER_SPEED * 0.33f;
     enemySpeedMap[EnemyType::SPEEDY] = Constants::BASE_PLAYER_SPEED * 1.10f;
+    enemySpeedMap[EnemyType::BOMBER] = Constants::BASE_PLAYER_SPEED * 0.25f;
 }
 
 EnemySpawnManager::~EnemySpawnManager()
@@ -79,6 +82,8 @@ std::unique_ptr<Enemy> EnemySpawnManager::spawnEnemy(
         return std::make_unique<ShooterEnemy>(texture, textureRect, spawnPosition, speed);
     case EnemyType::SPEEDY:
         return std::make_unique<SpeedyEnemy>(texture, textureRect, spawnPosition, speed);
+    case EnemyType::BOMBER:
+        return std::make_unique<BomberEnemy>(texture, textureRect, spawnPosition, speed);
     default:
         return nullptr;
     }

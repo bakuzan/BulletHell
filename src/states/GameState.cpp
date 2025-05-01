@@ -3,8 +3,8 @@
 #include <random>
 #include <sstream>
 
-#include "entities/BasicEnemy.h"
 #include "entities/ShooterEnemy.h"
+#include "entities/BomberEnemy.h"
 #include "entities/LazerProjectile.h"
 #include "utils/CollisionUtils.h"
 #include "utils/GameUtils.h"
@@ -95,7 +95,7 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
     }
 
     updateEnemies(deltaTime.asSeconds(), playerSprite.getPosition());
-    processEnemyShooting(deltaTime.asSeconds(), playerSprite.getPosition());
+    processEnemyProjectiles(deltaTime.asSeconds(), playerSprite.getPosition());
 
     player->update(deltaTime.asSeconds(), window);
     if (auto playerProjectile = player->getShootData())
@@ -241,10 +241,12 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
                     if (projectile->getType() == ProjectileType::MISSILE)
                     {
-                        newProjectilesData.push_back(ProjectileData(
+                        newProjectilesData.push_back(ProjectileData::CreateChained(
                             ProjectileType::MISSILE_DEBRIS,
                             projectile->getSprite().getPosition(),
-                            Constants::PROJECTILE_DAMAGE_MISSILE_DEBRIS));
+                            Constants::PROJECTILE_DAMAGE_MISSILE_DEBRIS,
+                            Constants::PROJECTILE_SPEED_MISSILE_DEBRIS,
+                            16));
                     }
 
                     projIt = projectiles.erase(projIt);
@@ -288,6 +290,13 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
         }
     }
 
+    processChainedProjectiles(projectiles, newProjectilesData);
+}
+
+void GameState::processChainedProjectiles(
+    std::vector<std::unique_ptr<Projectile>> &projectiles,
+    std::vector<ProjectileData> &newProjectilesData)
+{
     projectileSpawnManager.spawnChainedProjectiles(
         gameData.textureManager.getTexture(TextureId::PROJECTILES),
         projectiles,
@@ -389,14 +398,16 @@ void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPositio
     }
 }
 
-void GameState::processEnemyShooting(float deltaTime, const sf::Vector2f &playerPosition)
+void GameState::processEnemyProjectiles(float deltaTime, const sf::Vector2f &playerPosition)
 {
+    std::vector<ProjectileData> newProjectilesData;
     auto &enemies = gameData.getEnemies();
     auto &projectiles = gameData.getProjectiles();
 
-    for (auto &enemy : enemies)
+    for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
     {
-        if (auto shooterEnemy = dynamic_cast<ShooterEnemy *>(enemy.get()))
+        auto enemy = enemyIt->get();
+        if (auto shooterEnemy = dynamic_cast<ShooterEnemy *>(enemy))
         {
             if (auto projectile = shooterEnemy->getShootData(deltaTime, playerPosition))
             {
@@ -409,7 +420,26 @@ void GameState::processEnemyShooting(float deltaTime, const sf::Vector2f &player
                 gameData.audioManager.playPooledSound(projectileAudioId);
             }
         }
+        else if (auto bomberEnemy = dynamic_cast<BomberEnemy *>(enemy))
+        {
+            if (bomberEnemy->shouldDetonate(playerPosition))
+            {
+                newProjectilesData.push_back(ProjectileData::CreateChained(
+                    ProjectileType::BOMBER_DEBRIS,
+                    bomberEnemy->getSprite().getPosition(),
+                    Constants::PROJECTILE_DAMAGE_BOMBER_DEBRIS,
+                    Constants::PROJECTILE_SPEED_BOMBER_DEBRIS,
+                    24));
+
+                enemyIt = enemies.erase(enemyIt);
+                continue;
+            }
+        }
+
+        ++enemyIt;
     }
+
+    processChainedProjectiles(projectiles, newProjectilesData);
 }
 
 void GameState::renderScoreText(sf::RenderWindow &window, const sf::View &view)

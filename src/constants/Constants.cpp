@@ -17,6 +17,8 @@ namespace Constants
     const int SPRITE_HEIGHT_SHOOTER = 128;
     const int SPRITE_WIDTH_SPEEDY = 112;
     const int SPRITE_HEIGHT_SPEEDY = 105;
+    const int SPRITE_WIDTH_BOMBER = 128;
+    const int SPRITE_HEIGHT_BOMBER = 96;
 
     const float BASE_PLAYER_SPEED = 400.0f;
     const float PROJECTILE_SPEED_BULLET = 600.0f;
@@ -24,24 +26,29 @@ namespace Constants
     const float PROJECTILE_SPEED_MISSILE = 400.0f;
     const float PROJECTILE_SPEED_MISSILE_DEBRIS = 600.0f;
     const float PROJECTILE_SPEED_BULLET_ALIEN = 600.0f;
+    const float PROJECTILE_SPEED_BOMBER_DEBRIS = 600.0f;
 
     const float PROJECTILE_DAMAGE_BULLET = 25.0f;
     const float PROJECTILE_DAMAGE_LAZER = 75.0f;
     const float PROJECTILE_DAMAGE_MISSILE = 50.0f;
     const float PROJECTILE_DAMAGE_MISSILE_DEBRIS = 25.0f;
     const float PROJECTILE_DAMAGE_BULLET_ALIEN = 25.0f;
+    const float PROJECTILE_DAMAGE_BOMBER_DEBRIS = 25.0f;
 
     const float ENEMY_SPAWN_OFFSET = 5.0f;
 
     const int ENEMY_POINTS_BASIC = 10.0f;
     const int ENEMY_POINTS_SHOOTER = 50.0f;
     const int ENEMY_POINTS_SPEEDY = 50.0f;
+    const int ENEMY_POINTS_BOMBER = 75.0f;
 
     const float ENEMY_HEALTH_BASIC = 25.0f;
     const float ENEMY_HEALTH_SHOOTER = 50.0f;
     const float ENEMY_HEALTH_SPEEDY = 25.0f;
+    const float ENEMY_HEALTH_BOMBER = 100.0f;
 
     const float ENEMY_SHOOTER_DISTANCE = 500.0f;
+    const float ENEMY_BOMBER_DISTANCE = 500.0f;
 
     const float UPGRADE_BOX_LIFETIME_LIMIT = 30.0f;
     const float UPGRADE_BOX_SPAWN_OFFSET = 64.0f;

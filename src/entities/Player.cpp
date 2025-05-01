@@ -98,7 +98,7 @@ std::optional<ProjectileData> Player::getShootData()
                 weaponAttrs,
                 rotationOffset);
 
-        return ProjectileData(
+        return ProjectileData::CreateRegular(
             weaponAttrs.projectileType,
             projectileSpawnData.position,
             projectileSpawnData.velocity,

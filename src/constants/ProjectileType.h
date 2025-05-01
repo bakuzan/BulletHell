@@ -8,4 +8,5 @@ enum ProjectileType
     MISSILE,
     MISSILE_DEBRIS,
     BULLET_ALIEN,
+    BOMBER_DEBRIS,
 };

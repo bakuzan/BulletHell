@@ -106,7 +106,7 @@ void AudioManager::initializeVolumeDefaults()
     volumeMap[AudioId::PROJECTILE_BASIC] = 75.0f;
     volumeMap[AudioId::PROJECTILE_LAZER] = 75.0f;
     volumeMap[AudioId::PROJECTILE_MISSILE] = 75.0f;
-    volumeMap[AudioId::PROJECTILE_MISSILE_DEBRIS] = 75.0f;
+    volumeMap[AudioId::PROJECTILE_EXPLOSION_DEBRIS] = 75.0f;
     volumeMap[AudioId::PROJECTILE_ALIEN_BASIC] = 75.0f;
 
     volumeMap[AudioId::UPGRADEBOX_HEALTH] = 100.0f;

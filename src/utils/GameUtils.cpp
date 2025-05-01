@@ -108,7 +108,8 @@ namespace GameUtils
         case ProjectileType::MISSILE:
             return AudioId::PROJECTILE_MISSILE;
         case ProjectileType::MISSILE_DEBRIS:
-            return AudioId::PROJECTILE_MISSILE_DEBRIS;
+        case ProjectileType::BOMBER_DEBRIS:
+            return AudioId::PROJECTILE_EXPLOSION_DEBRIS;
 
         case ProjectileType::BULLET_ALIEN:
             return AudioId::PROJECTILE_ALIEN_BASIC;

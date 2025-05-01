@@ -1,6 +1,7 @@
 #ifndef SHOOTERENEMY_H
 #define SHOOTERENEMY_H
 
+#include <SFML/Graphics.hpp>
 #include <optional>
 
 #include "Enemy.h"

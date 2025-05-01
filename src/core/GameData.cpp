@@ -16,7 +16,7 @@ GameData::GameData()
     audioManager.loadSound(AudioId::PROJECTILE_BASIC, "resources/audio/Projectile_Basic.wav");
     audioManager.loadSound(AudioId::PROJECTILE_LAZER, "resources/audio/Projectile_Lazer.wav");
     audioManager.loadSound(AudioId::PROJECTILE_MISSILE, "resources/audio/Projectile_Missile.wav");
-    audioManager.loadSound(AudioId::PROJECTILE_MISSILE_DEBRIS, "resources/audio/Projectile_MissileDebris.wav");
+    audioManager.loadSound(AudioId::PROJECTILE_EXPLOSION_DEBRIS, "resources/audio/Projectile_MissileDebris.wav");
     audioManager.loadSound(AudioId::PROJECTILE_ALIEN_BASIC, "resources/audio/Projectile_AlienBasic.wav");
     audioManager.loadSound(AudioId::UPGRADEBOX_HEALTH, "resources/audio/UpgradeBox_Health.wav");
     audioManager.loadSound(AudioId::UPGRADEBOX_WEAPON, "resources/audio/UpgradeBox_Weapon.wav");

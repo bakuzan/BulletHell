@@ -18,6 +18,8 @@ namespace Constants
     extern const int SPRITE_HEIGHT_SHOOTER;
     extern const int SPRITE_WIDTH_SPEEDY;
     extern const int SPRITE_HEIGHT_SPEEDY;
+    extern const int SPRITE_WIDTH_BOMBER;
+    extern const int SPRITE_HEIGHT_BOMBER;
 
     extern const float BASE_PLAYER_SPEED;
     extern const float PROJECTILE_SPEED_BULLET;
@@ -25,24 +27,29 @@ namespace Constants
     extern const float PROJECTILE_SPEED_MISSILE;
     extern const float PROJECTILE_SPEED_MISSILE_DEBRIS;
     extern const float PROJECTILE_SPEED_BULLET_ALIEN;
+    extern const float PROJECTILE_SPEED_BOMBER_DEBRIS;
 
     extern const float PROJECTILE_DAMAGE_BULLET;
     extern const float PROJECTILE_DAMAGE_LAZER;
     extern const float PROJECTILE_DAMAGE_MISSILE;
     extern const float PROJECTILE_DAMAGE_MISSILE_DEBRIS;
     extern const float PROJECTILE_DAMAGE_BULLET_ALIEN;
+    extern const float PROJECTILE_DAMAGE_BOMBER_DEBRIS;
 
     extern const float ENEMY_SPAWN_OFFSET;
 
     extern const int ENEMY_POINTS_BASIC;
     extern const int ENEMY_POINTS_SHOOTER;
     extern const int ENEMY_POINTS_SPEEDY;
+    extern const int ENEMY_POINTS_BOMBER;
 
     extern const float ENEMY_HEALTH_BASIC;
     extern const float ENEMY_HEALTH_SHOOTER;
     extern const float ENEMY_HEALTH_SPEEDY;
+    extern const float ENEMY_HEALTH_BOMBER;
 
     extern const float ENEMY_SHOOTER_DISTANCE;
+    extern const float ENEMY_BOMBER_DISTANCE;
 
     extern const float UPGRADE_BOX_LIFETIME_LIMIT;
     extern const float UPGRADE_BOX_SPAWN_OFFSET;

@@ -10,6 +10,7 @@ ProjectileTextureManager::ProjectileTextureManager()
 
     // ENEMY
     textureRects[ProjectileType::BULLET_ALIEN] = sf::IntRect(100, 500, 300, 200);
+    textureRects[ProjectileType::BOMBER_DEBRIS] = sf::IntRect(200, 500, 100, 100);
 }
 
 ProjectileTextureManager::~ProjectileTextureManager()
