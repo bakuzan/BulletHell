@@ -18,7 +18,7 @@ GameFlowManager::~GameFlowManager()
 
 // Publics
 
-void GameFlowManager::update(float deltaTime)
+void GameFlowManager::update(float deltaTime, std::vector<std::unique_ptr<Enemy>> &enemies)
 {
     if (waveActive)
     {
@@ -38,10 +38,16 @@ void GameFlowManager::update(float deltaTime)
     {
         waveCooldown -= deltaTime;
 
-        // TODO update this to check for end of level and if any enemies left...
-        if (waveCooldown <= 0.0f)
+        if (waveCooldown <= 0.0f &&
+            (currentLevelIndex < waves.size() ||
+             enemies.size() == 0))
         {
             startNextWave();
+        }
+        else if (currentLevelIndex == waves.size() &&
+                 enemies.size() != 0)
+        {
+            waveCooldown = 5.0f;
         }
     }
 }

@@ -77,7 +77,7 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         gameData.audioManager.playSound(AudioId::AMBIENT, true);
     }
 
-    gameFlowManager.update(deltaTime.asSeconds());
+    gameFlowManager.update(deltaTime.asSeconds(), gameData.getEnemies());
 
     auto &player = gameData.getPlayer();
     auto playerSprite = player->getSprite();
@@ -112,15 +112,12 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 
     updateProjectiles(deltaTime, window);
 
-    if (gameFlowManager.isWaveActive())
-    {
-        upgradeBoxSpawnManager.spawnUpgradeBoxes(
-            deltaTime.asSeconds(),
-            gameData.getUpgradeBoxes(),
-            gameData.textureManager.getTexture(TextureId::UPGRADE_BOXES),
-            player->getLastDirectionMoved(),
-            view);
-    }
+    upgradeBoxSpawnManager.spawnUpgradeBoxes(
+        deltaTime.asSeconds(),
+        gameData.getUpgradeBoxes(),
+        gameData.textureManager.getTexture(TextureId::UPGRADE_BOXES),
+        player->getLastDirectionMoved(),
+        view);
 
     updateUpgradeBoxes(deltaTime);
 
