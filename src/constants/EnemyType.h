@@ -6,4 +6,5 @@ enum class EnemyType
     SHOOTER,
     SPEEDY,
     BOMBER,
+    BOSS,
 };

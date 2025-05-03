@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 
+#include "core/TextureManager.h"
 #include "components/EnemyTextureManager.h"
 #include "entities/Enemy.h"
 
@@ -27,7 +28,7 @@ private:
 private:
     std::unique_ptr<Enemy> spawnEnemy(
         EnemyType type,
-        const sf::Texture &texture,
+        const TextureManager &textureManager,
         sf::IntRect textureRect,
         sf::Vector2f spawnPosition,
         float speed);
@@ -43,9 +44,9 @@ public:
         const std::unordered_map<EnemyType, float> &spawnRates);
 
     void spawnEnemies(
+        const TextureManager &textureManager,
         float deltaTime,
         std::vector<std::unique_ptr<Enemy>> &enemies,
-        const sf::Texture &enemiesTexture,
         const sf::View &view);
 };
 

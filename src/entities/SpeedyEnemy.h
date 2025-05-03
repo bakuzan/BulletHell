@@ -10,7 +10,7 @@ public:
                 sf::Vector2f spawnPosition, float movementSpeed);
     ~SpeedyEnemy() override;
 
-    void update(float deltaTime, const sf::Vector2f &playerPosition) override;
+    void update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition) override;
 };
 
 #endif // SPEEDYENEMY_H

@@ -18,7 +18,7 @@ GameFlowManager::~GameFlowManager()
 
 // Publics
 
-void GameFlowManager::update(float deltaTime, std::vector<std::unique_ptr<Enemy>> &enemies)
+void GameFlowManager::update(float deltaTime, const std::vector<std::unique_ptr<Enemy>> &enemies)
 {
     if (waveActive)
     {
@@ -42,6 +42,10 @@ void GameFlowManager::update(float deltaTime, std::vector<std::unique_ptr<Enemy>
             (currentLevelIndex < waves.size() ||
              enemies.size() == 0))
         {
+            std::cout << "Next wave..."
+                      << "Index: " << std::to_string(currentLevelIndex)
+                      << ", Enemies count: " << std::to_string(enemies.size())
+                      << std::endl;
             startNextWave();
         }
         else if (currentLevelIndex == waves.size() &&
@@ -81,6 +85,7 @@ void GameFlowManager::startNextWave()
               << ", Wave " << std::to_string(currentWaveIndex + 1)
               << std::endl;
     waveActive = true;
+    waveCooldown = 10.0f;
 }
 
 void GameFlowManager::initialise()
@@ -91,17 +96,17 @@ void GameFlowManager::initialise()
     waveActive = false;
     waves.clear();
 
-    waves.push_back({10.0f, {{EnemyType::BASIC, 5.0f}, {EnemyType::SHOOTER, 0.1f}, {EnemyType::SPEEDY, 0.0f}, {EnemyType::BOMBER, 0.0f}}});
-    waves.push_back({12.0f, {{EnemyType::BASIC, 6.0f}, {EnemyType::SHOOTER, 0.2f}, {EnemyType::SPEEDY, 0.1f}, {EnemyType::BOMBER, 0.0f}}});
-    waves.push_back({15.0f, {{EnemyType::BASIC, 7.0f}, {EnemyType::SHOOTER, 0.3f}, {EnemyType::SPEEDY, 0.2f}, {EnemyType::BOMBER, 0.0f}}});
-    waves.push_back({18.0f, {{EnemyType::BASIC, 8.0f}, {EnemyType::SHOOTER, 0.5f}, {EnemyType::SPEEDY, 0.3f}, {EnemyType::BOMBER, 0.1f}}});
-    waves.push_back({22.0f, {{EnemyType::BASIC, 10.0f}, {EnemyType::SHOOTER, 0.7f}, {EnemyType::SPEEDY, 0.5f}, {EnemyType::BOMBER, 0.3f}}});
-    waves.push_back({25.0f, {{EnemyType::BASIC, 12.0f}, {EnemyType::SHOOTER, 1.0f}, {EnemyType::SPEEDY, 0.7f}, {EnemyType::BOMBER, 0.5f}}});
+    // waves.push_back({10.0f, {{EnemyType::BASIC, 5.0f}, {EnemyType::SHOOTER, 0.1f}, {EnemyType::SPEEDY, 0.0f}, {EnemyType::BOMBER, 0.0f}}});
+    // waves.push_back({12.0f, {{EnemyType::BASIC, 6.0f}, {EnemyType::SHOOTER, 0.2f}, {EnemyType::SPEEDY, 0.1f}, {EnemyType::BOMBER, 0.0f}}});
+    // waves.push_back({15.0f, {{EnemyType::BASIC, 7.0f}, {EnemyType::SHOOTER, 0.3f}, {EnemyType::SPEEDY, 0.2f}, {EnemyType::BOMBER, 0.0f}}});
+    // waves.push_back({18.0f, {{EnemyType::BASIC, 8.0f}, {EnemyType::SHOOTER, 0.5f}, {EnemyType::SPEEDY, 0.3f}, {EnemyType::BOMBER, 0.1f}}});
+    // waves.push_back({22.0f, {{EnemyType::BASIC, 10.0f}, {EnemyType::SHOOTER, 0.7f}, {EnemyType::SPEEDY, 0.5f}, {EnemyType::BOMBER, 0.3f}}});
+    // waves.push_back({25.0f, {{EnemyType::BASIC, 12.0f}, {EnemyType::SHOOTER, 1.0f}, {EnemyType::SPEEDY, 0.7f}, {EnemyType::BOMBER, 0.5f}}});
 
-    // TODO Implement EnemyType::BOSS and have that appear as the final wave!
-    // waves.push_back({0.0f,
-    //                  {{EnemyType::BASIC, 0.0f},
-    //                   {EnemyType::SHOOTER, 0.0f},
-    //                   {EnemyType::SPEEDY, 0.0f},
-    //                   {EnemyType::BOMBER, 0.0f}}});
+    waves.push_back({1.0f,
+                     {{EnemyType::BASIC, 0.0f},
+                      {EnemyType::SHOOTER, 0.0f},
+                      {EnemyType::SPEEDY, 0.0f},
+                      {EnemyType::BOMBER, 0.0f},
+                      {EnemyType::BOSS, 1.0f}}});
 }

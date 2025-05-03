@@ -24,7 +24,7 @@ ShooterEnemy::~ShooterEnemy()
 }
 
 // Publics
-void ShooterEnemy::update(float deltaTime, const sf::Vector2f &playerPosition)
+void ShooterEnemy::update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition)
 {
     sf::Vector2f direction = playerPosition - sprite.getPosition();
     float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);

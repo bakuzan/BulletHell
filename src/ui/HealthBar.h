@@ -17,8 +17,11 @@ public:
               float maxHealth, float initHealth);
     ~HealthBar();
 
-    void render(sf::RenderWindow &window, const sf::View &view);
+    void render(sf::RenderWindow &window);
     void setHealth(float health);
+
+    void setPosition(float x, float y);
+    void scaleBasedOnTargetWidth(float targetWidth);
 };
 
 #endif // HEALTHBAR_H

@@ -20,6 +20,8 @@ namespace Constants
     extern const int SPRITE_HEIGHT_SPEEDY;
     extern const int SPRITE_WIDTH_BOMBER;
     extern const int SPRITE_HEIGHT_BOMBER;
+    extern const int SPRITE_WIDTH_BOSS;
+    extern const int SPRITE_HEIGHT_BOSS;
 
     extern const float BASE_PLAYER_SPEED;
     extern const float PROJECTILE_SPEED_BULLET;
@@ -42,11 +44,13 @@ namespace Constants
     extern const int ENEMY_POINTS_SHOOTER;
     extern const int ENEMY_POINTS_SPEEDY;
     extern const int ENEMY_POINTS_BOMBER;
+    extern const int ENEMY_POINTS_BOSS;
 
     extern const float ENEMY_HEALTH_BASIC;
     extern const float ENEMY_HEALTH_SHOOTER;
     extern const float ENEMY_HEALTH_SPEEDY;
     extern const float ENEMY_HEALTH_BOMBER;
+    extern const float ENEMY_HEALTH_BOSS;
 
     extern const float ENEMY_SHOOTER_DISTANCE;
     extern const float ENEMY_BOMBER_DISTANCE;

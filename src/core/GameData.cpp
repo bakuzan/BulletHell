@@ -30,6 +30,8 @@ GameData::GameData()
 
     // Init player
     player = std::make_unique<Player>(
+        textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
+        textureManager.getTexture(TextureId::HEALTHBAR_FILLINGS),
         textureManager.getTexture(TextureId::SPACESHIPS),
         sf::IntRect(392, Constants::SPRITE_OFFSET_Y, Constants::SPRITE_WIDTH_PLAYER, Constants::SPRITE_HEIGHT_PLAYER),
         300.0f,
@@ -85,4 +87,6 @@ void GameData::reset()
 
     player->reset();
     playerScore = 0;
+
+    gameFlowManager.reset();
 }

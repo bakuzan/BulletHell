@@ -7,6 +7,7 @@
 #include "constants/Direction.h"
 #include "constants/WeaponType.h"
 #include "data/ProjectileData.h"
+#include "ui/HealthBar.h"
 
 class Player
 {
@@ -16,6 +17,7 @@ private:
     float health;
     float initHealth;
     float maxHealth;
+    HealthBar healthBar;
 
     bool shoot;
     float weaponTimeout;
@@ -28,13 +30,14 @@ private:
     void move(float deltaTime);
 
 public:
-    Player(const sf::Texture &texture, sf::IntRect textureRect,
+    Player(const sf::Texture &borderTexture, const sf::Texture &fillingTexture,
+           const sf::Texture &texture, sf::IntRect textureRect,
            float maxHealth, float initHealth);
     ~Player();
 
     void handleEvent(const sf::Event &event);
     void update(float deltaTime, sf::RenderWindow &window);
-    void render(sf::RenderWindow &window) const;
+    void render(sf::RenderWindow &window);
     void reset();
 
     std::optional<ProjectileData> getShootData();

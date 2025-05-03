@@ -14,7 +14,9 @@ GameOverState::GameOverState(GameData &data, StateManager &manager, sf::RenderWi
       isAskingForPlayerName(false),
       playerHasHighScore(false),
       playerName(""),
-      playerScore(0)
+      playerScore(0),
+      cleanupTriggered(false),
+      accumulatedTime(0.0f)
 {
     buttonSpacing = 20.f;
     sf::View view = window.getView();
@@ -126,7 +128,16 @@ void GameOverState::handleEvent(const sf::Event &event)
 
 void GameOverState::update(sf::Time deltaTime, sf::RenderWindow &window)
 {
-    gameData.audioManager.cleanupSounds();
+    if (!cleanupTriggered)
+    {
+        accumulatedTime += deltaTime.asSeconds();
+
+        if (accumulatedTime >= 0.5f)
+        {
+            gameData.audioManager.cleanupSounds();
+            cleanupTriggered = true;
+        }
+    }
 
     if (gameData.audioManager.getSoundStatus(AudioId::AMBIENT) == sf::Sound::Status::Playing)
     {

@@ -20,7 +20,7 @@ public:
     ShooterEnemy(const sf::Texture &texture, sf::IntRect textureRect, sf::Vector2f spawnPosition, float movementSpeed);
     ~ShooterEnemy() override;
 
-    void update(float deltaTime, const sf::Vector2f &playerPosition) override;
+    void update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition) override;
     std::optional<ProjectileData> getShootData(float deltaTime, const sf::Vector2f &playerPosition);
 };
 

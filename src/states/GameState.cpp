@@ -17,11 +17,8 @@
 GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &window)
     : gameData(data),
       stateManager(manager),
-      window(window),
-      healthBar(gameData.textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
-                gameData.textureManager.getTexture(TextureId::HEALTHBAR_FILLINGS),
-                300.0f,
-                100.0f)
+      window(window)
+
 {
     // Load background
     const sf::Texture &backgroundTexture = gameData.textureManager.getTexture(TextureId::BACKGROUND);
@@ -77,20 +74,22 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
         gameData.audioManager.playSound(AudioId::AMBIENT, true);
     }
 
-    gameFlowManager.update(deltaTime.asSeconds(), gameData.getEnemies());
+    gameData.gameFlowManager.update(
+        deltaTime.asSeconds(),
+        gameData.getEnemies());
 
     auto &player = gameData.getPlayer();
     auto playerSprite = player->getSprite();
 
-    if (gameFlowManager.isWaveActive())
+    if (gameData.gameFlowManager.isWaveActive())
     {
         enemySpawnManager.setWaveParameters(
-            gameFlowManager.getSpawnRates());
+            gameData.gameFlowManager.getSpawnRates());
 
         enemySpawnManager.spawnEnemies(
+            gameData.textureManager,
             deltaTime.asSeconds(),
             gameData.getEnemies(),
-            gameData.textureManager.getTexture(TextureId::SPACESHIPS),
             view);
     }
 
@@ -142,8 +141,6 @@ void GameState::render(sf::RenderWindow &window)
         upgrade.render(window);
     }
 
-    gameData.getPlayer()->render(window);
-
     auto &enemies = gameData.getEnemies();
     for (const auto &enemy : enemies)
     {
@@ -156,8 +153,9 @@ void GameState::render(sf::RenderWindow &window)
         projectile->render(window);
     }
 
+    gameData.getPlayer()->render(window);
+
     // UI Elements
-    healthBar.render(window, view);
     renderScoreText(window, view);
 }
 
@@ -265,7 +263,6 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
             // Effects of player being hit
             player->updateHealth(-projectile->getDamageInflicts());
-            healthBar.setHealth(player->getHealth());
 
             if (player->getHealth() <= 0)
             {
@@ -340,7 +337,6 @@ void GameState::processUpgradeBoxPickUp(const UpgradeBox &upgradeBox)
     {
         auto &player = gameData.getPlayer();
         player->updateHealth(50);
-        healthBar.setHealth(player->getHealth());
         gameData.audioManager.playSound(AudioId::UPGRADEBOX_HEALTH);
         break;
     }
@@ -371,7 +367,7 @@ void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPositio
     for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
     {
         auto enemy = enemyIt->get();
-        enemy->update(deltaTime, playerPosition);
+        enemy->update(deltaTime, window, playerPosition);
 
         if (enemy->getSprite().getGlobalBounds().intersects(playerBounds) &&
             CollisionUtils::CheckSpritesIntersect(enemy->getSprite(), player->getSprite()))
@@ -379,7 +375,6 @@ void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPositio
             // Effects of hitting player
             float collisionDamage = enemy->getHealth() * 0.4f;
             player->updateHealth(-collisionDamage);
-            healthBar.setHealth(player->getHealth());
 
             enemyIt = enemies.erase(enemyIt); // Current assumption will be enemies die on collision!
 

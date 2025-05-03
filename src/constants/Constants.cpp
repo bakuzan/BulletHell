@@ -19,6 +19,8 @@ namespace Constants
     const int SPRITE_HEIGHT_SPEEDY = 105;
     const int SPRITE_WIDTH_BOMBER = 128;
     const int SPRITE_HEIGHT_BOMBER = 96;
+    const int SPRITE_WIDTH_BOSS = 128;
+    const int SPRITE_HEIGHT_BOSS = 112;
 
     const float BASE_PLAYER_SPEED = 400.0f;
     const float PROJECTILE_SPEED_BULLET = 600.0f;
@@ -41,11 +43,13 @@ namespace Constants
     const int ENEMY_POINTS_SHOOTER = 50.0f;
     const int ENEMY_POINTS_SPEEDY = 50.0f;
     const int ENEMY_POINTS_BOMBER = 75.0f;
+    const int ENEMY_POINTS_BOSS = 250.0f;
 
     const float ENEMY_HEALTH_BASIC = 25.0f;
     const float ENEMY_HEALTH_SHOOTER = 50.0f;
     const float ENEMY_HEALTH_SPEEDY = 25.0f;
     const float ENEMY_HEALTH_BOMBER = 100.0f;
+    const float ENEMY_HEALTH_BOSS = 500.f;
 
     const float ENEMY_SHOOTER_DISTANCE = 500.0f;
     const float ENEMY_BOMBER_DISTANCE = 500.0f;

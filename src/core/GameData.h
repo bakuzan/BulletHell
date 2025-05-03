@@ -12,6 +12,7 @@
 #include "components/EnemyTextureManager.h"
 #include "components/ProjectileTextureManager.h"
 #include "components/UpgradeBoxTextureManager.h"
+#include "components/GameFlowManager.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
 
@@ -30,6 +31,8 @@ public:
 
     TextureManager textureManager;
     AudioManager audioManager;
+
+    GameFlowManager gameFlowManager;
 
 public:
     GameData();

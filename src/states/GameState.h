@@ -13,7 +13,6 @@
 #include "components/EnemySpawnManager.h"
 #include "components/ProjectileSpawnManager.h"
 #include "components/UpgradeBoxSpawnManager.h"
-#include "components/GameFlowManager.h"
 
 class GameState : public State
 {
@@ -26,11 +25,9 @@ private:
     EnemySpawnManager enemySpawnManager;
     ProjectileSpawnManager projectileSpawnManager;
     UpgradeBoxSpawnManager upgradeBoxSpawnManager;
-    GameFlowManager gameFlowManager;
 
     sf::RectangleShape background;
 
-    HealthBar healthBar;
     sf::Text scoreText;
 
     bool shootProjectile;

@@ -25,7 +25,7 @@ BomberEnemy::~BomberEnemy()
 
 // Publics
 
-void BomberEnemy::update(float deltaTime, const sf::Vector2f &playerPosition)
+void BomberEnemy::update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition)
 {
     sf::Vector2f direction = playerPosition - sprite.getPosition();
     float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);

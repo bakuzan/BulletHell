@@ -17,7 +17,7 @@ public:
     BomberEnemy(const sf::Texture &texture, sf::IntRect textureRect, sf::Vector2f spawnPosition, float movementSpeed);
     ~BomberEnemy() override;
 
-    void update(float deltaTime, const sf::Vector2f &playerPosition) override;
+    void update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition) override;
     bool shouldDetonate(const sf::Vector2f &playerPosition);
 };
 

@@ -6,12 +6,16 @@
 #include "utils/InputUtils.h"
 #include "components/WeaponAttributesManager.h"
 
-Player::Player(const sf::Texture &texture, sf::IntRect textureRect,
+Player::Player(const sf::Texture &borderTexture, const sf::Texture &fillingTexture,
+               const sf::Texture &texture, sf::IntRect textureRect,
                float maxHealth, float initHealth)
     : maxHealth(maxHealth), health(initHealth), initHealth(initHealth),
       lastDirectionMoved(Direction::NONE),
       shoot(false),
-      weaponType(WeaponType::BASIC)
+      weaponType(WeaponType::BASIC),
+      healthBar(borderTexture, fillingTexture,
+                maxHealth,
+                initHealth)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -69,17 +73,24 @@ void Player::update(float deltaTime,
             weaponTimeout = 0.0f;
         }
     }
+
+    // Update the healthbar
+    sf::View view = window.getView();
+    healthBar.setPosition(view.getCenter().x - view.getSize().x / 2.0f + 20.0f,
+                          view.getCenter().y - view.getSize().y / 2.0f + 20.0f);
 }
 
-void Player::render(sf::RenderWindow &window) const
+void Player::render(sf::RenderWindow &window)
 {
     window.draw(sprite);
+    healthBar.render(window);
     // TODO Consider ui for weaponType and timeout!
 }
 
 void Player::reset()
 {
     health = initHealth;
+    healthBar.setHealth(initHealth);
     shoot = false;
     weaponTimeout = 0.0f;
     weaponType = WeaponType::BASIC;
@@ -126,6 +137,7 @@ const float Player::getHealth() const
 void Player::updateHealth(float adjustment)
 {
     health = std::max(0.0f, std::min(health + adjustment, maxHealth)); // Clamp between 0 and maxHealth
+    healthBar.setHealth(health);
 }
 
 void Player::setWeaponType(WeaponType type)

@@ -19,19 +19,14 @@ HealthBar::~HealthBar()
 
 // Publics
 
-void HealthBar::render(sf::RenderWindow &window, const sf::View &view)
+void HealthBar::render(sf::RenderWindow &window)
 {
     // Draw the border
-    borderSprite.setPosition(view.getCenter().x - view.getSize().x / 2.0f + 20.0f,
-                             view.getCenter().y - view.getSize().y / 2.0f + 20.0f);
     window.draw(borderSprite);
 
     // Draw the filling(s)
     sf::Vector2u fillingSpriteSize = fillingSprite.getTexture()->getSize();
     int availableFillings = 4;
-
-    // int scaledWidth = static_cast<int>(fillingSpriteSize.x * fillingSprite.getScale().x);
-    // int scaledHeight = static_cast<int>(fillingSpriteSize.y * fillingSprite.getScale().y / availableFillings);
 
     // Calculate how many full bars and the percentage of the next bar
     int fullBars = static_cast<int>(currentHealth / singleBarHealth);
@@ -47,7 +42,6 @@ void HealthBar::render(sf::RenderWindow &window, const sf::View &view)
             fillingSpriteSize.x,
             fillingSpriteSize.y / availableFillings));
 
-        fillingSprite.setPosition(borderSprite.getPosition());
         window.draw(fillingSprite);
     }
 
@@ -60,7 +54,6 @@ void HealthBar::render(sf::RenderWindow &window, const sf::View &view)
             partialWidth,
             fillingSpriteSize.y / availableFillings));
 
-        fillingSprite.setPosition(borderSprite.getPosition());
         window.draw(fillingSprite);
     }
 }
@@ -68,4 +61,19 @@ void HealthBar::render(sf::RenderWindow &window, const sf::View &view)
 void HealthBar::setHealth(float health)
 {
     currentHealth = std::max(0.0f, std::min(health, absoluteMaxHealth)); // Clamp between 0 and maxHealth
+}
+
+void HealthBar::setPosition(float x, float y)
+{
+    borderSprite.setPosition(x, y);
+    fillingSprite.setPosition(x, y);
+}
+
+void HealthBar::scaleBasedOnTargetWidth(float targetWidth)
+{
+    float originalWidth = borderSprite.getTexture()->getSize().x;
+    float scaleFactor = targetWidth / originalWidth;
+
+    borderSprite.setScale(scaleFactor, 2.0f);
+    fillingSprite.setScale(scaleFactor, 2.0f);
 }

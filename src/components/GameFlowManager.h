@@ -27,7 +27,7 @@ public:
     GameFlowManager();
     ~GameFlowManager();
 
-    void update(float deltaTime, std::vector<std::unique_ptr<Enemy>> &enemies);
+    void update(float deltaTime, const std::vector<std::unique_ptr<Enemy>> &enemies);
     void reset();
     // TODO Consider a mechanism to display ui for wave num/cooldown
     bool isWaveActive() const;

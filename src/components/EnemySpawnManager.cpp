@@ -5,6 +5,7 @@
 #include "entities/ShooterEnemy.h"
 #include "entities/SpeedyEnemy.h"
 #include "entities/BomberEnemy.h"
+#include "entities/BossEnemy.h"
 #include "utils/GameUtils.h"
 
 EnemySpawnManager::EnemySpawnManager()
@@ -13,11 +14,13 @@ EnemySpawnManager::EnemySpawnManager()
     spawnData[EnemyType::SHOOTER] = {0.0f, 0.0f};
     spawnData[EnemyType::SPEEDY] = {0.0f, 0.0f};
     spawnData[EnemyType::BOMBER] = {0.0f, 0.0f};
+    spawnData[EnemyType::BOSS] = {0.0f, 0.0f};
 
     enemySpeedMap[EnemyType::BASIC] = Constants::BASE_PLAYER_SPEED * 0.50f;
     enemySpeedMap[EnemyType::SHOOTER] = Constants::BASE_PLAYER_SPEED * 0.33f;
     enemySpeedMap[EnemyType::SPEEDY] = Constants::BASE_PLAYER_SPEED * 1.10f;
     enemySpeedMap[EnemyType::BOMBER] = Constants::BASE_PLAYER_SPEED * 0.25f;
+    enemySpeedMap[EnemyType::BOSS] = Constants::BASE_PLAYER_SPEED * 0.10;
 }
 
 EnemySpawnManager::~EnemySpawnManager()
@@ -40,9 +43,9 @@ void EnemySpawnManager::setWaveParameters(
 }
 
 void EnemySpawnManager::spawnEnemies(
+    const TextureManager &textureManager,
     float deltaTime,
     std::vector<std::unique_ptr<Enemy>> &enemies,
-    const sf::Texture &enemiesTexture,
     const sf::View &view)
 {
     for (auto &[enemyType, spawnInfo] : spawnData)
@@ -59,7 +62,7 @@ void EnemySpawnManager::spawnEnemies(
 
             enemies.emplace_back(
                 spawnEnemy(enemyType,
-                           enemiesTexture, textureRect,
+                           textureManager, textureRect,
                            spawnPosition, enemySpeed));
         }
     }
@@ -69,11 +72,13 @@ void EnemySpawnManager::spawnEnemies(
 
 std::unique_ptr<Enemy> EnemySpawnManager::spawnEnemy(
     EnemyType type,
-    const sf::Texture &texture,
+    const TextureManager &textureManager,
     sf::IntRect textureRect,
     sf::Vector2f spawnPosition,
     float speed)
 {
+    const sf::Texture &texture = textureManager.getTexture(TextureId::SPACESHIPS);
+
     switch (type)
     {
     case EnemyType::BASIC:
@@ -84,6 +89,11 @@ std::unique_ptr<Enemy> EnemySpawnManager::spawnEnemy(
         return std::make_unique<SpeedyEnemy>(texture, textureRect, spawnPosition, speed);
     case EnemyType::BOMBER:
         return std::make_unique<BomberEnemy>(texture, textureRect, spawnPosition, speed);
+    case EnemyType::BOSS:
+        return std::make_unique<BossEnemy>(
+            textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
+            textureManager.getTexture(TextureId::HEALTHBAR_FILLINGS),
+            texture, textureRect, spawnPosition, speed);
     default:
         return nullptr;
     }
