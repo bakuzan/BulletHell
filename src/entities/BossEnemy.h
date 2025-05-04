@@ -25,9 +25,9 @@ public:
     void update(float deltaTime,
                 sf::RenderWindow &window,
                 const sf::Vector2f &playerPosition) override;
-    void render(sf::RenderWindow &window);
 
-    void updateHealth(float adjustment);
+    void updateHealth(float adjustment) override;
+    HealthBar &getHealthBar();
 };
 
 #endif // BOSSENEMY_H

@@ -2,6 +2,7 @@
 #define HEALTHBAR_H
 
 #include <SFML/Graphics.hpp>
+#include <string>
 
 class HealthBar
 {
@@ -12,9 +13,12 @@ private:
     float singleBarHealth;
     float absoluteMaxHealth;
 
+    std::string name;
+
 public:
     HealthBar(const sf::Texture &borderTexture, const sf::Texture &fillingTexture,
-              float maxHealth, float initHealth);
+              float maxHealth, float initHealth,
+              std::string barName);
     ~HealthBar();
 
     void render(sf::RenderWindow &window);

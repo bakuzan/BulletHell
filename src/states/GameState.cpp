@@ -5,6 +5,7 @@
 
 #include "entities/ShooterEnemy.h"
 #include "entities/BomberEnemy.h"
+#include "entities/BossEnemy.h"
 #include "entities/LazerProjectile.h"
 #include "utils/CollisionUtils.h"
 #include "utils/GameUtils.h"
@@ -156,7 +157,22 @@ void GameState::render(sf::RenderWindow &window)
     gameData.getPlayer()->render(window);
 
     // UI Elements
-    renderScoreText(window, view);
+    window.setView(window.getDefaultView()); // Set "UI" view
+
+    gameData.getPlayer()->getHealthBar().render(window);
+
+    for (const auto &enemy : enemies)
+    {
+        if (auto boss = dynamic_cast<BossEnemy *>(enemy.get()))
+        {
+            boss->getHealthBar().render(window);
+        }
+    }
+
+    renderScoreText(window);
+
+    // Restore game view
+    window.setView(view);
 }
 
 // Private
@@ -434,8 +450,10 @@ void GameState::processEnemyProjectiles(float deltaTime, const sf::Vector2f &pla
     processChainedProjectiles(projectiles, newProjectilesData);
 }
 
-void GameState::renderScoreText(sf::RenderWindow &window, const sf::View &view)
+void GameState::renderScoreText(sf::RenderWindow &window)
 {
+    sf::View view = window.getDefaultView();
+
     float margin = 10.0f;
     scoreText.setPosition(
         view.getCenter().x + view.getSize().x / 2.0f - scoreText.getGlobalBounds().width - margin,

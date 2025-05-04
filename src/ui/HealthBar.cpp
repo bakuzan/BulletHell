@@ -3,8 +3,10 @@
 HealthBar::HealthBar(
     const sf::Texture &borderTexture, const sf::Texture &fillingTexture,
     float maxHealth,
-    float initHealth)
-    : absoluteMaxHealth(maxHealth), singleBarHealth(initHealth), currentHealth(initHealth)
+    float initHealth,
+    std::string barName)
+    : absoluteMaxHealth(maxHealth), singleBarHealth(initHealth), currentHealth(initHealth),
+      name(barName)
 {
     borderSprite.setTexture(borderTexture);
     borderSprite.setScale(2.0f, 2.0f);
@@ -74,6 +76,6 @@ void HealthBar::scaleBasedOnTargetWidth(float targetWidth)
     float originalWidth = borderSprite.getTexture()->getSize().x;
     float scaleFactor = targetWidth / originalWidth;
 
-    borderSprite.setScale(scaleFactor, 2.0f);
-    fillingSprite.setScale(scaleFactor, 2.0f);
+    borderSprite.setScale(scaleFactor, 3.0f);
+    fillingSprite.setScale(scaleFactor, 3.0f);
 }

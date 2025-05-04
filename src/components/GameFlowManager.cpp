@@ -39,17 +39,14 @@ void GameFlowManager::update(float deltaTime, const std::vector<std::unique_ptr<
         waveCooldown -= deltaTime;
 
         if (waveCooldown <= 0.0f &&
-            (currentLevelIndex < waves.size() ||
-             enemies.size() == 0))
+            (currentWaveIndex < waves.size() ||
+             enemies.empty()))
         {
-            std::cout << "Next wave..."
-                      << "Index: " << std::to_string(currentLevelIndex)
-                      << ", Enemies count: " << std::to_string(enemies.size())
-                      << std::endl;
+
             startNextWave();
         }
-        else if (currentLevelIndex == waves.size() &&
-                 enemies.size() != 0)
+        else if (currentWaveIndex == waves.size() &&
+                 !enemies.empty())
         {
             waveCooldown = 5.0f;
         }
@@ -81,11 +78,7 @@ void GameFlowManager::startNextWave()
         currentWaveIndex = 0;
     }
 
-    std::cout << "Starting Level " << std::to_string(currentLevelIndex + 1)
-              << ", Wave " << std::to_string(currentWaveIndex + 1)
-              << std::endl;
     waveActive = true;
-    waveCooldown = 10.0f;
 }
 
 void GameFlowManager::initialise()
@@ -103,7 +96,7 @@ void GameFlowManager::initialise()
     // waves.push_back({22.0f, {{EnemyType::BASIC, 10.0f}, {EnemyType::SHOOTER, 0.7f}, {EnemyType::SPEEDY, 0.5f}, {EnemyType::BOMBER, 0.3f}}});
     // waves.push_back({25.0f, {{EnemyType::BASIC, 12.0f}, {EnemyType::SHOOTER, 1.0f}, {EnemyType::SPEEDY, 0.7f}, {EnemyType::BOMBER, 0.5f}}});
 
-    waves.push_back({1.0f,
+    waves.push_back({1.10f,
                      {{EnemyType::BASIC, 0.0f},
                       {EnemyType::SHOOTER, 0.0f},
                       {EnemyType::SPEEDY, 0.0f},

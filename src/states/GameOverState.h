@@ -31,9 +31,6 @@ private:
     std::string playerName;
     int playerScore;
 
-    bool cleanupTriggered;
-    float accumulatedTime;
-
 private:
     void updateMenuItemPositions();
 

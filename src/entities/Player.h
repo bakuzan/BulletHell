@@ -46,6 +46,7 @@ public:
     const float getHealth() const;
     void updateHealth(float adjustment);
     void setWeaponType(WeaponType type);
+    HealthBar &getHealthBar();
 };
 
 #endif // PLAYER_H

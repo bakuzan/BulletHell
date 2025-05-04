@@ -42,7 +42,7 @@ private:
     void updateEnemies(float deltaTime, const sf::Vector2f &playerPosition);
     void processEnemyProjectiles(float deltaTime, const sf::Vector2f &playerPosition);
 
-    void renderScoreText(sf::RenderWindow &window, const sf::View &view);
+    void renderScoreText(sf::RenderWindow &window);
     void updateScoreText(int score);
 
     void ensureBackgroundSizeIsLinkedToViewSize(

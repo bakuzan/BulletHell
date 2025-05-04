@@ -33,7 +33,7 @@ public:
     const sf::Sprite &getSprite() const;
     const int getPointsValue() const;
     void setPosition(sf::Vector2f position);
-    void updateHealth(float adjustment);
+    virtual void updateHealth(float adjustment);
 };
 
 #endif // ENEMY_H

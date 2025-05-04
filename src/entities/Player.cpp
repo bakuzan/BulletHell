@@ -15,7 +15,8 @@ Player::Player(const sf::Texture &borderTexture, const sf::Texture &fillingTextu
       weaponType(WeaponType::BASIC),
       healthBar(borderTexture, fillingTexture,
                 maxHealth,
-                initHealth)
+                initHealth,
+                "Player")
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -75,15 +76,18 @@ void Player::update(float deltaTime,
     }
 
     // Update the healthbar
-    sf::View view = window.getView();
-    healthBar.setPosition(view.getCenter().x - view.getSize().x / 2.0f + 20.0f,
-                          view.getCenter().y - view.getSize().y / 2.0f + 20.0f);
+    sf::View view = window.getDefaultView();
+    sf::Vector2f viewSize = view.getSize();
+    sf::Vector2f viewCenter = view.getCenter();
+
+    float xPos = viewCenter.x - viewSize.x / 2.0f + 5.0f;
+    float yPos = viewCenter.y - viewSize.y / 2.0f + 5.0f;
+    healthBar.setPosition(xPos, yPos);
 }
 
 void Player::render(sf::RenderWindow &window)
 {
     window.draw(sprite);
-    healthBar.render(window);
     // TODO Consider ui for weaponType and timeout!
 }
 
@@ -144,6 +148,11 @@ void Player::setWeaponType(WeaponType type)
 {
     weaponType = type;
     weaponTimeout = WeaponAttributesManager::getInstance().getTimeout(type);
+}
+
+HealthBar &Player::getHealthBar()
+{
+    return healthBar;
 }
 
 // Privates

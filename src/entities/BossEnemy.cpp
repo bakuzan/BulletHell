@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 
 #include "BossEnemy.h"
 #include "constants/Constants.h"
@@ -13,7 +14,8 @@ BossEnemy::BossEnemy(
             spawnPosition,
             movementSpeed, Constants::ENEMY_POINTS_BOSS, Constants::ENEMY_HEALTH_BOSS),
       healthBar(borderTexture, fillingTexture,
-                Constants::ENEMY_HEALTH_BOSS, Constants::ENEMY_HEALTH_BOSS)
+                Constants::ENEMY_HEALTH_BOSS, Constants::ENEMY_HEALTH_BOSS,
+                "Boss")
 {
     sprite.setOrigin(Constants::SPRITE_WIDTH_BOSS / 2.0f, Constants::SPRITE_HEIGHT_BOSS / 2.0f);
 }
@@ -48,16 +50,15 @@ void BossEnemy::update(float deltaTime,
     updateHealthBarPlacement(window);
 }
 
-void BossEnemy::render(sf::RenderWindow &window)
-{
-    Enemy::render(window);
-    healthBar.render(window);
-}
-
 void BossEnemy::updateHealth(float adjustment)
 {
     Enemy::updateHealth(adjustment);
     healthBar.setHealth(getHealth());
+}
+
+HealthBar &BossEnemy::getHealthBar()
+{
+    return healthBar;
 }
 
 // Privates
@@ -70,16 +71,16 @@ float BossEnemy::calculateDistanceToPlayerMagnitude(const sf::Vector2f &playerPo
 
 void BossEnemy::updateHealthBarPlacement(sf::RenderWindow &window)
 {
-    sf::View view = window.getView();
+    sf::View view = window.getDefaultView();
     sf::Vector2f viewSize = view.getSize();
     sf::Vector2f viewCenter = view.getCenter();
 
     // // Resize health bar to match width (minus margins)
-    float newWidth = viewSize.x - 40.0f;
+    float newWidth = viewSize.x - 20.0f;
     healthBar.scaleBasedOnTargetWidth(newWidth);
 
     // Calculate bottom-left starting position
-    float xPos = viewCenter.x - (viewSize.x / 2.0f) + 20.0f;
-    float yPos = viewCenter.y + (viewSize.y / 2.0f) - 40.0f;
+    float xPos = viewCenter.x - viewSize.x / 2.0f + 10.0f;
+    float yPos = viewCenter.y + viewSize.y / 2.0f - 60.0f;
     healthBar.setPosition(xPos, yPos);
 }
