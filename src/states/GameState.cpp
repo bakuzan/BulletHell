@@ -282,8 +282,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
             if (player->getHealth() <= 0)
             {
-                gameData.audioManager.playSound(AudioId::DEATH_PLAYER);
-                stateManager.pushState(std::make_unique<GameOverState>(gameData, stateManager, window));
+                onPlayerDeath();
             }
         }
 
@@ -396,7 +395,7 @@ void GameState::updateEnemies(float deltaTime, const sf::Vector2f &playerPositio
 
             if (player->getHealth() <= 0)
             {
-                stateManager.pushState(std::make_unique<GameOverState>(gameData, stateManager, window));
+                onPlayerDeath();
             }
         }
         else
@@ -448,6 +447,12 @@ void GameState::processEnemyProjectiles(float deltaTime, const sf::Vector2f &pla
     }
 
     processChainedProjectiles(projectiles, newProjectilesData);
+}
+
+void GameState::onPlayerDeath()
+{
+    gameData.audioManager.playSound(AudioId::DEATH_PLAYER);
+    stateManager.pushState(std::make_unique<GameOverState>(gameData, stateManager, window));
 }
 
 void GameState::renderScoreText(sf::RenderWindow &window)

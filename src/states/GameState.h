@@ -42,6 +42,8 @@ private:
     void updateEnemies(float deltaTime, const sf::Vector2f &playerPosition);
     void processEnemyProjectiles(float deltaTime, const sf::Vector2f &playerPosition);
 
+    void onPlayerDeath();
+
     void renderScoreText(sf::RenderWindow &window);
     void updateScoreText(int score);
 
