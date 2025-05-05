@@ -39,8 +39,10 @@ const ProjectileOrigin Projectile::getOrigin() const
     case ProjectileType::MISSILE:
     case ProjectileType::MISSILE_DEBRIS:
         return ProjectileOrigin::PLAYER;
-    case ProjectileType::BULLET_ALIEN:
-    case ProjectileType::BOMBER_DEBRIS:
+    case ProjectileType::ALIEN_BULLET:
+    case ProjectileType::ALIEN_DEBRIS:
+    case ProjectileType::ALIEN_LAZER:
+    case ProjectileType::ALIEN_SEEKER:
         return ProjectileOrigin::ENEMY;
     }
 

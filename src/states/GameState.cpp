@@ -7,6 +7,7 @@
 #include "entities/BomberEnemy.h"
 #include "entities/BossEnemy.h"
 #include "entities/LazerProjectile.h"
+#include "entities/SeekerProjectile.h"
 #include "utils/CollisionUtils.h"
 #include "utils/GameUtils.h"
 #include "utils/InputUtils.h"
@@ -183,37 +184,63 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
     auto &projectiles = gameData.getProjectiles();
     auto &enemies = gameData.getEnemies();
     auto &player = gameData.getPlayer();
+    sf::Vector2f playerPos = player->getSprite().getPosition();
 
     for (auto projIt = projectiles.begin(); projIt != projectiles.end();)
     {
         auto projectile = projIt->get();
+
+        // Setup
+        if (projectile->getType() == ProjectileType::ALIEN_SEEKER)
+        {
+            auto seeker = dynamic_cast<SeekerProjectile *>(projectile);
+            seeker->setTargetPosition(playerPos);
+        }
+
+        // Update
         projectile->update(deltaTime);
 
+        // Handle collisions
         bool projectileRemoved = false;
-        if (projectile->getType() == ProjectileType::LAZER)
+        if (projectile->getType() == ProjectileType::LAZER ||
+            projectile->getType() == ProjectileType::ALIEN_LAZER)
         {
             auto lazer = dynamic_cast<LazerProjectile *>(projectile);
 
             if (!lazer->isDamageCalculated())
             {
-                for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
+                if (lazer->getOrigin() == ProjectileOrigin::PLAYER)
                 {
-                    auto &enemy = **enemyIt;
-                    if (lazer->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()) &&
-                        CollisionUtils::CheckSpritesIntersect(lazer->getSprite(), enemy.getSprite()))
+                    for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
                     {
-                        enemy.updateHealth(-lazer->getDamageInflicts());
-                        if (enemy.getHealth() <= 0.0f)
+                        auto &enemy = **enemyIt;
+                        if (lazer->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()) &&
+                            CollisionUtils::CheckSpritesIntersect(lazer->getSprite(), enemy.getSprite()))
                         {
-                            gameData.updateScore(enemy.getPointsValue());
-                            updateScoreText(gameData.getScore());
+                            enemy.updateHealth(-lazer->getDamageInflicts());
+                            if (enemy.getHealth() <= 0.0f)
+                            {
+                                gameData.updateScore(enemy.getPointsValue());
+                                updateScoreText(gameData.getScore());
 
-                            enemyIt = enemies.erase(enemyIt);
+                                enemyIt = enemies.erase(enemyIt);
+                            }
+                        }
+                        else
+                        {
+                            ++enemyIt;
                         }
                     }
-                    else
+                }
+                else if (lazer->getSprite().getGlobalBounds().intersects(player->getSprite().getGlobalBounds()) &&
+                         CollisionUtils::CheckSpritesIntersect(lazer->getSprite(), player->getSprite()))
+                {
+                    // Effects of player being hit
+                    player->updateHealth(-lazer->getDamageInflicts());
+
+                    if (player->getHealth() <= 0)
                     {
-                        ++enemyIt;
+                        onPlayerDeath();
                     }
                 }
 
@@ -432,10 +459,10 @@ void GameState::processEnemyProjectiles(float deltaTime, const sf::Vector2f &pla
             if (bomberEnemy->shouldDetonate(playerPosition))
             {
                 newProjectilesData.push_back(ProjectileData::CreateChained(
-                    ProjectileType::BOMBER_DEBRIS,
+                    ProjectileType::ALIEN_DEBRIS,
                     bomberEnemy->getSprite().getPosition(),
-                    Constants::PROJECTILE_DAMAGE_BOMBER_DEBRIS,
-                    Constants::PROJECTILE_SPEED_BOMBER_DEBRIS,
+                    Constants::PROJECTILE_DAMAGE_ALIEN_DEBRIS,
+                    Constants::PROJECTILE_SPEED_ALIEN_DEBRIS,
                     24));
 
                 enemyIt = enemies.erase(enemyIt);

@@ -11,7 +11,8 @@ private:
     bool hasDamageBeenCalculated;
 
 public:
-    LazerProjectile(const sf::Texture &texture, sf::IntRect textureRect,
+    LazerProjectile(ProjectileType type,
+                    const sf::Texture &texture, sf::IntRect textureRect,
                     sf::Vector2f spawnPosition, sf::Vector2f velocity,
                     float damage);
     ~LazerProjectile();

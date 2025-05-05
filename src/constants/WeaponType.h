@@ -8,4 +8,6 @@ enum class WeaponType
     MISSILE,
 
     ALIEN_BASIC,
+    ALIEN_LAZER,
+    ALIEN_SEEKER,
 };

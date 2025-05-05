@@ -108,11 +108,15 @@ namespace GameUtils
         case ProjectileType::MISSILE:
             return AudioId::PROJECTILE_MISSILE;
         case ProjectileType::MISSILE_DEBRIS:
-        case ProjectileType::BOMBER_DEBRIS:
+        case ProjectileType::ALIEN_DEBRIS:
             return AudioId::PROJECTILE_EXPLOSION_DEBRIS;
 
-        case ProjectileType::BULLET_ALIEN:
+        case ProjectileType::ALIEN_BULLET:
             return AudioId::PROJECTILE_ALIEN_BASIC;
+        case ProjectileType::ALIEN_LAZER:
+            return AudioId::PROJECTILE_LAZER;
+        case ProjectileType::ALIEN_SEEKER:
+            return AudioId::PROJECTILE_MISSILE;
         }
 
         throw std::logic_error("Unhandled ProjectileType in GameUtils::getAudioIdForProjectileType()");

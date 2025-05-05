@@ -18,8 +18,8 @@ struct ProjectileData
         return {type, position, {0, 0}, damage, speed, debrisCount};
     }
 
-    static ProjectileData CreateRegular(ProjectileType type, sf::Vector2f position, sf::Vector2f direction, float damage)
+    static ProjectileData CreateRegular(ProjectileType type, sf::Vector2f position, sf::Vector2f direction, float damage, float speed)
     {
-        return {type, position, direction, damage, 0.0f, 0};
+        return {type, position, direction, damage, speed, 0};
     }
 };

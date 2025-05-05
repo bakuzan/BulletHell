@@ -1,5 +1,3 @@
-#include <cmath>
-
 #include "BasicEnemy.h"
 #include "constants/Constants.h"
 #include "utils/GameUtils.h"

@@ -1,5 +1,7 @@
 #include <cmath>
 #include <iostream>
+#include <random>
+#include <vector>
 
 #include "BossEnemy.h"
 #include "constants/Constants.h"
@@ -58,8 +60,10 @@ std::optional<ProjectileData> BossEnemy::getShootData(
 {
     if (shouldShoot(deltaTime, playerPosition))
     {
+        float healthPercentage = health / Constants::ENEMY_HEALTH_BOSS;
+        WeaponType selectedType = getWeightedWeaponType(healthPercentage);
         WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance()
-                                           .getAttributes(WeaponType::ALIEN_BASIC);
+                                           .getAttributes(selectedType);
 
         SpawnData projectileSpawnData =
             GameUtils::getSpawnDataForProjectileFromEntity(
@@ -71,7 +75,8 @@ std::optional<ProjectileData> BossEnemy::getShootData(
             weaponAttrs.projectileType,
             projectileSpawnData.position,
             projectileSpawnData.velocity,
-            weaponAttrs.damage);
+            weaponAttrs.damage,
+            weaponAttrs.speed);
     }
 
     return std::nullopt;
@@ -115,10 +120,13 @@ void BossEnemy::updateHealthBarPlacement(sf::RenderWindow &window)
 bool BossEnemy::shouldShoot(float deltaTime,
                             const sf::Vector2f &playerPosition)
 {
-    static float shootCooldown = 1.0f;
     static float timeSinceLastShot = 0.0f;
 
-    float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);
+    float healthPercentage = health / Constants::ENEMY_HEALTH_BOSS;
+
+    float maxCooldown = 1.5f;
+    float minCooldown = 0.3f;
+    float shootCooldown = minCooldown + (maxCooldown - minCooldown) * healthPercentage;
 
     timeSinceLastShot += deltaTime;
 
@@ -129,4 +137,24 @@ bool BossEnemy::shouldShoot(float deltaTime,
     }
 
     return false;
+}
+
+WeaponType BossEnemy::getWeightedWeaponType(float healthPercentage)
+{
+    std::vector<WeaponType> weaponTypes = {
+        WeaponType::ALIEN_BASIC,
+        WeaponType::ALIEN_LAZER,
+        WeaponType::ALIEN_SEEKER};
+
+    // Adjust probabilities based on health percentage
+    std::vector<int> weights = {
+        static_cast<int>(100 * (healthPercentage)),
+        static_cast<int>(100 * (1.0 - healthPercentage)),
+        static_cast<int>(100 * (1.0 - healthPercentage) * 2)};
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::discrete_distribution<> dist(weights.begin(), weights.end());
+
+    return weaponTypes[dist(gen)];
 }

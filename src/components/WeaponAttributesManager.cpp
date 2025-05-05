@@ -29,10 +29,24 @@ WeaponAttributesManager::WeaponAttributesManager()
 
       // Enemy
       {WeaponType::ALIEN_BASIC,
-       {ProjectileType::BULLET_ALIEN,
-        Constants::PROJECTILE_DAMAGE_BULLET_ALIEN,
-        Constants::PROJECTILE_SPEED_BULLET_ALIEN,
-        {15.f, 10.f}}}};
+       {ProjectileType::ALIEN_BULLET,
+        Constants::PROJECTILE_DAMAGE_ALIEN_BULLET,
+        Constants::PROJECTILE_SPEED_ALIEN_BULLET,
+        {15.f, 10.f}}},
+
+      {WeaponType::ALIEN_SEEKER,
+       {ProjectileType::ALIEN_SEEKER,
+        Constants::PROJECTILE_DAMAGE_ALIEN_SEEKER,
+        Constants::PROJECTILE_SPEED_ALIEN_SEEKER,
+        {15.f, 25.f}}},
+
+      {WeaponType::ALIEN_LAZER,
+       {ProjectileType::ALIEN_LAZER,
+        Constants::PROJECTILE_DAMAGE_ALIEN_LAZER,
+        Constants::PROJECTILE_SPEED_ALIEN_LAZER,
+        {15.f, 5000.f}}},
+
+  };
 
   weaponTimeouts = {
       {WeaponType::DOUBLE_SHOT, 12.0f},

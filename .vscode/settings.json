@@ -77,6 +77,12 @@
     "iomanip": "cpp",
     "sstream": "cpp",
     "queue": "cpp",
-    "set": "cpp"
+    "set": "cpp",
+    "chrono": "cpp",
+    "forward_list": "cpp",
+    "ratio": "cpp",
+    "semaphore": "cpp",
+    "stop_token": "cpp",
+    "thread": "cpp"
   }
 }

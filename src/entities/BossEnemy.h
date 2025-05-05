@@ -4,6 +4,7 @@
 #include <optional>
 
 #include "RangedEnemy.h"
+#include "constants/WeaponType.h"
 #include "data/ProjectileData.h"
 #include "ui/HealthBar.h"
 
@@ -15,7 +16,9 @@ private:
 private:
     float calculateDistanceToPlayerMagnitude(const sf::Vector2f &playerPosition);
     void updateHealthBarPlacement(sf::RenderWindow &window);
+
     bool shouldShoot(float deltaTime, const sf::Vector2f &playerPosition);
+    WeaponType getWeightedWeaponType(float healthPercentage);
 
 public:
     static constexpr float rotationOffset = 90.0f;

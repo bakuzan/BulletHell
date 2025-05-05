@@ -117,7 +117,8 @@ std::optional<ProjectileData> Player::getShootData()
             weaponAttrs.projectileType,
             projectileSpawnData.position,
             projectileSpawnData.velocity,
-            weaponAttrs.damage);
+            weaponAttrs.damage,
+            weaponAttrs.speed);
     }
 
     return std::nullopt;

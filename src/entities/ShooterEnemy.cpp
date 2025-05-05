@@ -52,7 +52,8 @@ std::optional<ProjectileData> ShooterEnemy::getShootData(
 {
     if (shouldShoot(deltaTime, playerPosition))
     {
-        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance().getAttributes(WeaponType::ALIEN_BASIC);
+        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance()
+                                           .getAttributes(WeaponType::ALIEN_BASIC);
 
         SpawnData projectileSpawnData =
             GameUtils::getSpawnDataForProjectileFromEntity(
@@ -64,7 +65,8 @@ std::optional<ProjectileData> ShooterEnemy::getShootData(
             weaponAttrs.projectileType,
             projectileSpawnData.position,
             projectileSpawnData.velocity,
-            weaponAttrs.damage);
+            weaponAttrs.damage,
+            weaponAttrs.speed);
     }
 
     return std::nullopt;

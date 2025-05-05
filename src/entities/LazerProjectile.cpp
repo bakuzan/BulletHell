@@ -3,10 +3,11 @@
 
 #include "LazerProjectile.h"
 
-LazerProjectile::LazerProjectile(const sf::Texture &texture, sf::IntRect textureRect,
+LazerProjectile::LazerProjectile(ProjectileType type,
+                                 const sf::Texture &texture, sf::IntRect textureRect,
                                  sf::Vector2f spawnPosition, sf::Vector2f velocity,
                                  float damage)
-    : Projectile(ProjectileType::LAZER,
+    : Projectile(type,
                  texture, textureRect,
                  spawnPosition, velocity,
                  damage),
