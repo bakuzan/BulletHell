@@ -3,16 +3,18 @@
 
 #include "BossEnemy.h"
 #include "constants/Constants.h"
+#include "constants/ProjectileType.h"
 #include "utils/GameUtils.h"
+#include "components/WeaponAttributesManager.h"
 
 BossEnemy::BossEnemy(
     const sf::Texture &borderTexture, const sf::Texture &fillingTexture,
     const sf::Texture &texture, sf::IntRect textureRect,
     sf::Vector2f spawnPosition, float movementSpeed)
-    : Enemy(EnemyType::BOSS,
-            texture, textureRect,
-            spawnPosition,
-            movementSpeed, Constants::ENEMY_POINTS_BOSS, Constants::ENEMY_HEALTH_BOSS),
+    : RangedEnemy(EnemyType::BOSS,
+                  texture, textureRect,
+                  spawnPosition,
+                  movementSpeed, Constants::ENEMY_POINTS_BOSS, Constants::ENEMY_HEALTH_BOSS),
       healthBar(borderTexture, fillingTexture,
                 Constants::ENEMY_HEALTH_BOSS, Constants::ENEMY_HEALTH_BOSS,
                 "Boss")
@@ -50,6 +52,31 @@ void BossEnemy::update(float deltaTime,
     updateHealthBarPlacement(window);
 }
 
+std::optional<ProjectileData> BossEnemy::getShootData(
+    float deltaTime,
+    const sf::Vector2f &playerPosition)
+{
+    if (shouldShoot(deltaTime, playerPosition))
+    {
+        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance()
+                                           .getAttributes(WeaponType::ALIEN_BASIC);
+
+        SpawnData projectileSpawnData =
+            GameUtils::getSpawnDataForProjectileFromEntity(
+                sprite,
+                weaponAttrs,
+                rotationOffset);
+
+        return ProjectileData::CreateRegular(
+            weaponAttrs.projectileType,
+            projectileSpawnData.position,
+            projectileSpawnData.velocity,
+            weaponAttrs.damage);
+    }
+
+    return std::nullopt;
+}
+
 void BossEnemy::updateHealth(float adjustment)
 {
     Enemy::updateHealth(adjustment);
@@ -83,4 +110,23 @@ void BossEnemy::updateHealthBarPlacement(sf::RenderWindow &window)
     float xPos = viewCenter.x - viewSize.x / 2.0f + 10.0f;
     float yPos = viewCenter.y + viewSize.y / 2.0f - 60.0f;
     healthBar.setPosition(xPos, yPos);
+}
+
+bool BossEnemy::shouldShoot(float deltaTime,
+                            const sf::Vector2f &playerPosition)
+{
+    static float shootCooldown = 1.0f;
+    static float timeSinceLastShot = 0.0f;
+
+    float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);
+
+    timeSinceLastShot += deltaTime;
+
+    if (timeSinceLastShot >= shootCooldown)
+    {
+        timeSinceLastShot -= shootCooldown;
+        return true;
+    }
+
+    return false;
 }

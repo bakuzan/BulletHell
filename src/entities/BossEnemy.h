@@ -1,10 +1,13 @@
 #ifndef BOSSENEMY_H
 #define BOSSENEMY_H
 
-#include "Enemy.h"
+#include <optional>
+
+#include "RangedEnemy.h"
+#include "data/ProjectileData.h"
 #include "ui/HealthBar.h"
 
-class BossEnemy : public Enemy
+class BossEnemy : public RangedEnemy
 {
 private:
     HealthBar healthBar;
@@ -12,6 +15,7 @@ private:
 private:
     float calculateDistanceToPlayerMagnitude(const sf::Vector2f &playerPosition);
     void updateHealthBarPlacement(sf::RenderWindow &window);
+    bool shouldShoot(float deltaTime, const sf::Vector2f &playerPosition);
 
 public:
     static constexpr float rotationOffset = 90.0f;
@@ -25,6 +29,8 @@ public:
     void update(float deltaTime,
                 sf::RenderWindow &window,
                 const sf::Vector2f &playerPosition) override;
+
+    std::optional<ProjectileData> getShootData(float deltaTime, const sf::Vector2f &playerPosition) override;
 
     void updateHealth(float adjustment) override;
     HealthBar &getHealthBar();

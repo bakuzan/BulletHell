@@ -414,9 +414,9 @@ void GameState::processEnemyProjectiles(float deltaTime, const sf::Vector2f &pla
     for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
     {
         auto enemy = enemyIt->get();
-        if (auto shooterEnemy = dynamic_cast<ShooterEnemy *>(enemy))
+        if (auto rangedEnemy = dynamic_cast<RangedEnemy *>(enemy))
         {
-            if (auto projectile = shooterEnemy->getShootData(deltaTime, playerPosition))
+            if (auto projectile = rangedEnemy->getShootData(deltaTime, playerPosition))
             {
                 projectileSpawnManager.spawnEnemyProjectile(
                     gameData.textureManager.getTexture(TextureId::PROJECTILES),

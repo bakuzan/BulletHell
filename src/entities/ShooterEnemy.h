@@ -4,10 +4,10 @@
 #include <SFML/Graphics.hpp>
 #include <optional>
 
-#include "Enemy.h"
+#include "RangedEnemy.h"
 #include "data/ProjectileData.h"
 
-class ShooterEnemy : public Enemy
+class ShooterEnemy : public RangedEnemy
 {
 private:
     bool shouldShoot(float deltaTime, const sf::Vector2f &playerPosition);
@@ -21,7 +21,7 @@ public:
     ~ShooterEnemy() override;
 
     void update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition) override;
-    std::optional<ProjectileData> getShootData(float deltaTime, const sf::Vector2f &playerPosition);
+    std::optional<ProjectileData> getShootData(float deltaTime, const sf::Vector2f &playerPosition) override;
 };
 
 #endif // SHOOTERENEMY_H
