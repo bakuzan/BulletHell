@@ -2,7 +2,10 @@
 #include <iostream>
 #include <random>
 #include <sstream>
+#include <unordered_map>
+#include <unordered_set>
 
+#include "data/PairHash.h"
 #include "entities/ShooterEnemy.h"
 #include "entities/BomberEnemy.h"
 #include "entities/BossEnemy.h"
@@ -186,6 +189,16 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
     auto &player = gameData.getPlayer();
     sf::Vector2f playerPos = player->getSprite().getPosition();
 
+    // Setup spatial grid for projectile-projectile collision detection
+    std::unordered_map<std::pair<int, int>, std::vector<Projectile *>, PairHash> spatialGrid;
+    int gridCellSize = 64; // TODO Make dynamic if performance is an issue
+
+    auto getGridCell = [&gridCellSize](const sf::Vector2f &position)
+    {
+        return std::make_pair(static_cast<int>(position.x) / gridCellSize,
+                              static_cast<int>(position.y) / gridCellSize);
+    };
+
     for (auto projIt = projectiles.begin(); projIt != projectiles.end();)
     {
         auto projectile = projIt->get();
@@ -321,10 +334,43 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
             }
             else
             {
+                // Assign to cell grid
+                auto cell = getGridCell(projectile->getSprite().getPosition());
+                spatialGrid[cell].push_back(projectile);
+
                 ++projIt;
             }
         }
     }
+
+    // Handle projectile-projectile collisions!
+    std::unordered_set<Projectile *> removalList;
+    for (auto &[cell, projectilesInCell] : spatialGrid)
+    {
+        for (size_t i = 0; i < projectilesInCell.size(); ++i)
+        {
+            for (size_t j = i + 1; j < projectilesInCell.size(); ++j)
+            {
+                auto *projA = projectilesInCell[i];
+                auto *projB = projectilesInCell[j];
+
+                if (projA->getSprite().getGlobalBounds().intersects(projB->getSprite().getGlobalBounds()) &&
+                    CollisionUtils::CheckSpritesIntersect(projA->getSprite(), projB->getSprite()))
+                {
+                    if (projA->getOrigin() != projB->getOrigin())
+                    {
+                        removalList.insert(projA);
+                        removalList.insert(projB);
+                    }
+                }
+            }
+        }
+    }
+
+    projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(),
+                                     [&](const std::unique_ptr<Projectile> &proj)
+                                     { return removalList.count(proj.get()); }),
+                      projectiles.end());
 
     processChainedProjectiles(projectiles, newProjectilesData);
 }

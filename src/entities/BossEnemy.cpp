@@ -143,8 +143,8 @@ WeaponType BossEnemy::getWeightedWeaponType(float healthPercentage)
 {
     std::vector<WeaponType> weaponTypes = {
         WeaponType::ALIEN_BASIC,
-        WeaponType::ALIEN_LAZER,
-        WeaponType::ALIEN_SEEKER};
+        WeaponType::ALIEN_SEEKER,
+        WeaponType::ALIEN_LAZER};
 
     // Adjust probabilities based on health percentage
     std::vector<int> weights = {
