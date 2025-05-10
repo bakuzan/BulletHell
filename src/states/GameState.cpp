@@ -193,12 +193,6 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
     std::unordered_map<std::pair<int, int>, std::vector<Projectile *>, PairHash> spatialGrid;
     int gridCellSize = 64; // TODO Make dynamic if performance is an issue
 
-    auto getGridCell = [&gridCellSize](const sf::Vector2f &position)
-    {
-        return std::make_pair(static_cast<int>(position.x) / gridCellSize,
-                              static_cast<int>(position.y) / gridCellSize);
-    };
-
     for (auto projIt = projectiles.begin(); projIt != projectiles.end();)
     {
         auto projectile = projIt->get();
@@ -238,6 +232,10 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
                                 enemyIt = enemies.erase(enemyIt);
                             }
+                            else
+                            {
+                                ++enemyIt;
+                            }
                         }
                         else
                         {
@@ -258,6 +256,13 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                 }
 
                 lazer->setDamageCalculated(true);
+                auto lazerCells = CollisionUtils::getLazerCells(gridCellSize,
+                                                                lazer->getStartPoint(),
+                                                                lazer->getEndPoint());
+                for (auto &cell : lazerCells)
+                {
+                    spatialGrid[cell].push_back(projectile);
+                }
             }
 
             if (lazer->canBeRemoved())
@@ -335,7 +340,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
             else
             {
                 // Assign to cell grid
-                auto cell = getGridCell(projectile->getSprite().getPosition());
+                auto cell = CollisionUtils::getGridCell(gridCellSize, projectile->getSprite().getPosition());
                 spatialGrid[cell].push_back(projectile);
 
                 ++projIt;
@@ -368,8 +373,13 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
     }
 
     projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(),
-                                     [&](const std::unique_ptr<Projectile> &proj)
-                                     { return removalList.count(proj.get()); }),
+                                     [&](const std::unique_ptr<Projectile> &projectile)
+                                     {
+                                         auto proj = projectile.get();
+                                         return removalList.count(proj) &&
+                                                proj->getType() != ProjectileType::LAZER &&
+                                                proj->getType() != ProjectileType::ALIEN_LAZER;
+                                     }),
                       projectiles.end());
 
     processChainedProjectiles(projectiles, newProjectilesData);

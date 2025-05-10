@@ -67,4 +67,32 @@ namespace CollisionUtils
         return true; // Polygons intersect on all axes
     }
 
+    std::pair<int, int> getGridCell(int gridCellSize,
+                                    const sf::Vector2f &position)
+    {
+        return std::make_pair(static_cast<int>(position.x) / gridCellSize,
+                              static_cast<int>(position.y) / gridCellSize);
+    }
+
+    std::vector<std::pair<int, int>> getLazerCells(int gridCellSize,
+                                                   const sf::Vector2f &start,
+                                                   const sf::Vector2f &end)
+    {
+        std::vector<std::pair<int, int>> cells;
+
+        float dx = end.x - start.x;
+        float dy = end.y - start.y;
+        int steps = std::max(std::abs(dx), std::abs(dy)) / gridCellSize; // Number of grid cells lazer spans
+
+        for (int i = 0; i <= steps; ++i)
+        {
+            float t = static_cast<float>(i) / steps;
+            sf::Vector2f point = start + t * (end - start);
+            cells.emplace_back(static_cast<int>(point.x) / gridCellSize,
+                               static_cast<int>(point.y) / gridCellSize);
+        }
+
+        return cells;
+    }
+
 }

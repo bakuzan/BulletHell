@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "LazerProjectile.h"
+#include "utils/GameUtils.h"
 
 LazerProjectile::LazerProjectile(ProjectileType type,
                                  const sf::Texture &texture, sf::IntRect textureRect,
@@ -36,6 +37,20 @@ void LazerProjectile::update(sf::Time deltaTime)
     // Ensure lazer is angled correctly
     float angle = std::atan2(velocity.y, velocity.x) * 180.f / M_PI; // Convert radians to degrees
     sprite.setRotation(angle + 90.0f);                               // Add offset due to position in the spritesheet
+}
+
+const sf::Vector2f &LazerProjectile::getStartPoint() const
+{
+    return sprite.getPosition();
+}
+
+const sf::Vector2f LazerProjectile::getEndPoint() const
+{
+    sf::Vector2f startPos = getStartPoint();
+    sf::Vector2f direction = GameUtils::normaliseVector(velocity);
+    float range = sprite.getGlobalBounds().height;
+
+    return startPos + (direction * range);
 }
 
 const bool LazerProjectile::canBeRemoved() const
