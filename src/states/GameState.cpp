@@ -259,6 +259,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                 auto lazerCells = CollisionUtils::getLazerCells(gridCellSize,
                                                                 lazer->getStartPoint(),
                                                                 lazer->getEndPoint());
+
                 for (auto &cell : lazerCells)
                 {
                     spatialGrid[cell].push_back(projectile);

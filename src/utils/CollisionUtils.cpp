@@ -1,3 +1,4 @@
+#include <cmath>
 #include <limits>
 
 #include "CollisionUtils.h"
@@ -82,11 +83,11 @@ namespace CollisionUtils
 
         float dx = end.x - start.x;
         float dy = end.y - start.y;
-        int steps = std::max(std::abs(dx), std::abs(dy)) / gridCellSize; // Number of grid cells lazer spans
+        int steps = static_cast<int>(std::ceil(std::hypot(dx, dy) / gridCellSize));
+        float stepSize = 1.0f / steps;
 
-        for (int i = 0; i <= steps; ++i)
+        for (float t = 0; t <= steps; t += stepSize)
         {
-            float t = static_cast<float>(i) / steps;
             sf::Vector2f point = start + t * (end - start);
             cells.emplace_back(static_cast<int>(point.x) / gridCellSize,
                                static_cast<int>(point.y) / gridCellSize);

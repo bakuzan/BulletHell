@@ -11,6 +11,9 @@ private:
     bool hasDamageBeenCalculated;
 
 public:
+    static constexpr float rotationOffset = 90.0f;
+
+public:
     LazerProjectile(ProjectileType type,
                     const sf::Texture &texture, sf::IntRect textureRect,
                     sf::Vector2f spawnPosition, sf::Vector2f velocity,
@@ -19,7 +22,7 @@ public:
 
     void update(sf::Time deltaTime) override;
 
-    const sf::Vector2f &getStartPoint() const;
+    const sf::Vector2f getStartPoint() const;
     const sf::Vector2f getEndPoint() const;
 
     const bool canBeRemoved() const;
