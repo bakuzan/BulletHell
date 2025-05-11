@@ -42,6 +42,8 @@ namespace Constants
     extern const float PROJECTILE_DAMAGE_ALIEN_LAZER;
     extern const float PROJECTILE_DAMAGE_ALIEN_SEEKER;
 
+    extern const int PROJECTILE_MISSILE_DEBRIS_COUNT;
+
     extern const float ENEMY_SPAWN_OFFSET;
 
     extern const int ENEMY_POINTS_BASIC;

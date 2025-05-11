@@ -41,6 +41,8 @@ namespace Constants
     const float PROJECTILE_DAMAGE_ALIEN_LAZER = 75.0f;
     const float PROJECTILE_DAMAGE_ALIEN_SEEKER = 25.0f;
 
+    const int PROJECTILE_MISSILE_DEBRIS_COUNT = 16;
+
     const float ENEMY_SPAWN_OFFSET = 5.0f;
 
     const int ENEMY_POINTS_BASIC = 10.0f;

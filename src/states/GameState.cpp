@@ -303,7 +303,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                             projectile->getSprite().getPosition(),
                             Constants::PROJECTILE_DAMAGE_MISSILE_DEBRIS,
                             Constants::PROJECTILE_SPEED_MISSILE_DEBRIS,
-                            16));
+                            Constants::PROJECTILE_MISSILE_DEBRIS_COUNT));
                     }
 
                     projIt = projectiles.erase(projIt);
@@ -377,9 +377,22 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                                      [&](const std::unique_ptr<Projectile> &projectile)
                                      {
                                          auto proj = projectile.get();
-                                         return removalList.count(proj) &&
-                                                proj->getType() != ProjectileType::LAZER &&
-                                                proj->getType() != ProjectileType::ALIEN_LAZER;
+                                         bool isRemove = removalList.count(proj) &&
+                                                         proj->getType() != ProjectileType::LAZER &&
+                                                         proj->getType() != ProjectileType::ALIEN_LAZER;
+
+                                         if (isRemove &&
+                                             proj->getType() == ProjectileType::MISSILE)
+                                         {
+                                             newProjectilesData.push_back(ProjectileData::CreateChained(
+                                                 ProjectileType::MISSILE_DEBRIS,
+                                                 proj->getSprite().getPosition(),
+                                                 Constants::PROJECTILE_DAMAGE_MISSILE_DEBRIS,
+                                                 Constants::PROJECTILE_SPEED_MISSILE_DEBRIS,
+                                                 Constants::PROJECTILE_MISSILE_DEBRIS_COUNT));
+                                         }
+
+                                         return isRemove;
                                      }),
                       projectiles.end());
 

@@ -12,7 +12,7 @@ Player::Player(const sf::Texture &borderTexture, const sf::Texture &fillingTextu
     : maxHealth(maxHealth), health(initHealth), initHealth(initHealth),
       lastDirectionMoved(Direction::NONE),
       shoot(false),
-      weaponType(WeaponType::LAZER),
+      weaponType(WeaponType::BASIC),
       healthBar(borderTexture, fillingTexture,
                 maxHealth,
                 initHealth,
@@ -70,7 +70,7 @@ void Player::update(float deltaTime,
         weaponTimeout -= deltaTime;
         if (weaponTimeout <= 0.0f)
         {
-            weaponType = WeaponType::LAZER;
+            weaponType = WeaponType::BASIC;
             weaponTimeout = 0.0f;
         }
     }
@@ -97,7 +97,7 @@ void Player::reset()
     healthBar.setHealth(initHealth);
     shoot = false;
     weaponTimeout = 0.0f;
-    weaponType = WeaponType::LAZER;
+    weaponType = WeaponType::BASIC;
 }
 
 std::optional<ProjectileData> Player::getShootData()
