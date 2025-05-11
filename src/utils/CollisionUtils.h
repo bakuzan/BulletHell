@@ -11,7 +11,7 @@ namespace CollisionUtils
 
     std::pair<int, int> getGridCell(int gridCellSize,
                                     const sf::Vector2f &position);
-    std::vector<std::pair<int, int>> getLazerCells(int gridCellSize,
+    std::vector<std::pair<int, int>> getLaserCells(int gridCellSize,
                                                    const sf::Vector2f &start,
                                                    const sf::Vector2f &end);
 }

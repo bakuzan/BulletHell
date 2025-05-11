@@ -4,7 +4,7 @@ enum class UpgradeBoxType
 {
     HEALTH = 0,
     DOUBLE_SHOT,
-    LAZER,
+    LASER,
     MISSILE,
     // Must be LAST is not a real option!!
     COUNT,

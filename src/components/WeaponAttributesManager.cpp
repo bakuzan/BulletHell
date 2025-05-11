@@ -11,10 +11,10 @@ WeaponAttributesManager::WeaponAttributesManager()
         Constants::PROJECTILE_DAMAGE_BULLET,
         Constants::PROJECTILE_SPEED_BULLET,
         {15.f, 25.f}}},
-      {WeaponType::LAZER,
-       {ProjectileType::LAZER,
-        Constants::PROJECTILE_DAMAGE_LAZER,
-        Constants::PROJECTILE_SPEED_LAZER,
+      {WeaponType::LASER,
+       {ProjectileType::LASER,
+        Constants::PROJECTILE_DAMAGE_LASER,
+        Constants::PROJECTILE_SPEED_LASER,
         {15.f, 5000.f}}},
       {WeaponType::MISSILE,
        {ProjectileType::MISSILE,
@@ -40,17 +40,17 @@ WeaponAttributesManager::WeaponAttributesManager()
         Constants::PROJECTILE_SPEED_ALIEN_SEEKER,
         {15.f, 25.f}}},
 
-      {WeaponType::ALIEN_LAZER,
-       {ProjectileType::ALIEN_LAZER,
-        Constants::PROJECTILE_DAMAGE_ALIEN_LAZER,
-        Constants::PROJECTILE_SPEED_ALIEN_LAZER,
+      {WeaponType::ALIEN_LASER,
+       {ProjectileType::ALIEN_LASER,
+        Constants::PROJECTILE_DAMAGE_ALIEN_LASER,
+        Constants::PROJECTILE_SPEED_ALIEN_LASER,
         {15.f, 5000.f}}},
 
   };
 
   weaponTimeouts = {
       {WeaponType::DOUBLE_SHOT, 12.0f},
-      {WeaponType::LAZER, 8.0f},
+      {WeaponType::LASER, 8.0f},
       {WeaponType::MISSILE, 6.0f},
   };
 }

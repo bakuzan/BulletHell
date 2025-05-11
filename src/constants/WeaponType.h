@@ -4,10 +4,10 @@ enum class WeaponType
 {
     BASIC = 0,
     DOUBLE_SHOT,
-    LAZER,
+    LASER,
     MISSILE,
 
     ALIEN_BASIC,
-    ALIEN_LAZER,
+    ALIEN_LASER,
     ALIEN_SEEKER,
 };

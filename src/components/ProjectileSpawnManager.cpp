@@ -2,7 +2,7 @@
 
 #include "ProjectileSpawnManager.h"
 #include "constants/Constants.h"
-#include "entities/LazerProjectile.h"
+#include "entities/LaserProjectile.h"
 #include "entities/SeekerProjectile.h"
 
 ProjectileSpawnManager::ProjectileSpawnManager()
@@ -86,9 +86,9 @@ std::unique_ptr<Projectile> ProjectileSpawnManager::spawnProjectile(
 {
     switch (data.type)
     {
-    case ProjectileType::LAZER:
-    case ProjectileType::ALIEN_LAZER:
-        return std::make_unique<LazerProjectile>(data.type,
+    case ProjectileType::LASER:
+    case ProjectileType::ALIEN_LASER:
+        return std::make_unique<LaserProjectile>(data.type,
                                                  texture,
                                                  projectileTextureManager.getTextureRect(data.type),
                                                  data.position,

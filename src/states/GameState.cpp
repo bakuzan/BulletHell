@@ -9,7 +9,7 @@
 #include "entities/ShooterEnemy.h"
 #include "entities/BomberEnemy.h"
 #include "entities/BossEnemy.h"
-#include "entities/LazerProjectile.h"
+#include "entities/LaserProjectile.h"
 #include "entities/SeekerProjectile.h"
 #include "utils/CollisionUtils.h"
 #include "utils/GameUtils.h"
@@ -209,22 +209,22 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
         // Handle collisions
         bool projectileRemoved = false;
-        if (projectile->getType() == ProjectileType::LAZER ||
-            projectile->getType() == ProjectileType::ALIEN_LAZER)
+        if (projectile->getType() == ProjectileType::LASER ||
+            projectile->getType() == ProjectileType::ALIEN_LASER)
         {
-            auto lazer = dynamic_cast<LazerProjectile *>(projectile);
+            auto laser = dynamic_cast<LaserProjectile *>(projectile);
 
-            if (!lazer->isDamageCalculated())
+            if (!laser->isDamageCalculated())
             {
-                if (lazer->getOrigin() == ProjectileOrigin::PLAYER)
+                if (laser->getOrigin() == ProjectileOrigin::PLAYER)
                 {
                     for (auto enemyIt = enemies.begin(); enemyIt != enemies.end();)
                     {
                         auto &enemy = **enemyIt;
-                        if (lazer->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()) &&
-                            CollisionUtils::CheckSpritesIntersect(lazer->getSprite(), enemy.getSprite()))
+                        if (laser->getSprite().getGlobalBounds().intersects(enemy.getSprite().getGlobalBounds()) &&
+                            CollisionUtils::CheckSpritesIntersect(laser->getSprite(), enemy.getSprite()))
                         {
-                            enemy.updateHealth(-lazer->getDamageInflicts());
+                            enemy.updateHealth(-laser->getDamageInflicts());
                             if (enemy.getHealth() <= 0.0f)
                             {
                                 gameData.updateScore(enemy.getPointsValue());
@@ -243,11 +243,11 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                         }
                     }
                 }
-                else if (lazer->getSprite().getGlobalBounds().intersects(player->getSprite().getGlobalBounds()) &&
-                         CollisionUtils::CheckSpritesIntersect(lazer->getSprite(), player->getSprite()))
+                else if (laser->getSprite().getGlobalBounds().intersects(player->getSprite().getGlobalBounds()) &&
+                         CollisionUtils::CheckSpritesIntersect(laser->getSprite(), player->getSprite()))
                 {
                     // Effects of player being hit
-                    player->updateHealth(-lazer->getDamageInflicts());
+                    player->updateHealth(-laser->getDamageInflicts());
 
                     if (player->getHealth() <= 0)
                     {
@@ -255,18 +255,18 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                     }
                 }
 
-                lazer->setDamageCalculated(true);
-                auto lazerCells = CollisionUtils::getLazerCells(gridCellSize,
-                                                                lazer->getStartPoint(),
-                                                                lazer->getEndPoint());
+                laser->setDamageCalculated(true);
+                auto laserCells = CollisionUtils::getLaserCells(gridCellSize,
+                                                                laser->getStartPoint(),
+                                                                laser->getEndPoint());
 
-                for (auto &cell : lazerCells)
+                for (auto &cell : laserCells)
                 {
                     spatialGrid[cell].push_back(projectile);
                 }
             }
 
-            if (lazer->canBeRemoved())
+            if (laser->canBeRemoved())
             {
                 projIt = projectiles.erase(projIt);
             }
@@ -378,8 +378,8 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
                                      {
                                          auto proj = projectile.get();
                                          bool isRemove = removalList.count(proj) &&
-                                                         proj->getType() != ProjectileType::LAZER &&
-                                                         proj->getType() != ProjectileType::ALIEN_LAZER;
+                                                         proj->getType() != ProjectileType::LASER &&
+                                                         proj->getType() != ProjectileType::ALIEN_LASER;
 
                                          if (isRemove &&
                                              proj->getType() == ProjectileType::MISSILE)
@@ -453,7 +453,7 @@ void GameState::processUpgradeBoxPickUp(const UpgradeBox &upgradeBox)
         break;
     }
     case UpgradeBoxType::DOUBLE_SHOT:
-    case UpgradeBoxType::LAZER:
+    case UpgradeBoxType::LASER:
     case UpgradeBoxType::MISSILE:
     {
         auto &player = gameData.getPlayer();
@@ -588,8 +588,8 @@ WeaponType GameState::mapUpgradeBoxToWeapon(UpgradeBoxType upgradeType)
     {
     case UpgradeBoxType::DOUBLE_SHOT:
         return WeaponType::DOUBLE_SHOT;
-    case UpgradeBoxType::LAZER:
-        return WeaponType::LAZER;
+    case UpgradeBoxType::LASER:
+        return WeaponType::LASER;
     case UpgradeBoxType::MISSILE:
         return WeaponType::MISSILE;
     case UpgradeBoxType::HEALTH:

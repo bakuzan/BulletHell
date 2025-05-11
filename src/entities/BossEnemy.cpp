@@ -19,7 +19,10 @@ BossEnemy::BossEnemy(
                   movementSpeed, Constants::ENEMY_POINTS_BOSS, Constants::ENEMY_HEALTH_BOSS),
       healthBar(borderTexture, fillingTexture,
                 Constants::ENEMY_HEALTH_BOSS, Constants::ENEMY_HEALTH_BOSS,
-                "Boss")
+                "Boss"),
+      laserCountdown(0.0f),
+      laserTelegraphTimer(0.0f),
+      currentSpriteColour(sf::Color::White)
 {
     sprite.setOrigin(Constants::SPRITE_WIDTH_BOSS / 2.0f, Constants::SPRITE_HEIGHT_BOSS / 2.0f);
 }
@@ -35,6 +38,7 @@ void BossEnemy::update(float deltaTime,
                        sf::RenderWindow &window,
                        const sf::Vector2f &playerPosition)
 {
+    // Do standard Boss turing/moving and health adjustments
     sf::Vector2f direction = playerPosition - sprite.getPosition();
     float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);
 
@@ -45,38 +49,64 @@ void BossEnemy::update(float deltaTime,
 
     sprite.move(direction * speed * deltaTime);
 
-    GameUtils::rotateTowards(
-        sprite,
-        sprite.getPosition(),
-        playerPosition,
-        rotationOffset);
+    if (!pendingShootData.has_value())
+    {
+        // Only turn if Boss isn't "charging" laser
+        GameUtils::rotateTowards(
+            sprite,
+            sprite.getPosition(),
+            playerPosition,
+            rotationOffset);
+    }
 
     updateHealthBarPlacement(window);
+
+    // Handle Boss shooting
+    if (!pendingShootData.has_value())
+    {
+        currentSpriteColour = sf::Color::White;
+
+        pendingShootData = prepareShootData(deltaTime, playerPosition);
+        if (pendingShootData.has_value())
+        {
+            if (pendingShootData->type == ProjectileType::ALIEN_LASER)
+            {
+                laserCountdown = 0.3f;
+                currentSpriteColour = sf::Color::Green;
+            }
+        }
+    }
+    else if (pendingShootData.has_value() &&
+             pendingShootData->type == ProjectileType::ALIEN_LASER)
+    {
+        laserCountdown -= deltaTime;
+        laserTelegraphTimer += deltaTime;
+
+        if (laserTelegraphTimer >= 0.1f)
+        {
+            laserTelegraphTimer = 0.0f;
+            currentSpriteColour = currentSpriteColour == sf::Color::White
+                                      ? sf::Color::Green
+                                      : sf::Color::White;
+        }
+    }
+
+    sprite.setColor(currentSpriteColour);
 }
 
 std::optional<ProjectileData> BossEnemy::getShootData(
     float deltaTime,
     const sf::Vector2f &playerPosition)
 {
-    if (shouldShoot(deltaTime, playerPosition))
+    if (pendingShootData.has_value())
     {
-        float healthPercentage = health / Constants::ENEMY_HEALTH_BOSS;
-        WeaponType selectedType = getWeightedWeaponType(healthPercentage);
-        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance()
-                                           .getAttributes(selectedType);
-
-        SpawnData projectileSpawnData =
-            GameUtils::getSpawnDataForProjectileFromEntity(
-                sprite,
-                weaponAttrs,
-                rotationOffset);
-
-        return ProjectileData::CreateRegular(
-            weaponAttrs.projectileType,
-            projectileSpawnData.position,
-            projectileSpawnData.velocity,
-            weaponAttrs.damage,
-            weaponAttrs.speed);
+        if (pendingShootData->type != ProjectileType::ALIEN_LASER ||
+            laserCountdown <= 0.0f)
+        {
+            auto shootData = pendingShootData;
+            pendingShootData.reset();
+            return shootData;
+        }
     }
 
     return std::nullopt;
@@ -144,7 +174,7 @@ WeaponType BossEnemy::getWeightedWeaponType(float healthPercentage)
     std::vector<WeaponType> weaponTypes = {
         WeaponType::ALIEN_BASIC,
         WeaponType::ALIEN_SEEKER,
-        WeaponType::ALIEN_LAZER};
+        WeaponType::ALIEN_LASER};
 
     // Adjust probabilities based on health percentage
     std::vector<int> weights = {
@@ -157,4 +187,32 @@ WeaponType BossEnemy::getWeightedWeaponType(float healthPercentage)
     std::discrete_distribution<> dist(weights.begin(), weights.end());
 
     return weaponTypes[dist(gen)];
+}
+
+std::optional<ProjectileData> BossEnemy::prepareShootData(
+    float deltaTime,
+    const sf::Vector2f &playerPosition)
+{
+    if (shouldShoot(deltaTime, playerPosition))
+    {
+        float healthPercentage = health / Constants::ENEMY_HEALTH_BOSS;
+        WeaponType selectedType = getWeightedWeaponType(healthPercentage);
+        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance()
+                                           .getAttributes(selectedType);
+
+        SpawnData projectileSpawnData =
+            GameUtils::getSpawnDataForProjectileFromEntity(
+                sprite,
+                weaponAttrs,
+                rotationOffset);
+
+        return ProjectileData::CreateRegular(
+            weaponAttrs.projectileType,
+            projectileSpawnData.position,
+            projectileSpawnData.velocity,
+            weaponAttrs.damage,
+            weaponAttrs.speed);
+    }
+
+    return std::nullopt;
 }

@@ -3,7 +3,7 @@
 
 #include "Projectile.h"
 
-class LazerProjectile : public Projectile
+class LaserProjectile : public Projectile
 {
 private:
     float fadeDuration;
@@ -14,11 +14,11 @@ public:
     static constexpr float rotationOffset = 90.0f;
 
 public:
-    LazerProjectile(ProjectileType type,
+    LaserProjectile(ProjectileType type,
                     const sf::Texture &texture, sf::IntRect textureRect,
                     sf::Vector2f spawnPosition, sf::Vector2f velocity,
                     float damage);
-    ~LazerProjectile();
+    ~LaserProjectile();
 
     void update(sf::Time deltaTime) override;
 

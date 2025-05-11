@@ -12,6 +12,11 @@ class BossEnemy : public RangedEnemy
 {
 private:
     HealthBar healthBar;
+    std::optional<ProjectileData> pendingShootData;
+    float laserCountdown;
+
+    float laserTelegraphTimer;
+    sf::Color currentSpriteColour;
 
 private:
     float calculateDistanceToPlayerMagnitude(const sf::Vector2f &playerPosition);
@@ -19,6 +24,10 @@ private:
 
     bool shouldShoot(float deltaTime, const sf::Vector2f &playerPosition);
     WeaponType getWeightedWeaponType(float healthPercentage);
+
+    std::optional<ProjectileData> prepareShootData(
+        float deltaTime,
+        const sf::Vector2f &playerPosition);
 
 public:
     static constexpr float rotationOffset = 90.0f;

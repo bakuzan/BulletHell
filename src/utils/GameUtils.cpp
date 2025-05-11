@@ -103,8 +103,8 @@ namespace GameUtils
         case ProjectileType::BULLET:
         case ProjectileType::DOUBLE_SHOT:
             return AudioId::PROJECTILE_BASIC;
-        case ProjectileType::LAZER:
-            return AudioId::PROJECTILE_LAZER;
+        case ProjectileType::LASER:
+            return AudioId::PROJECTILE_LASER;
         case ProjectileType::MISSILE:
             return AudioId::PROJECTILE_MISSILE;
         case ProjectileType::MISSILE_DEBRIS:
@@ -113,8 +113,8 @@ namespace GameUtils
 
         case ProjectileType::ALIEN_BULLET:
             return AudioId::PROJECTILE_ALIEN_BASIC;
-        case ProjectileType::ALIEN_LAZER:
-            return AudioId::PROJECTILE_LAZER;
+        case ProjectileType::ALIEN_LASER:
+            return AudioId::PROJECTILE_LASER;
         case ProjectileType::ALIEN_SEEKER:
             return AudioId::PROJECTILE_MISSILE;
         }

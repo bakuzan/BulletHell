@@ -1,9 +1,9 @@
 #include <cmath>
 
-#include "LazerProjectile.h"
+#include "LaserProjectile.h"
 #include "utils/GameUtils.h"
 
-LazerProjectile::LazerProjectile(ProjectileType type,
+LaserProjectile::LaserProjectile(ProjectileType type,
                                  const sf::Texture &texture, sf::IntRect textureRect,
                                  sf::Vector2f spawnPosition, sf::Vector2f velocity,
                                  float damage)
@@ -11,20 +11,20 @@ LazerProjectile::LazerProjectile(ProjectileType type,
                  texture, textureRect,
                  spawnPosition, velocity,
                  damage),
-      fadeDuration(0.5f),
-      fadeOutTimeRemaining(0.5f),
+      fadeDuration(0.3f),
+      fadeOutTimeRemaining(0.3f),
       hasDamageBeenCalculated(false)
 {
     sprite.setScale(0.05f, 10.0f);
 }
 
-LazerProjectile::~LazerProjectile()
+LaserProjectile::~LaserProjectile()
 {
     // Destructor
 }
 
 // Publics
-void LazerProjectile::update(sf::Time deltaTime)
+void LaserProjectile::update(sf::Time deltaTime)
 {
     if (fadeOutTimeRemaining > 0.0f)
     {
@@ -38,7 +38,7 @@ void LazerProjectile::update(sf::Time deltaTime)
     sprite.setRotation(angle + rotationOffset);                      // Add offset due to position in the spritesheet
 }
 
-const sf::Vector2f LazerProjectile::getStartPoint() const
+const sf::Vector2f LaserProjectile::getStartPoint() const
 {
     sf::Vector2f endPos = getEndPoint();
     sf::Vector2f direction = GameUtils::normaliseVector(velocity);
@@ -47,22 +47,22 @@ const sf::Vector2f LazerProjectile::getStartPoint() const
     return endPos - (direction * range);
 }
 
-const sf::Vector2f LazerProjectile::getEndPoint() const
+const sf::Vector2f LaserProjectile::getEndPoint() const
 {
     return sprite.getPosition();
 }
 
-const bool LazerProjectile::canBeRemoved() const
+const bool LaserProjectile::canBeRemoved() const
 {
     return fadeOutTimeRemaining <= 0.0f;
 }
 
-const bool LazerProjectile::isDamageCalculated() const
+const bool LaserProjectile::isDamageCalculated() const
 {
     return hasDamageBeenCalculated;
 }
 
-void LazerProjectile::setDamageCalculated(bool isCalculated)
+void LaserProjectile::setDamageCalculated(bool isCalculated)
 {
     hasDamageBeenCalculated = isCalculated;
 }

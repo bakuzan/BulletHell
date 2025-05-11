@@ -25,21 +25,21 @@ namespace Constants
 
     extern const float BASE_PLAYER_SPEED;
     extern const float PROJECTILE_SPEED_BULLET;
-    extern const float PROJECTILE_SPEED_LAZER;
+    extern const float PROJECTILE_SPEED_LASER;
     extern const float PROJECTILE_SPEED_MISSILE;
     extern const float PROJECTILE_SPEED_MISSILE_DEBRIS;
     extern const float PROJECTILE_SPEED_ALIEN_BULLET;
     extern const float PROJECTILE_SPEED_ALIEN_DEBRIS;
-    extern const float PROJECTILE_SPEED_ALIEN_LAZER;
+    extern const float PROJECTILE_SPEED_ALIEN_LASER;
     extern const float PROJECTILE_SPEED_ALIEN_SEEKER;
 
     extern const float PROJECTILE_DAMAGE_BULLET;
-    extern const float PROJECTILE_DAMAGE_LAZER;
+    extern const float PROJECTILE_DAMAGE_LASER;
     extern const float PROJECTILE_DAMAGE_MISSILE;
     extern const float PROJECTILE_DAMAGE_MISSILE_DEBRIS;
     extern const float PROJECTILE_DAMAGE_ALIEN_BULLET;
     extern const float PROJECTILE_DAMAGE_ALIEN_DEBRIS;
-    extern const float PROJECTILE_DAMAGE_ALIEN_LAZER;
+    extern const float PROJECTILE_DAMAGE_ALIEN_LASER;
     extern const float PROJECTILE_DAMAGE_ALIEN_SEEKER;
 
     extern const int PROJECTILE_MISSILE_DEBRIS_COUNT;

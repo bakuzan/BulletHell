@@ -75,7 +75,7 @@ namespace CollisionUtils
                               static_cast<int>(position.y) / gridCellSize);
     }
 
-    std::vector<std::pair<int, int>> getLazerCells(int gridCellSize,
+    std::vector<std::pair<int, int>> getLaserCells(int gridCellSize,
                                                    const sf::Vector2f &start,
                                                    const sf::Vector2f &end)
     {

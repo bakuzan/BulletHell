@@ -20,13 +20,12 @@ public:
           const sf::Texture &texture, sf::IntRect textureRect,
           sf::Vector2f spawnPosition,
           float movementSpeed, int pointsValue, float startingHealth);
+    virtual ~Enemy();
 
     virtual void update(float deltaTime,
                         sf::RenderWindow &window, const sf::Vector2f &playerPosition) = 0;
 
-    virtual ~Enemy();
-
-    void render(sf::RenderWindow &window) const;
+    virtual void render(sf::RenderWindow &window) const;
 
     const EnemyType getType() const;
     const float getHealth() const;

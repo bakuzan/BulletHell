@@ -35,13 +35,13 @@ const ProjectileOrigin Projectile::getOrigin() const
     {
     case ProjectileType::BULLET:
     case ProjectileType::DOUBLE_SHOT:
-    case ProjectileType::LAZER:
+    case ProjectileType::LASER:
     case ProjectileType::MISSILE:
     case ProjectileType::MISSILE_DEBRIS:
         return ProjectileOrigin::PLAYER;
     case ProjectileType::ALIEN_BULLET:
     case ProjectileType::ALIEN_DEBRIS:
-    case ProjectileType::ALIEN_LAZER:
+    case ProjectileType::ALIEN_LASER:
     case ProjectileType::ALIEN_SEEKER:
         return ProjectileOrigin::ENEMY;
     }

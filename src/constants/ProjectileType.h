@@ -5,12 +5,12 @@ enum ProjectileType
     // Player
     BULLET = 0,
     DOUBLE_SHOT,
-    LAZER,
+    LASER,
     MISSILE,
     MISSILE_DEBRIS,
     // Enemy
     ALIEN_BULLET,
     ALIEN_DEBRIS,
-    ALIEN_LAZER,
+    ALIEN_LASER,
     ALIEN_SEEKER,
 };
