@@ -191,7 +191,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
     // Setup spatial grid for projectile-projectile collision detection
     std::unordered_map<std::pair<int, int>, std::vector<Projectile *>, PairHash> spatialGrid;
-    int gridCellSize = 64; // TODO Make dynamic if performance is an issue
+    int gridCellSize = 64; // TODO (Optional) Make dynamic if performance is an issue
 
     for (auto projIt = projectiles.begin(); projIt != projectiles.end();)
     {

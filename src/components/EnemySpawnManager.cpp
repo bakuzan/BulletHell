@@ -35,10 +35,9 @@ void EnemySpawnManager::setWaveParameters(
 {
     for (auto &[enemyType, spawnInfo] : spawnData)
     {
-        if (spawnRates.count(enemyType))
-        {
-            spawnInfo.spawnRate = spawnRates.at(enemyType);
-        }
+        spawnInfo.spawnRate = spawnRates.count(enemyType)
+                                  ? spawnRates.at(enemyType)
+                                  : 0.0f;
     }
 }
 
