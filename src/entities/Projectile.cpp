@@ -64,12 +64,31 @@ const ProjectileType &Projectile::getType() const
     return type;
 }
 
-bool Projectile::isOffScreen(sf::RenderWindow &window)
+bool Projectile::isOutOfPlay(sf::RenderWindow &window)
 {
     sf::View view = window.getView();
     sf::Vector2f viewSize = view.getSize();
 
-    sf::FloatRect bounds = sprite.getGlobalBounds();
-    sf::FloatRect viewBounds(view.getCenter() - viewSize / 2.f, viewSize);
-    return !viewBounds.intersects(bounds);
+    float bufferFactor = 0.1f;
+    sf::Vector2f buffer = viewSize * bufferFactor;
+    sf::FloatRect viewBounds(view.getCenter() - (viewSize / 2.f) - buffer,
+                             viewSize + buffer * 2.f);
+
+    return !viewBounds.intersects(sprite.getGlobalBounds()) &&
+           isMovingAway(window);
+}
+
+// Protecteds
+
+bool Projectile::isMovingAway(sf::RenderWindow &window)
+{
+    sf::View view = window.getView();
+    sf::Vector2f viewCenter = view.getCenter();
+    sf::Vector2f projectilePos = sprite.getPosition();
+    sf::Vector2f velocityDir = velocity;
+
+    sf::Vector2f toViewCenter = viewCenter - projectilePos; // Direction toward screen center
+
+    // Check if projectile is moving away from view
+    return (velocityDir.x * toViewCenter.x + velocityDir.y * toViewCenter.y) < 0;
 }

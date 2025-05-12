@@ -334,7 +334,7 @@ void GameState::updateProjectiles(const sf::Time &deltaTime, sf::RenderWindow &w
 
         if (!projectileRemoved)
         {
-            if (projectile->isOffScreen(window))
+            if (projectile->isOutOfPlay(window))
             {
                 projIt = projectiles.erase(projIt);
             }

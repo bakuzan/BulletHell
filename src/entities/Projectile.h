@@ -14,6 +14,9 @@ protected:
     ProjectileType type;
     float damage;
 
+protected:
+    bool isMovingAway(sf::RenderWindow &window);
+
 public:
     Projectile(ProjectileType type,
                const sf::Texture &texture, sf::IntRect textureRect,
@@ -28,7 +31,7 @@ public:
     const float getDamageInflicts() const;
     const sf::Sprite &getSprite() const;
     const ProjectileType &getType() const;
-    bool isOffScreen(sf::RenderWindow &window);
+    bool isOutOfPlay(sf::RenderWindow &window);
 };
 
 #endif // PROJECTILE_H

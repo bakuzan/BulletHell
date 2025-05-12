@@ -31,6 +31,7 @@ private:
 
 public:
     static constexpr float rotationOffset = 90.0f;
+    static constexpr float maximumDistanceFromPlayer = 2000.0f;
 
 public:
     BossEnemy(const sf::Texture &borderTexture, const sf::Texture &fillingTexture,

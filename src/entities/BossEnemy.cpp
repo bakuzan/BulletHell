@@ -47,7 +47,16 @@ void BossEnemy::update(float deltaTime,
         direction /= magnitude; // Normalize the vector
     }
 
-    sprite.move(direction * speed * deltaTime);
+    if (magnitude > maximumDistanceFromPlayer)
+    {
+        // Player is running! Force the boss closer!
+        sf::Vector2f clampedPosition = playerPosition - direction * maximumDistanceFromPlayer;
+        sprite.setPosition(clampedPosition);
+    }
+    else
+    {
+        sprite.move(direction * speed * deltaTime);
+    }
 
     if (!pendingShootData.has_value())
     {
