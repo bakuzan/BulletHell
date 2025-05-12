@@ -207,11 +207,8 @@ std::optional<ProjectileData> BossEnemy::prepareShootData(
                 rotationOffset);
 
         return ProjectileData::CreateRegular(
-            weaponAttrs.projectileType,
-            projectileSpawnData.position,
-            projectileSpawnData.velocity,
-            weaponAttrs.damage,
-            weaponAttrs.speed);
+            weaponAttrs,
+            projectileSpawnData);
     }
 
     return std::nullopt;

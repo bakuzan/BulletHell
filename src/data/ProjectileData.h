@@ -3,6 +3,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "constants/ProjectileType.h"
+#include "data/ProjectileData.h"
+#include "data/SpawnData.h"
+#include "data/WeaponAttributes.h"
 
 struct ProjectileData
 {
@@ -12,14 +15,31 @@ struct ProjectileData
     float damage;
     float speed;
     int debrisCircleProjectileCount; // Number of debris created for chained projectile
+    ProjectileAttributes projectileAttrs;
 
-    static ProjectileData CreateChained(ProjectileType type, sf::Vector2f position, float damage, float speed, int debrisCount)
+    static ProjectileData CreateChained(ProjectileType type,
+                                        sf::Vector2f position,
+                                        float damage, float speed,
+                                        int debrisCount)
     {
-        return {type, position, {0, 0}, damage, speed, debrisCount};
+        return {type,
+                position,
+                {0, 0},
+                damage,
+                speed,
+                debrisCount,
+                {0.0f, 0.0f}};
     }
 
-    static ProjectileData CreateRegular(ProjectileType type, sf::Vector2f position, sf::Vector2f direction, float damage, float speed)
+    static ProjectileData CreateRegular(WeaponAttributes weaponAttrs,
+                                        SpawnData spawnData)
     {
-        return {type, position, direction, damage, speed, 0};
+        return {weaponAttrs.projectileType,
+                spawnData.position,
+                spawnData.velocity,
+                weaponAttrs.damage,
+                weaponAttrs.speed,
+                0,
+                weaponAttrs.projectileAttrs};
     }
 };

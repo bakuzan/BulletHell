@@ -93,7 +93,8 @@ std::unique_ptr<Projectile> ProjectileSpawnManager::spawnProjectile(
                                                  projectileTextureManager.getTextureRect(data.type),
                                                  data.position,
                                                  data.direction,
-                                                 data.damage);
+                                                 data.damage,
+                                                 data.projectileAttrs);
     case ProjectileType::ALIEN_SEEKER:
         return std::make_unique<SeekerProjectile>(data.type,
                                                   texture,

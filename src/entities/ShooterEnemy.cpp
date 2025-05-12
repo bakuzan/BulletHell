@@ -62,11 +62,8 @@ std::optional<ProjectileData> ShooterEnemy::getShootData(
                 rotationOffset);
 
         return ProjectileData::CreateRegular(
-            weaponAttrs.projectileType,
-            projectileSpawnData.position,
-            projectileSpawnData.velocity,
-            weaponAttrs.damage,
-            weaponAttrs.speed);
+            weaponAttrs,
+            projectileSpawnData);
     }
 
     return std::nullopt;

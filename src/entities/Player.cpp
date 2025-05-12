@@ -105,7 +105,8 @@ std::optional<ProjectileData> Player::getShootData()
     if (shoot)
     {
         shoot = false;
-        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance().getAttributes(weaponType);
+        WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance()
+                                           .getAttributes(weaponType);
 
         SpawnData projectileSpawnData =
             GameUtils::getSpawnDataForProjectileFromEntity(
@@ -114,11 +115,8 @@ std::optional<ProjectileData> Player::getShootData()
                 rotationOffset);
 
         return ProjectileData::CreateRegular(
-            weaponAttrs.projectileType,
-            projectileSpawnData.position,
-            projectileSpawnData.velocity,
-            weaponAttrs.damage,
-            weaponAttrs.speed);
+            weaponAttrs,
+            projectileSpawnData);
     }
 
     return std::nullopt;

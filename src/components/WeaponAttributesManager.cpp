@@ -44,7 +44,7 @@ WeaponAttributesManager::WeaponAttributesManager()
        {ProjectileType::ALIEN_LASER,
         Constants::PROJECTILE_DAMAGE_ALIEN_LASER,
         Constants::PROJECTILE_SPEED_ALIEN_LASER,
-        {15.f, 5000.f}}},
+        {45.f, 5000.f}}},
 
   };
 

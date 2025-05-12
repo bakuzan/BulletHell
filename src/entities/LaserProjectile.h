@@ -2,6 +2,7 @@
 #define LAZERPROJECTILE_H
 
 #include "Projectile.h"
+#include "data/ProjectileAttributes.h"
 
 class LaserProjectile : public Projectile
 {
@@ -17,7 +18,8 @@ public:
     LaserProjectile(ProjectileType type,
                     const sf::Texture &texture, sf::IntRect textureRect,
                     sf::Vector2f spawnPosition, sf::Vector2f velocity,
-                    float damage);
+                    float damage,
+                    ProjectileAttributes projectileAttrs);
     ~LaserProjectile();
 
     void update(sf::Time deltaTime) override;
