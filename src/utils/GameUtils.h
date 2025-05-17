@@ -6,6 +6,8 @@
 #include "constants/Direction.h"
 #include "constants/AudioId.h"
 #include "constants/ProjectileType.h"
+#include "constants/UpgradeBoxType.h"
+#include "constants/WeaponType.h"
 #include "data/SpawnData.h"
 #include "data/WeaponAttributes.h"
 
@@ -30,6 +32,8 @@ namespace GameUtils
         float offset);
 
     const AudioId getAudioIdForProjectileType(ProjectileType projectileType);
+    const WeaponType mapUpgradeBoxToWeapon(UpgradeBoxType upgradeType);
+    const UpgradeBoxType getUpgradeBoxTypeForWeaponType(WeaponType weaponType);
 
     std::string formatScoreText(int score);
 };

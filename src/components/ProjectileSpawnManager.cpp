@@ -5,7 +5,8 @@
 #include "entities/LaserProjectile.h"
 #include "entities/SeekerProjectile.h"
 
-ProjectileSpawnManager::ProjectileSpawnManager()
+ProjectileSpawnManager::ProjectileSpawnManager(const TextureRectManager &textureRectManager)
+    : projectileRectManager(textureRectManager)
 {
     // Constructor
 }
@@ -90,7 +91,7 @@ std::unique_ptr<Projectile> ProjectileSpawnManager::spawnProjectile(
     case ProjectileType::ALIEN_LASER:
         return std::make_unique<LaserProjectile>(data.type,
                                                  texture,
-                                                 projectileTextureManager.getTextureRect(data.type),
+                                                 projectileRectManager.getTextureRect(data.type),
                                                  data.position,
                                                  data.direction,
                                                  data.damage,
@@ -98,7 +99,7 @@ std::unique_ptr<Projectile> ProjectileSpawnManager::spawnProjectile(
     case ProjectileType::ALIEN_SEEKER:
         return std::make_unique<SeekerProjectile>(data.type,
                                                   texture,
-                                                  projectileTextureManager.getTextureRect(data.type),
+                                                  projectileRectManager.getTextureRect(data.type),
                                                   data.position,
                                                   data.direction,
                                                   data.damage,
@@ -110,7 +111,7 @@ std::unique_ptr<Projectile> ProjectileSpawnManager::spawnProjectile(
     case ProjectileType::ALIEN_DEBRIS:
         return std::make_unique<Projectile>(data.type,
                                             texture,
-                                            projectileTextureManager.getTextureRect(data.type),
+                                            projectileRectManager.getTextureRect(data.type),
                                             data.position,
                                             data.direction,
                                             data.damage);

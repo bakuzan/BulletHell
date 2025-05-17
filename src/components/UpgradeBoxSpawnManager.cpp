@@ -2,7 +2,8 @@
 #include "UpgradeBoxSpawnManager.h"
 #include "utils/GameUtils.h"
 
-UpgradeBoxSpawnManager::UpgradeBoxSpawnManager()
+UpgradeBoxSpawnManager::UpgradeBoxSpawnManager(const TextureRectManager &textureRectManager)
+    : upgradeBoxRectManager(textureRectManager)
 {
     resetHealthBoxTimer();
     resetWeaponBoxTimer();
@@ -60,7 +61,7 @@ UpgradeBox UpgradeBoxSpawnManager::spawnBox(UpgradeBoxType boxType,
     float lifetime = 30.0f;
 
     return UpgradeBox(boxType,
-                      texture, upgradeBoxTextureManager.getTextureRect(boxType),
+                      texture, upgradeBoxRectManager.getTextureRect(boxType),
                       spawnPosition, lifetime);
 }
 
@@ -93,5 +94,5 @@ void UpgradeBoxSpawnManager::resetHealthBoxTimer()
 }
 void UpgradeBoxSpawnManager::resetWeaponBoxTimer()
 {
-    weaponBoxTimer = 30.0f;
+    weaponBoxTimer = 3.0f; // 30.0f;
 }

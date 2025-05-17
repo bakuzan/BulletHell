@@ -9,9 +9,7 @@
 #include "entities/Player.h"
 #include "entities/Projectile.h"
 #include "entities/UpgradeBox.h"
-#include "components/EnemyTextureManager.h"
-#include "components/ProjectileTextureManager.h"
-#include "components/UpgradeBoxTextureManager.h"
+#include "components/TextureRectManager.h"
 #include "components/GameFlowManager.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
@@ -31,6 +29,8 @@ public:
 
     TextureManager textureManager;
     AudioManager audioManager;
+
+    TextureRectManager rectManager;
 
     GameFlowManager gameFlowManager;
 

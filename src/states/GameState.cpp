@@ -22,8 +22,12 @@
 GameState::GameState(GameData &data, StateManager &manager, sf::RenderWindow &window)
     : gameData(data),
       stateManager(manager),
-      window(window)
-
+      window(window),
+      enemySpawnManager(gameData.rectManager),
+      projectileSpawnManager(gameData.rectManager),
+      upgradeBoxSpawnManager(gameData.rectManager),
+      weaponUIManager(gameData.textureManager.getTexture(TextureId::UPGRADE_BOXES),
+                      gameData.rectManager.getUpgradeBoxTextureRects())
 {
     // Load background
     const sf::Texture &backgroundTexture = gameData.textureManager.getTexture(TextureId::BACKGROUND);
@@ -125,6 +129,9 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
 
     updateUpgradeBoxes(deltaTime);
 
+    weaponUIManager.update(player->getWeaponType(),
+                           player->getWeaponTimeout());
+
     // Update view to follow player
     view.setCenter(playerSprite.getPosition());
 
@@ -161,9 +168,11 @@ void GameState::render(sf::RenderWindow &window)
     gameData.getPlayer()->render(window);
 
     // UI Elements
-    window.setView(window.getDefaultView()); // Set "UI" view
+    sf::View uiView = window.getDefaultView();
+    window.setView(uiView); // Set "UI" view
 
     gameData.getPlayer()->getHealthBar().render(window);
+    weaponUIManager.render(window);
 
     for (const auto &enemy : enemies)
     {
@@ -457,7 +466,7 @@ void GameState::processUpgradeBoxPickUp(const UpgradeBox &upgradeBox)
     case UpgradeBoxType::MISSILE:
     {
         auto &player = gameData.getPlayer();
-        player->setWeaponType(mapUpgradeBoxToWeapon(upgradeBox.getType()));
+        player->setWeaponType(GameUtils::mapUpgradeBoxToWeapon(upgradeBox.getType()));
         gameData.audioManager.playSound(AudioId::UPGRADEBOX_WEAPON);
         break;
     }
@@ -580,21 +589,4 @@ void GameState::ensureBackgroundSizeIsLinkedToViewSize(
         static_cast<int>(viewPos.y),
         static_cast<int>(viewSize.x),
         static_cast<int>(viewSize.y)));
-}
-
-WeaponType GameState::mapUpgradeBoxToWeapon(UpgradeBoxType upgradeType)
-{
-    switch (upgradeType)
-    {
-    case UpgradeBoxType::DOUBLE_SHOT:
-        return WeaponType::DOUBLE_SHOT;
-    case UpgradeBoxType::LASER:
-        return WeaponType::LASER;
-    case UpgradeBoxType::MISSILE:
-        return WeaponType::MISSILE;
-    case UpgradeBoxType::HEALTH:
-    case UpgradeBoxType::COUNT:
-    default:
-        return WeaponType::BASIC; // Shouldn't hit!
-    }
 }

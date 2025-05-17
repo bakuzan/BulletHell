@@ -122,6 +122,44 @@ namespace GameUtils
         throw std::logic_error("Unhandled ProjectileType in GameUtils::getAudioIdForProjectileType()");
     }
 
+    const WeaponType mapUpgradeBoxToWeapon(UpgradeBoxType upgradeType)
+    {
+        switch (upgradeType)
+        {
+        case UpgradeBoxType::DOUBLE_SHOT:
+            return WeaponType::DOUBLE_SHOT;
+        case UpgradeBoxType::LASER:
+            return WeaponType::LASER;
+        case UpgradeBoxType::MISSILE:
+            return WeaponType::MISSILE;
+        case UpgradeBoxType::HEALTH:
+        case UpgradeBoxType::COUNT:
+        default:
+            return WeaponType::BASIC; // Shouldn't hit!
+        }
+    }
+
+    const UpgradeBoxType getUpgradeBoxTypeForWeaponType(WeaponType weaponType)
+    {
+        switch (weaponType)
+        {
+        case WeaponType::DOUBLE_SHOT:
+            return UpgradeBoxType::DOUBLE_SHOT;
+        case WeaponType::MISSILE:
+            return UpgradeBoxType::MISSILE;
+        case WeaponType::LASER:
+            return UpgradeBoxType::LASER;
+
+        case WeaponType::BASIC:
+        case WeaponType::ALIEN_BASIC:
+        case WeaponType::ALIEN_LASER:
+        case WeaponType::ALIEN_SEEKER:
+            throw std::logic_error("Invalid WeaponType in GameUtils::getUpgradeBoxTypeForWeaponType()");
+        }
+
+        throw std::logic_error("Unhandled WeaponType in GameUtils::getUpgradeBoxTypeForWeaponType()");
+    }
+
     std::string formatScoreText(int score)
     {
         std::stringstream ss;

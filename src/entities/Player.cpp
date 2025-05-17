@@ -88,7 +88,6 @@ void Player::update(float deltaTime,
 void Player::render(sf::RenderWindow &window)
 {
     window.draw(sprite);
-    // TODO Consider ui for weaponType and timeout!
 }
 
 void Player::reset()
@@ -152,6 +151,16 @@ void Player::setWeaponType(WeaponType type)
 HealthBar &Player::getHealthBar()
 {
     return healthBar;
+}
+
+WeaponType Player::getWeaponType() const
+{
+    return weaponType;
+}
+
+float Player::getWeaponTimeout() const
+{
+    return weaponTimeout;
 }
 
 // Privates

@@ -8,13 +8,13 @@
 #include <unordered_map>
 
 #include "core/TextureManager.h"
-#include "components/EnemyTextureManager.h"
+#include "components/TextureRectManager.h"
 #include "entities/Enemy.h"
 
 class EnemySpawnManager
 {
 private:
-    EnemyTextureManager enemyTextureManager;
+    const TextureRectManager &enemyRectManager;
 
     struct SpawnInfo
     {
@@ -37,7 +37,7 @@ private:
         const sf::View &view);
 
 public:
-    EnemySpawnManager();
+    EnemySpawnManager(const TextureRectManager &textureRectManager);
     ~EnemySpawnManager();
 
     void setWaveParameters(

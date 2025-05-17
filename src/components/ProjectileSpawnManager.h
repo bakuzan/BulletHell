@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "ProjectileTextureManager.h"
+#include "TextureRectManager.h"
 
 #include "constants/ProjectileType.h"
 #include "data/ProjectileData.h"
@@ -12,7 +12,7 @@
 class ProjectileSpawnManager
 {
 private:
-    ProjectileTextureManager projectileTextureManager;
+    const TextureRectManager &projectileRectManager;
 
 private:
     std::unique_ptr<Projectile> spawnProjectile(
@@ -20,7 +20,7 @@ private:
         const ProjectileData &data);
 
 public:
-    ProjectileSpawnManager();
+    ProjectileSpawnManager(const TextureRectManager &textureRectManager);
     ~ProjectileSpawnManager();
 
     void spawnPlayerProjectile(const sf::Texture &texture,

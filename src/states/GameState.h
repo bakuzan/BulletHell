@@ -10,6 +10,7 @@
 #include "core/StateManager.h"
 #include "entities/Enemy.h"
 #include "ui/HealthBar.h"
+#include "ui/WeaponUI.h"
 #include "components/EnemySpawnManager.h"
 #include "components/ProjectileSpawnManager.h"
 #include "components/UpgradeBoxSpawnManager.h"
@@ -27,8 +28,8 @@ private:
     UpgradeBoxSpawnManager upgradeBoxSpawnManager;
 
     sf::RectangleShape background;
-
     sf::Text scoreText;
+    WeaponUI weaponUIManager;
 
     bool shootProjectile;
 
@@ -50,8 +51,6 @@ private:
     void ensureBackgroundSizeIsLinkedToViewSize(
         const sf::Vector2f &viewPos,
         const sf::Vector2f &viewSize);
-
-    WeaponType mapUpgradeBoxToWeapon(UpgradeBoxType upgradeType);
 
 public:
     GameState(GameData &data, StateManager &manager, sf::RenderWindow &window);

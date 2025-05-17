@@ -4,12 +4,12 @@
 #include "constants/Direction.h"
 #include "constants/UpgradeBoxType.h"
 #include "entities/UpgradeBox.h"
-#include "UpgradeBoxTextureManager.h"
+#include "TextureRectManager.h"
 
 class UpgradeBoxSpawnManager
 {
 private:
-    UpgradeBoxTextureManager upgradeBoxTextureManager;
+    const TextureRectManager &upgradeBoxRectManager;
 
     float healthBoxTimer;
     float weaponBoxTimer;
@@ -30,7 +30,7 @@ private:
     void resetWeaponBoxTimer();
 
 public:
-    UpgradeBoxSpawnManager();
+    UpgradeBoxSpawnManager(const TextureRectManager &textureRectManager);
     ~UpgradeBoxSpawnManager();
 
     void spawnUpgradeBoxes(float deltaTime,

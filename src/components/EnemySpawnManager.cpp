@@ -8,7 +8,8 @@
 #include "entities/BossEnemy.h"
 #include "utils/GameUtils.h"
 
-EnemySpawnManager::EnemySpawnManager()
+EnemySpawnManager::EnemySpawnManager(const TextureRectManager &textureRectManager)
+    : enemyRectManager(textureRectManager)
 {
     spawnData[EnemyType::BASIC] = {0.0f, 0.0f};
     spawnData[EnemyType::SHOOTER] = {0.0f, 0.0f};
@@ -56,7 +57,7 @@ void EnemySpawnManager::spawnEnemies(
         for (int i = 0; i < enemiesToSpawn; ++i)
         {
             sf::Vector2f spawnPosition = getRandomSpawnPosition(view);
-            const auto &textureRect = enemyTextureManager.getTextureRect(enemyType);
+            const auto &textureRect = enemyRectManager.getTextureRect(enemyType);
             float enemySpeed = enemySpeedMap[enemyType];
 
             enemies.emplace_back(
