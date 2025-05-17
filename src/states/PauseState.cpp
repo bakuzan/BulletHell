@@ -1,4 +1,5 @@
 #include <memory>
+#include <format>
 
 #include "constants/Constants.h"
 #include "utils/InputUtils.h"
@@ -16,11 +17,16 @@ PauseState::PauseState(GameData &data, StateManager &manager, sf::RenderWindow &
     background.setSize(sf::Vector2f(300.f, 300.f));
     background.setFillColor(sf::Color(0, 0, 0, 150));
 
-    // Configure pause text
+    // Configure text
     pauseText.setFont(gameData.gameFont);
     pauseText.setString("Paused");
     pauseText.setCharacterSize(36);
     pauseText.setFillColor(sf::Color::White);
+
+    waveText.setFont(gameData.gameFont);
+    waveText.setString(std::format("Wave {}:{}", gameData.gameFlowManager.getLevelNumber(), gameData.gameFlowManager.getWaveNumber()));
+    waveText.setCharacterSize(28);
+    waveText.setFillColor(sf::Color::Yellow);
 
     // Add buttons
     buttons.emplace_back(data.gameFont, "Resume", sf::Vector2f(center.x - 100.f, center.y - buttonSpacing),
@@ -72,6 +78,7 @@ void PauseState::render(sf::RenderWindow &window)
 {
     window.draw(background);
     window.draw(pauseText);
+    window.draw(waveText);
 
     for (const auto &button : buttons)
     {
@@ -94,9 +101,12 @@ void PauseState::updateMenuItemPositions()
     pauseText.setPosition(
         background.getPosition().x + (backgroundSize.x - pauseText.getGlobalBounds().width) / 2.f,
         background.getPosition().y + 20.f);
+    waveText.setPosition(
+        background.getPosition().x + (backgroundSize.x - waveText.getGlobalBounds().width) / 2.f,
+        background.getPosition().y + pauseText.getGlobalBounds().height + 30.f);
 
     float offsetX = Constants::BUTTON_WIDTH / 2.0f;
-    buttons[0].setPosition(sf::Vector2f(viewCenter.x - offsetX, viewCenter.y - buttonSpacing));
-    buttons[1].setPosition(sf::Vector2f(viewCenter.x - offsetX, viewCenter.y));
-    buttons[2].setPosition(sf::Vector2f(viewCenter.x - offsetX, viewCenter.y + buttonSpacing));
+    buttons[0].setPosition(sf::Vector2f(viewCenter.x - offsetX, viewCenter.y - buttonSpacing + 10.f));
+    buttons[1].setPosition(sf::Vector2f(viewCenter.x - offsetX, viewCenter.y + 10.f));
+    buttons[2].setPosition(sf::Vector2f(viewCenter.x - offsetX, viewCenter.y + buttonSpacing + 10.f));
 }

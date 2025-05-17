@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <memory>
+#include <format>
 
 #include "constants/Constants.h"
 #include "utils/InputUtils.h"
@@ -30,6 +31,11 @@ GameOverState::GameOverState(GameData &data, StateManager &manager, sf::RenderWi
     gameOverText.setString("Game Over");
     gameOverText.setCharacterSize(60);
     gameOverText.setFillColor(sf::Color::Red);
+
+    waveText.setFont(gameData.gameFont);
+    waveText.setString(std::format("Wave {}:{}", gameData.gameFlowManager.getLevelNumber(), gameData.gameFlowManager.getWaveNumber()));
+    waveText.setCharacterSize(48);
+    waveText.setFillColor(sf::Color::White);
 
     finalScoreText.setFont(gameData.gameFont);
     finalScoreText.setString(GameUtils::formatScoreText(calculateFinalScore()));
@@ -138,6 +144,7 @@ void GameOverState::render(sf::RenderWindow &window)
 {
     window.draw(background);
     window.draw(gameOverText);
+    window.draw(waveText);
     window.draw(finalScoreText);
 
     if (isAskingForPlayerName)
@@ -181,13 +188,19 @@ void GameOverState::updateMenuItemPositions()
         viewCenter.x - backgroundSize.x / 2.f,
         viewCenter.y - backgroundSize.y / 2.f);
 
+    float topEdge = viewCenter.y - viewSize.y / 2.0f;
+
     gameOverText.setPosition(
         viewCenter.x - (gameOverText.getGlobalBounds().width / 2.0f),
-        viewCenter.y - viewSize.y / 2.0f + buttonSpacing);
+        topEdge + buttonSpacing);
+
+    waveText.setPosition(
+        viewCenter.x - (waveText.getGlobalBounds().width / 2.0f),
+        topEdge + gameOverText.getGlobalBounds().height + (buttonSpacing * 2.0f));
 
     finalScoreText.setPosition(
         viewCenter.x - (finalScoreText.getGlobalBounds().width / 2.0f),
-        viewCenter.y - viewSize.y / 2.0f + gameOverText.getGlobalBounds().height + (buttonSpacing * 2.0f));
+        topEdge + gameOverText.getGlobalBounds().height + waveText.getGlobalBounds().height + (buttonSpacing * 3.0f));
 
     float buttonRowY = viewCenter.y + viewSize.y / 2.f - Constants::BUTTON_HEIGHT - buttonSpacing;
     buttons[0].setPosition(sf::Vector2f(viewCenter.x - viewSize.x / 2.f + buttonSpacing, buttonRowY));
@@ -227,7 +240,7 @@ void GameOverState::displayHighScores(const std::vector<HighScore> &scores, sf::
 
         sf::Text text(displayString, gameData.gameFont, 36);
         text.setPosition(viewCenter.x - text.getGlobalBounds().width / 2.0f,
-                         viewCenter.y - viewSize.y / 2.0f + gameOverText.getGlobalBounds().height + finalScoreText.getGlobalBounds().height + (buttonSpacing * 5.0f) + i * 50.0f);
+                         viewCenter.y - viewSize.y / 2.0f + gameOverText.getGlobalBounds().height + waveText.getGlobalBounds().height + finalScoreText.getGlobalBounds().height + (buttonSpacing * 5.0f) + i * 50.0f);
         text.setFillColor(isCurrentUserScore ? sf::Color::White : sf::Color::Yellow);
         window.draw(text);
     }

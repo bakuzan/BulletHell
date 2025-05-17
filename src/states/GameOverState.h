@@ -21,6 +21,7 @@ private:
 
     sf::RectangleShape background;
     sf::Text gameOverText;
+    sf::Text waveText;
     sf::Text finalScoreText;
     float buttonSpacing;
     std::vector<Button> buttons;

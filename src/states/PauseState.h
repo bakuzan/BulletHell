@@ -17,6 +17,8 @@ private:
 
     sf::RectangleShape background;
     sf::Text pauseText;
+    sf::Text waveText;
+
     float buttonSpacing;
     std::vector<Button> buttons;
     int selectedButtonIndex = 0;

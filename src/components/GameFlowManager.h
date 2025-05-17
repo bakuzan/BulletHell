@@ -29,8 +29,10 @@ public:
 
     void update(float deltaTime, const std::vector<std::unique_ptr<Enemy>> &enemies);
     void reset();
-    // TODO Consider a mechanism to display ui for wave num/cooldown
+
     bool isWaveActive() const;
+    int getLevelNumber() const;
+    int getWaveNumber() const;
 
     const std::unordered_map<EnemyType, float> &getSpawnRates() const;
 };

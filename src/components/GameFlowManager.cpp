@@ -62,6 +62,21 @@ bool GameFlowManager::isWaveActive() const
     return waveActive;
 }
 
+int GameFlowManager::getLevelNumber() const
+{
+    return currentLevelIndex + 1;
+}
+
+int GameFlowManager::getWaveNumber() const
+{
+    int waveNumber = currentWaveIndex + 1;
+    return waveActive
+               ? waveNumber
+           : waveNumber > waves.size()
+               ? waves.size()
+               : waveNumber - 1;
+}
+
 const std::unordered_map<EnemyType, float> &GameFlowManager::getSpawnRates() const
 {
     return waves[currentWaveIndex].spawnRates;
