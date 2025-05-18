@@ -4,9 +4,10 @@
 #include "GameFlowManager.h"
 
 GameFlowManager::GameFlowManager()
-    : currentLevelIndex(0), currentWaveIndex(0),
-      waveCooldown(0.25f),
-      waveActive(false)
+    : currentWaveIndex(0),
+      waveCooldown(0.5f),
+      waveActive(false),
+      activeWave(0.0f, {})
 {
     initialise();
 }
@@ -22,15 +23,14 @@ void GameFlowManager::update(float deltaTime, const std::vector<std::unique_ptr<
 {
     if (waveActive)
     {
-        Wave &currentWave = waves[currentWaveIndex];
-        currentWave.elapsedTime += deltaTime;
+        activeWave.elapsedTime += deltaTime;
 
-        if (currentWave.elapsedTime > currentWave.duration)
+        if (activeWave.elapsedTime > activeWave.duration)
         {
-            currentWave.elapsedTime = 0.0f; // reset the time!
+            activeWave.elapsedTime = 0.0f; // reset the time!
 
             waveActive = false;
-            waveCooldown = 10.0f;
+            waveCooldown = getWaveCooldown();
             currentWaveIndex++;
         }
     }
@@ -39,15 +39,13 @@ void GameFlowManager::update(float deltaTime, const std::vector<std::unique_ptr<
         waveCooldown -= deltaTime;
 
         if (waveCooldown <= 0.0f &&
-            (currentWaveIndex < waves.size() ||
-             enemies.empty()))
+            enemies.empty())
         {
             startNextWave();
         }
-        else if (currentWaveIndex == waves.size() &&
-                 !enemies.empty())
+        else if (!enemies.empty())
         {
-            waveCooldown = 5.0f;
+            waveCooldown = getWaveCooldown();
         }
     }
 }
@@ -64,42 +62,44 @@ bool GameFlowManager::isWaveActive() const
 
 int GameFlowManager::getLevelNumber() const
 {
-    return currentLevelIndex + 1;
+    return (currentWaveIndex / waves.size()) + 1;
 }
 
 int GameFlowManager::getWaveNumber() const
 {
-    int waveNumber = currentWaveIndex + 1;
+    int waveNumber = (currentWaveIndex % waves.size()) + 1;
     return waveActive
                ? waveNumber
-           : waveNumber > waves.size()
-               ? waves.size()
                : waveNumber - 1;
 }
 
-const std::unordered_map<EnemyType, float> &GameFlowManager::getSpawnRates() const
+std::unordered_map<EnemyType, float> GameFlowManager::getSpawnRates()
 {
-    return waves[currentWaveIndex].spawnRates;
+    return activeWave.spawnRates;
 }
 
 // Privates
 
+float GameFlowManager::getWaveCooldown()
+{
+    return std::max(0.0f, 6.0f - (1.0f * getLevelNumber()));
+}
+
 void GameFlowManager::startNextWave()
 {
-    if (currentWaveIndex >= waves.size())
-    {
-        currentLevelIndex++;
-        currentWaveIndex = 0;
-    }
-
     waveActive = true;
+
+    int baseWaveIndex = (getWaveNumber() - 1) % waves.size();
+    activeWave = waves[baseWaveIndex];
+    activeWave.elapsedTime = 0.0f;
+
+    // TODO adjust spawn rates based on level!
 }
 
 void GameFlowManager::initialise()
 {
-    currentLevelIndex = 0;
     currentWaveIndex = 0;
-    waveCooldown = 0.25f;
+    waveCooldown = 0.5f;
     waveActive = false;
     waves.clear();
 

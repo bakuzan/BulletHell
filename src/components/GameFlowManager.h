@@ -12,14 +12,15 @@
 class GameFlowManager
 {
 private:
-    int currentLevelIndex;
     int currentWaveIndex;
     float waveCooldown;
     bool waveActive;
 
     std::vector<Wave> waves;
+    Wave activeWave;
 
 private:
+    float getWaveCooldown();
     void startNextWave();
     void initialise();
 
@@ -34,7 +35,7 @@ public:
     int getLevelNumber() const;
     int getWaveNumber() const;
 
-    const std::unordered_map<EnemyType, float> &getSpawnRates() const;
+    std::unordered_map<EnemyType, float> getSpawnRates();
 };
 
 #endif // GAMEFLOWMANAGER_H
