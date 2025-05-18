@@ -16,6 +16,7 @@ private:
     float waveCooldown;
     bool waveActive;
 
+    std::unordered_map<EnemyType, int> initialWaveIndex;
     std::vector<Wave> waves;
     Wave activeWave;
 

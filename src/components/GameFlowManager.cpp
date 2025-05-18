@@ -1,4 +1,4 @@
-#include <iostream>
+#include <cmath>
 #include <string>
 
 #include "GameFlowManager.h"
@@ -89,11 +89,39 @@ void GameFlowManager::startNextWave()
 {
     waveActive = true;
 
-    int baseWaveIndex = (getWaveNumber() - 1) % waves.size();
+    int baseWaveIndex = getWaveNumber() - 1;
     activeWave = waves[baseWaveIndex];
     activeWave.elapsedTime = 0.0f;
 
-    // TODO adjust spawn rates based on level!
+    // Apply level-relative adjustments to the baseWave!
+    int levelIndex = getLevelNumber() - 1;
+    activeWave.duration *= std::pow(1.1f, levelIndex);
+
+    for (auto &[enemyType, spawnsPerSecond] : activeWave.spawnRates)
+    {
+        if (enemyType == EnemyType::BOSS)
+        {
+            spawnsPerSecond = 1.0f / activeWave.duration;
+        }
+
+        float scalingFactor = std::pow(1.05f, levelIndex);
+
+        if (spawnsPerSecond > 0.0f)
+        {
+            spawnsPerSecond *= scalingFactor;
+        }
+        else
+        {
+            // Introduce enemies into waves they werent in as levels progress
+            int introductionWave = initialWaveIndex[enemyType] - levelIndex / 2;
+            introductionWave = std::max(0, introductionWave);
+
+            if (baseWaveIndex >= introductionWave)
+            {
+                spawnsPerSecond = 0.1f * scalingFactor;
+            }
+        }
+    }
 }
 
 void GameFlowManager::initialise()
@@ -116,4 +144,17 @@ void GameFlowManager::initialise()
                       {EnemyType::SPEEDY, 0.0f},
                       {EnemyType::BOMBER, 0.0f},
                       {EnemyType::BOSS, 1.0f}}});
+
+    // Populate enemy initial wave index map
+    for (int waveIdx = 0; waveIdx < waves.size(); ++waveIdx)
+    {
+        for (const auto &[enemyType, spawnsPerSecond] : waves[waveIdx].spawnRates)
+        {
+            if (spawnsPerSecond > 0.0f &&
+                initialWaveIndex.find(enemyType) == initialWaveIndex.end())
+            {
+                initialWaveIndex[enemyType] = waveIdx;
+            }
+        }
+    }
 }
