@@ -102,6 +102,7 @@ void GameFlowManager::startNextWave()
         if (enemyType == EnemyType::BOSS)
         {
             spawnsPerSecond = 1.0f / activeWave.duration;
+            continue;
         }
 
         float scalingFactor = std::pow(1.05f, levelIndex);
