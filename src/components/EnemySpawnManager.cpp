@@ -17,11 +17,11 @@ EnemySpawnManager::EnemySpawnManager(const TextureRectManager &textureRectManage
     spawnData[EnemyType::BOMBER] = {0.0f, 0.0f};
     spawnData[EnemyType::BOSS] = {0.0f, 0.0f};
 
-    enemySpeedMap[EnemyType::BASIC] = Constants::BASE_PLAYER_SPEED * 0.50f;
-    enemySpeedMap[EnemyType::SHOOTER] = Constants::BASE_PLAYER_SPEED * 0.33f;
-    enemySpeedMap[EnemyType::SPEEDY] = Constants::BASE_PLAYER_SPEED * 1.10f;
-    enemySpeedMap[EnemyType::BOMBER] = Constants::BASE_PLAYER_SPEED * 0.25f;
-    enemySpeedMap[EnemyType::BOSS] = Constants::BASE_PLAYER_SPEED * 0.10;
+    statsData[EnemyType::BASIC] = EnemyStats::CreateEmpty();
+    statsData[EnemyType::SHOOTER] = EnemyStats::CreateEmpty();
+    statsData[EnemyType::SPEEDY] = EnemyStats::CreateEmpty();
+    statsData[EnemyType::BOMBER] = EnemyStats::CreateEmpty();
+    statsData[EnemyType::BOSS] = EnemyStats::CreateEmpty();
 }
 
 EnemySpawnManager::~EnemySpawnManager()
@@ -32,13 +32,21 @@ EnemySpawnManager::~EnemySpawnManager()
 // Publics
 
 void EnemySpawnManager::setWaveParameters(
-    const std::unordered_map<EnemyType, float> &spawnRates)
+    const std::unordered_map<EnemyType, float> &spawnRates,
+    const std::unordered_map<EnemyType, EnemyStats> &stats)
 {
     for (auto &[enemyType, spawnInfo] : spawnData)
     {
         spawnInfo.spawnRate = spawnRates.count(enemyType)
                                   ? spawnRates.at(enemyType)
                                   : 0.0f;
+    }
+
+    for (auto &[enemyType, statsInfo] : statsData)
+    {
+        statsInfo = stats.count(enemyType)
+                        ? stats.at(enemyType)
+                        : EnemyStats::CreateEmpty();
     }
 }
 
@@ -58,12 +66,12 @@ void EnemySpawnManager::spawnEnemies(
         {
             sf::Vector2f spawnPosition = getRandomSpawnPosition(view);
             const auto &textureRect = enemyRectManager.getTextureRect(enemyType);
-            float enemySpeed = enemySpeedMap[enemyType];
+            EnemyStats enemyStats = statsData[enemyType];
 
             enemies.emplace_back(
                 spawnEnemy(enemyType,
                            textureManager, textureRect,
-                           spawnPosition, enemySpeed));
+                           spawnPosition, enemyStats));
         }
     }
 }
@@ -75,25 +83,25 @@ std::unique_ptr<Enemy> EnemySpawnManager::spawnEnemy(
     const TextureManager &textureManager,
     sf::IntRect textureRect,
     sf::Vector2f spawnPosition,
-    float speed)
+    EnemyStats enemyStats)
 {
     const sf::Texture &texture = textureManager.getTexture(TextureId::SPACESHIPS);
 
     switch (type)
     {
     case EnemyType::BASIC:
-        return std::make_unique<BasicEnemy>(texture, textureRect, spawnPosition, speed);
+        return std::make_unique<BasicEnemy>(texture, textureRect, spawnPosition, enemyStats);
     case EnemyType::SHOOTER:
-        return std::make_unique<ShooterEnemy>(texture, textureRect, spawnPosition, speed);
+        return std::make_unique<ShooterEnemy>(texture, textureRect, spawnPosition, enemyStats);
     case EnemyType::SPEEDY:
-        return std::make_unique<SpeedyEnemy>(texture, textureRect, spawnPosition, speed);
+        return std::make_unique<SpeedyEnemy>(texture, textureRect, spawnPosition, enemyStats);
     case EnemyType::BOMBER:
-        return std::make_unique<BomberEnemy>(texture, textureRect, spawnPosition, speed);
+        return std::make_unique<BomberEnemy>(texture, textureRect, spawnPosition, enemyStats);
     case EnemyType::BOSS:
         return std::make_unique<BossEnemy>(
             textureManager.getTexture(TextureId::HEALTHBAR_BORDER),
             textureManager.getTexture(TextureId::HEALTHBAR_FILLINGS),
-            texture, textureRect, spawnPosition, speed);
+            texture, textureRect, spawnPosition, enemyStats);
     default:
         return nullptr;
     }

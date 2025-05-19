@@ -7,11 +7,11 @@
 #include "utils/GameUtils.h"
 
 SpeedyEnemy::SpeedyEnemy(const sf::Texture &texture, sf::IntRect textureRect,
-                         sf::Vector2f spawnPosition, float movementSpeed)
+                         sf::Vector2f spawnPosition, EnemyStats enemyStats)
     : Enemy(EnemyType::SPEEDY,
             texture, textureRect,
             spawnPosition,
-            movementSpeed, Constants::ENEMY_POINTS_SPEEDY, Constants::ENEMY_HEALTH_SPEEDY)
+            enemyStats)
 {
     sprite.setOrigin(Constants::SPRITE_WIDTH_SPEEDY / 2.0f, Constants::SPRITE_HEIGHT_SPEEDY / 2.0f);
     sprite.setScale(0.3, 0.3);
@@ -26,7 +26,7 @@ SpeedyEnemy::~SpeedyEnemy()
 void SpeedyEnemy::update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition)
 {
     sf::Vector2f direction = GameUtils::normaliseVector(playerPosition - sprite.getPosition());
-    sprite.move(direction * speed * deltaTime);
+    sprite.move(direction * stats.speed * deltaTime);
 
     GameUtils::rotateTowards(
         sprite,

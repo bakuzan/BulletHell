@@ -3,8 +3,8 @@
 Enemy::Enemy(EnemyType t,
              const sf::Texture &texture, sf::IntRect textureRect,
              sf::Vector2f spawnPosition,
-             float movementSpeed, int pointsValue, float startingHealth)
-    : type(t), speed(movementSpeed), pointsValue(pointsValue), health(startingHealth)
+             EnemyStats enemyStats)
+    : type(t), initialStats(enemyStats), stats(enemyStats)
 {
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -30,7 +30,7 @@ const EnemyType Enemy::getType() const
 
 const float Enemy::getHealth() const
 {
-    return health;
+    return stats.health;
 }
 
 const sf::Sprite &Enemy::getSprite() const
@@ -40,7 +40,7 @@ const sf::Sprite &Enemy::getSprite() const
 
 const int Enemy::getPointsValue() const
 {
-    return pointsValue;
+    return stats.pointValue;
 }
 
 void Enemy::setPosition(sf::Vector2f position)
@@ -50,5 +50,5 @@ void Enemy::setPosition(sf::Vector2f position)
 
 void Enemy::updateHealth(float adjustment)
 {
-    health = std::max(0.0f, health + adjustment);
+    stats.health = std::max(0.0f, stats.health + adjustment);
 }

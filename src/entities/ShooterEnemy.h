@@ -6,6 +6,7 @@
 
 #include "RangedEnemy.h"
 #include "data/ProjectileData.h"
+#include "data/EnemyStats.h"
 
 class ShooterEnemy : public RangedEnemy
 {
@@ -17,7 +18,8 @@ public:
     static constexpr float rotationOffset = 270.0f;
 
 public:
-    ShooterEnemy(const sf::Texture &texture, sf::IntRect textureRect, sf::Vector2f spawnPosition, float movementSpeed);
+    ShooterEnemy(const sf::Texture &texture, sf::IntRect textureRect,
+                 sf::Vector2f spawnPosition, EnemyStats enemyStats);
     ~ShooterEnemy() override;
 
     void update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition) override;

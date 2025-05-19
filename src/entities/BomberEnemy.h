@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Enemy.h"
+#include "data/EnemyStats.h"
 
 class BomberEnemy : public Enemy
 {
@@ -14,7 +15,8 @@ public:
     static constexpr float rotationOffset = 90.0f;
 
 public:
-    BomberEnemy(const sf::Texture &texture, sf::IntRect textureRect, sf::Vector2f spawnPosition, float movementSpeed);
+    BomberEnemy(const sf::Texture &texture, sf::IntRect textureRect,
+                sf::Vector2f spawnPosition, EnemyStats enemyStats);
     ~BomberEnemy() override;
 
     void update(float deltaTime, sf::RenderWindow &window, const sf::Vector2f &playerPosition) override;

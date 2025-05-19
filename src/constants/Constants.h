@@ -46,21 +46,6 @@ namespace Constants
 
     extern const float ENEMY_SPAWN_OFFSET;
 
-    extern const int ENEMY_POINTS_BASIC;
-    extern const int ENEMY_POINTS_SHOOTER;
-    extern const int ENEMY_POINTS_SPEEDY;
-    extern const int ENEMY_POINTS_BOMBER;
-    extern const int ENEMY_POINTS_BOSS;
-
-    extern const float ENEMY_HEALTH_BASIC;
-    extern const float ENEMY_HEALTH_SHOOTER;
-    extern const float ENEMY_HEALTH_SPEEDY;
-    extern const float ENEMY_HEALTH_BOMBER;
-    extern const float ENEMY_HEALTH_BOSS;
-
-    extern const float ENEMY_SHOOTER_DISTANCE;
-    extern const float ENEMY_BOMBER_DISTANCE;
-
     extern const float UPGRADE_BOX_LIFETIME_LIMIT;
     extern const float UPGRADE_BOX_SPAWN_OFFSET;
 };

@@ -93,7 +93,8 @@ void GameState::update(sf::Time deltaTime, sf::RenderWindow &window)
     if (gameData.gameFlowManager.isWaveActive())
     {
         enemySpawnManager.setWaveParameters(
-            gameData.gameFlowManager.getSpawnRates());
+            gameData.gameFlowManager.getSpawnRates(),
+            gameData.gameFlowManager.getEnemyStats());
 
         enemySpawnManager.spawnEnemies(
             gameData.textureManager,

@@ -8,11 +8,11 @@
 
 BomberEnemy::BomberEnemy(
     const sf::Texture &texture, sf::IntRect textureRect,
-    sf::Vector2f spawnPosition, float movementSpeed)
+    sf::Vector2f spawnPosition, EnemyStats enemyStats)
     : Enemy(EnemyType::BOMBER,
             texture, textureRect,
             spawnPosition,
-            movementSpeed, Constants::ENEMY_POINTS_BOMBER, Constants::ENEMY_HEALTH_BOMBER)
+            enemyStats)
 {
     sprite.setOrigin(Constants::SPRITE_WIDTH_BOMBER / 2.0f, Constants::SPRITE_HEIGHT_BOMBER / 2.0f);
     sprite.setScale(0.66, 0.66);
@@ -35,7 +35,7 @@ void BomberEnemy::update(float deltaTime, sf::RenderWindow &window, const sf::Ve
         direction /= magnitude; // Normalize the vector
     }
 
-    sprite.move(direction * speed * deltaTime);
+    sprite.move(direction * stats.speed * deltaTime);
 
     GameUtils::rotateTowards(
         sprite,
@@ -47,7 +47,7 @@ void BomberEnemy::update(float deltaTime, sf::RenderWindow &window, const sf::Ve
 bool BomberEnemy::shouldDetonate(const sf::Vector2f &playerPosition)
 {
     float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);
-    return magnitude < Constants::ENEMY_BOMBER_DISTANCE;
+    return magnitude < stats.activeDistance;
 }
 
 // Privates

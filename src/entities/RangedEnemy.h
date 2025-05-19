@@ -6,6 +6,7 @@
 
 #include "Enemy.h"
 #include "data/ProjectileData.h"
+#include "data/EnemyStats.h"
 
 class RangedEnemy : public Enemy
 {
@@ -13,7 +14,7 @@ public:
     RangedEnemy(EnemyType t,
                 const sf::Texture &texture, sf::IntRect textureRect,
                 sf::Vector2f spawnPosition,
-                float movementSpeed, int pointsValue, float startingHealth);
+                EnemyStats enemyStats);
     ~RangedEnemy() override;
 
     virtual std::optional<ProjectileData> getShootData(float deltaTime, const sf::Vector2f &playerPosition) = 0;

@@ -2,6 +2,7 @@
 #include <string>
 
 #include "GameFlowManager.h"
+#include "constants/Constants.h"
 
 GameFlowManager::GameFlowManager()
     : currentWaveIndex(0),
@@ -62,20 +63,26 @@ bool GameFlowManager::isWaveActive() const
 
 int GameFlowManager::getLevelNumber() const
 {
-    return (currentWaveIndex / waves.size()) + 1;
+    return waveActive
+               ? (currentWaveIndex / waves.size()) + 1
+               : (std::max(0, currentWaveIndex - 1) / waves.size()) + 1;
 }
 
 int GameFlowManager::getWaveNumber() const
 {
-    int waveNumber = (currentWaveIndex % waves.size()) + 1;
     return waveActive
-               ? waveNumber
-               : waveNumber - 1;
+               ? (currentWaveIndex % waves.size()) + 1
+               : (std::max(0, currentWaveIndex - 1) % waves.size()) + 1;
 }
 
-std::unordered_map<EnemyType, float> GameFlowManager::getSpawnRates()
+const std::unordered_map<EnemyType, float> &GameFlowManager::getSpawnRates() const
 {
     return activeWave.spawnRates;
+}
+
+const std::unordered_map<EnemyType, EnemyStats> &GameFlowManager::getEnemyStats() const
+{
+    return activeEnemyStats;
 }
 
 // Privates
@@ -90,11 +97,18 @@ void GameFlowManager::startNextWave()
     waveActive = true;
 
     int baseWaveIndex = getWaveNumber() - 1;
-    activeWave = waves[baseWaveIndex];
-    activeWave.elapsedTime = 0.0f;
-
-    // Apply level-relative adjustments to the baseWave!
     int levelIndex = getLevelNumber() - 1;
+
+    activeWave = waves[baseWaveIndex];
+    applyLevelEnhancementToWave(levelIndex, baseWaveIndex);
+
+    activeEnemyStats = enemyStats;
+    applyLevelBuffsToEnemyStats(levelIndex, baseWaveIndex);
+}
+
+void GameFlowManager::applyLevelEnhancementToWave(int levelIndex, int baseWaveIndex)
+{
+    activeWave.elapsedTime = 0.0f;
     activeWave.duration *= std::pow(1.1f, levelIndex);
 
     for (auto &[enemyType, spawnsPerSecond] : activeWave.spawnRates)
@@ -125,13 +139,21 @@ void GameFlowManager::startNextWave()
     }
 }
 
+void GameFlowManager::applyLevelBuffsToEnemyStats(int levelIndex, int baseWaveIndex)
+{
+    for (auto &[enemyType, stats] : activeEnemyStats)
+    {
+    }
+}
+
 void GameFlowManager::initialise()
 {
-    currentWaveIndex = 0;
+    currentWaveIndex = 6;
     waveCooldown = 0.5f;
     waveActive = false;
-    waves.clear();
 
+    // Populate waves
+    waves.clear();
     waves.push_back({10.0f, {{EnemyType::BASIC, 5.0f}, {EnemyType::SHOOTER, 0.1f}, {EnemyType::SPEEDY, 0.0f}, {EnemyType::BOMBER, 0.0f}}});
     waves.push_back({12.0f, {{EnemyType::BASIC, 6.0f}, {EnemyType::SHOOTER, 0.2f}, {EnemyType::SPEEDY, 0.1f}, {EnemyType::BOMBER, 0.0f}}});
     waves.push_back({15.0f, {{EnemyType::BASIC, 7.0f}, {EnemyType::SHOOTER, 0.3f}, {EnemyType::SPEEDY, 0.2f}, {EnemyType::BOMBER, 0.0f}}});
@@ -158,4 +180,12 @@ void GameFlowManager::initialise()
             }
         }
     }
+
+    // Populate base enemy stats
+    enemyStats[EnemyType::BASIC] = EnemyStats::CreateBasicStats(10.0f, 25.0f, Constants::BASE_PLAYER_SPEED * 0.50f);
+    enemyStats[EnemyType::SHOOTER] = EnemyStats::CreateRangedStats(50.0f, 50.f, Constants::BASE_PLAYER_SPEED * 0.33f, 1.0f, 500.f);
+    enemyStats[EnemyType::SPEEDY] = EnemyStats::CreateBasicStats(50.0f, 25.0f, Constants::BASE_PLAYER_SPEED * 1.10f);
+    enemyStats[EnemyType::BOMBER] = EnemyStats::CreateRangedStats(75.0f, 100.f, Constants::BASE_PLAYER_SPEED * 0.25f, 0.0f, 500.f);
+    enemyStats[EnemyType::BOSS] = EnemyStats::CreateRangedStats(500.0f, 1000.f, Constants::BASE_PLAYER_SPEED * 0.10, 1.5f, 2000.0f);
+    activeEnemyStats = enemyStats;
 }

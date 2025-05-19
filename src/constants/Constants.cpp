@@ -45,21 +45,6 @@ namespace Constants
 
     const float ENEMY_SPAWN_OFFSET = 5.0f;
 
-    const int ENEMY_POINTS_BASIC = 10.0f;
-    const int ENEMY_POINTS_SHOOTER = 50.0f;
-    const int ENEMY_POINTS_SPEEDY = 50.0f;
-    const int ENEMY_POINTS_BOMBER = 75.0f;
-    const int ENEMY_POINTS_BOSS = 500.0f;
-
-    const float ENEMY_HEALTH_BASIC = 25.0f;
-    const float ENEMY_HEALTH_SHOOTER = 50.0f;
-    const float ENEMY_HEALTH_SPEEDY = 25.0f;
-    const float ENEMY_HEALTH_BOMBER = 100.0f;
-    const float ENEMY_HEALTH_BOSS = 1000.f;
-
-    const float ENEMY_SHOOTER_DISTANCE = 500.0f;
-    const float ENEMY_BOMBER_DISTANCE = 500.0f;
-
     const float UPGRADE_BOX_LIFETIME_LIMIT = 30.0f;
     const float UPGRADE_BOX_SPAWN_OFFSET = 64.0f;
 };

@@ -20,9 +20,14 @@ private:
     std::vector<Wave> waves;
     Wave activeWave;
 
+    std::unordered_map<EnemyType, EnemyStats> enemyStats;
+    std::unordered_map<EnemyType, EnemyStats> activeEnemyStats;
+
 private:
     float getWaveCooldown();
     void startNextWave();
+    void applyLevelEnhancementToWave(int levelIndex, int baseWaveIndex);
+    void applyLevelBuffsToEnemyStats(int levelIndex, int baseWaveIndex);
     void initialise();
 
 public:
@@ -36,7 +41,8 @@ public:
     int getLevelNumber() const;
     int getWaveNumber() const;
 
-    std::unordered_map<EnemyType, float> getSpawnRates();
+    const std::unordered_map<EnemyType, float> &getSpawnRates() const;
+    const std::unordered_map<EnemyType, EnemyStats> &getEnemyStats() const;
 };
 
 #endif // GAMEFLOWMANAGER_H

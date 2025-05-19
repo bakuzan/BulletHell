@@ -10,6 +10,7 @@
 #include "core/TextureManager.h"
 #include "components/TextureRectManager.h"
 #include "entities/Enemy.h"
+#include "data/EnemyStats.h"
 
 class EnemySpawnManager
 {
@@ -23,7 +24,7 @@ private:
     };
 
     std::unordered_map<EnemyType, SpawnInfo> spawnData;
-    std::unordered_map<EnemyType, float> enemySpeedMap;
+    std::unordered_map<EnemyType, EnemyStats> statsData;
 
 private:
     std::unique_ptr<Enemy> spawnEnemy(
@@ -31,7 +32,7 @@ private:
         const TextureManager &textureManager,
         sf::IntRect textureRect,
         sf::Vector2f spawnPosition,
-        float speed);
+        EnemyStats enemyStats);
 
     sf::Vector2f getRandomSpawnPosition(
         const sf::View &view);
@@ -41,7 +42,8 @@ public:
     ~EnemySpawnManager();
 
     void setWaveParameters(
-        const std::unordered_map<EnemyType, float> &spawnRates);
+        const std::unordered_map<EnemyType, float> &spawnRates,
+        const std::unordered_map<EnemyType, EnemyStats> &stats);
 
     void spawnEnemies(
         const TextureManager &textureManager,

@@ -12,13 +12,13 @@
 BossEnemy::BossEnemy(
     const sf::Texture &borderTexture, const sf::Texture &fillingTexture,
     const sf::Texture &texture, sf::IntRect textureRect,
-    sf::Vector2f spawnPosition, float movementSpeed)
+    sf::Vector2f spawnPosition, EnemyStats enemyStats)
     : RangedEnemy(EnemyType::BOSS,
                   texture, textureRect,
                   spawnPosition,
-                  movementSpeed, Constants::ENEMY_POINTS_BOSS, Constants::ENEMY_HEALTH_BOSS),
+                  enemyStats),
       healthBar(borderTexture, fillingTexture,
-                Constants::ENEMY_HEALTH_BOSS, Constants::ENEMY_HEALTH_BOSS,
+                enemyStats.health, enemyStats.health,
                 "Boss"),
       laserCountdown(0.0f),
       laserTelegraphTimer(0.0f),
@@ -47,15 +47,15 @@ void BossEnemy::update(float deltaTime,
         direction /= magnitude; // Normalize the vector
     }
 
-    if (magnitude > maximumDistanceFromPlayer)
+    if (magnitude > stats.activeDistance)
     {
         // Player is running! Force the boss closer!
-        sf::Vector2f clampedPosition = playerPosition - direction * maximumDistanceFromPlayer;
+        sf::Vector2f clampedPosition = playerPosition - direction * stats.activeDistance;
         sprite.setPosition(clampedPosition);
     }
     else
     {
-        sprite.move(direction * speed * deltaTime);
+        sprite.move(direction * stats.speed * deltaTime);
     }
 
     if (!pendingShootData.has_value())
@@ -161,11 +161,8 @@ bool BossEnemy::shouldShoot(float deltaTime,
 {
     static float timeSinceLastShot = 0.0f;
 
-    float healthPercentage = health / Constants::ENEMY_HEALTH_BOSS;
-
-    float maxCooldown = 1.5f;
-    float minCooldown = 0.3f;
-    float shootCooldown = minCooldown + (maxCooldown - minCooldown) * healthPercentage;
+    float healthPercentage = stats.health / initialStats.health;
+    float shootCooldown = stats.fireRateCooldown * (0.2f + 0.8f * healthPercentage);
 
     timeSinceLastShot += deltaTime;
 
@@ -204,7 +201,7 @@ std::optional<ProjectileData> BossEnemy::prepareShootData(
 {
     if (shouldShoot(deltaTime, playerPosition))
     {
-        float healthPercentage = health / Constants::ENEMY_HEALTH_BOSS;
+        float healthPercentage = stats.health / initialStats.health;
         WeaponType selectedType = getWeightedWeaponType(healthPercentage);
         WeaponAttributes weaponAttrs = WeaponAttributesManager::getInstance()
                                            .getAttributes(selectedType);

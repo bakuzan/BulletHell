@@ -6,6 +6,7 @@
 #include "RangedEnemy.h"
 #include "constants/WeaponType.h"
 #include "data/ProjectileData.h"
+#include "data/EnemyStats.h"
 #include "ui/HealthBar.h"
 
 class BossEnemy : public RangedEnemy
@@ -31,12 +32,11 @@ private:
 
 public:
     static constexpr float rotationOffset = 90.0f;
-    static constexpr float maximumDistanceFromPlayer = 2000.0f;
 
 public:
     BossEnemy(const sf::Texture &borderTexture, const sf::Texture &fillingTexture,
               const sf::Texture &texture, sf::IntRect textureRect,
-              sf::Vector2f spawnPosition, float movementSpeed);
+              sf::Vector2f spawnPosition, EnemyStats enemyStats);
     ~BossEnemy() override;
 
     void update(float deltaTime,

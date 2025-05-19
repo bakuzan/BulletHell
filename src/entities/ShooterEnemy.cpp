@@ -8,11 +8,11 @@
 
 ShooterEnemy::ShooterEnemy(
     const sf::Texture &texture, sf::IntRect textureRect,
-    sf::Vector2f spawnPosition, float movementSpeed)
+    sf::Vector2f spawnPosition, EnemyStats enemyStats)
     : RangedEnemy(EnemyType::SHOOTER,
                   texture, textureRect,
                   spawnPosition,
-                  movementSpeed, Constants::ENEMY_POINTS_SHOOTER, Constants::ENEMY_HEALTH_SHOOTER)
+                  enemyStats)
 {
     sprite.setOrigin(Constants::SPRITE_WIDTH_SHOOTER / 2.0f, Constants::SPRITE_HEIGHT_SHOOTER / 2.0f);
     sprite.setScale(0.5, 0.5);
@@ -34,9 +34,9 @@ void ShooterEnemy::update(float deltaTime, sf::RenderWindow &window, const sf::V
         direction /= magnitude; // Normalize the vector
     }
 
-    if (magnitude > Constants::ENEMY_SHOOTER_DISTANCE)
+    if (magnitude > stats.activeDistance)
     {
-        sprite.move(direction * speed * deltaTime);
+        sprite.move(direction * stats.speed * deltaTime);
     }
 
     GameUtils::rotateTowards(
@@ -80,17 +80,16 @@ float ShooterEnemy::calculateDistanceToPlayerMagnitude(const sf::Vector2f &playe
 bool ShooterEnemy::shouldShoot(float deltaTime,
                                const sf::Vector2f &playerPosition)
 {
-    static float shootCooldown = 1.0f;
     static float timeSinceLastShot = 0.0f;
 
     float magnitude = calculateDistanceToPlayerMagnitude(playerPosition);
-    if (magnitude <= Constants::ENEMY_SHOOTER_DISTANCE)
+    if (magnitude <= stats.activeDistance)
     {
         timeSinceLastShot += deltaTime;
 
-        if (timeSinceLastShot >= shootCooldown)
+        if (timeSinceLastShot >= stats.fireRateCooldown)
         {
-            timeSinceLastShot -= shootCooldown;
+            timeSinceLastShot -= stats.fireRateCooldown;
             return true;
         }
     }

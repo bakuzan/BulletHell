@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "constants/EnemyType.h"
+#include "data/EnemyStats.h"
 
 class Enemy
 {
@@ -11,15 +12,14 @@ protected:
     EnemyType type;
     sf::Sprite sprite;
 
-    int pointsValue;
-    float health;
-    float speed;
+    EnemyStats initialStats;
+    EnemyStats stats;
 
 public:
     Enemy(EnemyType t,
           const sf::Texture &texture, sf::IntRect textureRect,
           sf::Vector2f spawnPosition,
-          float movementSpeed, int pointsValue, float startingHealth);
+          EnemyStats enemyStats);
     virtual ~Enemy();
 
     virtual void update(float deltaTime,
