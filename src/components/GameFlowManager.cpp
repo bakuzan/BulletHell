@@ -143,12 +143,40 @@ void GameFlowManager::applyLevelBuffsToEnemyStats(int levelIndex, int baseWaveIn
 {
     for (auto &[enemyType, stats] : activeEnemyStats)
     {
+        switch (enemyType)
+        {
+        case EnemyType::BASIC:
+            stats.health += 25 * std::floor(levelIndex / 4);
+            stats.pointValue += 25 * std::floor(levelIndex / 4);
+            break;
+        case EnemyType::SHOOTER:
+            stats.health += 5 * levelIndex;
+            stats.pointValue += 10 * levelIndex;
+            stats.fireRateCooldown = std::max(0.7, stats.fireRateCooldown - 0.05 * levelIndex);
+            stats.activeDistance = std::max(750.0f, stats.activeDistance + 50.0f * static_cast<float>(std::floor(levelIndex / 2)));
+            break;
+        case EnemyType::SPEEDY:
+            stats.health += 25 * std::floor(levelIndex / 3);
+            stats.speed += stats.speed * 0.02 * levelIndex;
+            stats.pointValue += 5 * levelIndex + 25 * std::floor(levelIndex / 3);
+            break;
+        case EnemyType::BOMBER:
+            stats.health += 25 * std::floor(levelIndex / 2);
+            stats.pointValue += 25 * std::floor(levelIndex / 2);
+            stats.activeDistance = std::max(250.0f, stats.activeDistance - 50.0f * levelIndex);
+            break;
+        case EnemyType::BOSS:
+            stats.health += stats.health * levelIndex;
+            stats.pointValue += stats.pointValue * levelIndex;
+            stats.fireRateCooldown = std::max(1.1, stats.fireRateCooldown - 0.03 * levelIndex);
+            break;
+        }
     }
 }
 
 void GameFlowManager::initialise()
 {
-    currentWaveIndex = 6;
+    currentWaveIndex = 0;
     waveCooldown = 0.5f;
     waveActive = false;
 
