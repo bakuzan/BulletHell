@@ -19,6 +19,14 @@ private:
     float laserTelegraphTimer;
     sf::Color currentSpriteColour;
 
+    bool isCharging;
+    bool isTelegraphingCharge;
+    float chargeCooldownTimer;
+    float baseChargeCooldown;
+    float chargeTelegraphTimer;
+    float chargeSpeedMultiplier;
+    sf::Vector2f chargeTargetPosition;
+
 private:
     float calculateDistanceToPlayerMagnitude(const sf::Vector2f &playerPosition);
     void updateHealthBarPlacement(sf::RenderWindow &window);

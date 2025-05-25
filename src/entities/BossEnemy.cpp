@@ -22,7 +22,10 @@ BossEnemy::BossEnemy(
                 "Boss"),
       laserCountdown(0.0f),
       laserTelegraphTimer(0.0f),
-      currentSpriteColour(sf::Color::White)
+      currentSpriteColour(sf::Color::White),
+      isCharging(false), isTelegraphingCharge(false),
+      chargeCooldownTimer(0.0f), baseChargeCooldown(8.0f),
+      chargeTelegraphTimer(0.25f), chargeSpeedMultiplier(10.0f)
 {
     sprite.setOrigin(Constants::SPRITE_WIDTH_BOSS / 2.0f, Constants::SPRITE_HEIGHT_BOSS / 2.0f);
 }
@@ -47,20 +50,77 @@ void BossEnemy::update(float deltaTime,
         direction /= magnitude; // Normalize the vector
     }
 
-    if (magnitude > stats.activeDistance)
+    if (chargeCooldownTimer > 0)
     {
-        // Player is running! Force the boss closer!
-        sf::Vector2f clampedPosition = playerPosition - direction * stats.activeDistance;
-        sprite.setPosition(clampedPosition);
+        chargeCooldownTimer -= deltaTime;
+    }
+
+    // Decide to charge?
+    if (!isCharging &&
+        !isTelegraphingCharge &&
+        chargeCooldownTimer <= 0 &&
+        !pendingShootData.has_value())
+    {
+        if (rand() % 100 == 0)
+        {
+            isTelegraphingCharge = true;
+            chargeTargetPosition = playerPosition;
+            chargeTelegraphTimer = 0.25f;
+            currentSpriteColour = sf::Color::Red;
+        }
+    }
+
+    // Telegraph phase
+    if (isTelegraphingCharge)
+    {
+        chargeTelegraphTimer -= deltaTime;
+
+        if (chargeTelegraphTimer <= 0)
+        {
+            isTelegraphingCharge = false;
+            isCharging = true;
+            currentSpriteColour = sf::Color::White;
+        }
+    }
+
+    if (isCharging)
+    {
+        sf::Vector2f chargeDirection = chargeTargetPosition - sprite.getPosition();
+        float chargeMagnitude = std::sqrt(chargeDirection.x * chargeDirection.x + chargeDirection.y * chargeDirection.y);
+
+        if (chargeMagnitude > 0)
+        {
+            chargeDirection /= chargeMagnitude;
+        }
+
+        sprite.move(chargeDirection * stats.speed * chargeSpeedMultiplier * deltaTime);
+
+        // Stop charging once close enough to the target position
+        if (chargeMagnitude < 10.0f)
+        {
+            isCharging = false;
+            chargeCooldownTimer = std::max(3.0f, baseChargeCooldown * (stats.health / initialStats.health));
+        }
     }
     else
     {
-        sprite.move(direction * stats.speed * deltaTime);
+        if (magnitude > stats.activeDistance)
+        {
+            // Player is running! Force the boss closer!
+            sf::Vector2f clampedPosition = playerPosition - direction * stats.activeDistance;
+            sprite.setPosition(clampedPosition);
+        }
+        else
+        {
+            sprite.move(direction * stats.speed * deltaTime);
+        }
     }
 
-    if (!pendingShootData.has_value())
+    if (!pendingShootData.has_value() &&
+        !isCharging &&
+        !isTelegraphingCharge)
     {
-        // Only turn if Boss isn't "charging" laser
+        // Only turn if Boss isn't "charging" laser or charging at the player
         GameUtils::rotateTowards(
             sprite,
             sprite.getPosition(),
@@ -71,7 +131,9 @@ void BossEnemy::update(float deltaTime,
     updateHealthBarPlacement(window);
 
     // Handle Boss shooting
-    if (!pendingShootData.has_value())
+    if (!pendingShootData.has_value() &&
+        !isCharging &&
+        !isTelegraphingCharge)
     {
         currentSpriteColour = sf::Color::White;
 
